@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "396587043426",
+    "project_id": "finn-1f202",
+    "storage_bucket": "finn-1f202.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:396587043426:android:f1cd12db103690de3c5f3b",
+        "android_client_info": {
+          "package_name": "com.example.finn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "396587043426-n49lc4clhdm5o478gmfcqci9vrgtaq9h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.finn",
+            "certificate_hash": "125f7707cdbdb69c5931b0c197e1e71c69fb0b9f"
+          }
+        },
+        {
+          "client_id": "396587043426-vifo8o4ko3h1gaj7daha9frp7dv3b1fm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAx2u5UoF9vpzpRm-pH92pdzs50i5gwH-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "396587043426-vifo8o4ko3h1gaj7daha9frp7dv3b1fm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

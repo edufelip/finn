@@ -2,4 +2,7 @@
     <string name="app_name">Finn</string>
 
     <string name="logo_description">brand logo</string>
+
+    <string name="facebook_app_id">135128858602779</string>
+    <string name="fb_login_protocol_scheme">fb135128858602779</string>
 </resources>
