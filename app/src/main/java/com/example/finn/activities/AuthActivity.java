@@ -9,10 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.finn.R;
 import com.example.finn.config.FirebaseConfig;
+import com.example.finn.models.User;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -42,6 +44,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import java.util.Arrays;
 
 public class AuthActivity extends AppCompatActivity {
+    private TextView redirectRegister;
     private EditText loginEmail, loginPassword;
     private Button loginButton;
     private SignInButton googleSignInButton;
@@ -57,6 +60,7 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
+        redirectRegister = findViewById(R.id.redirectRegister);
         loginEmail = findViewById(R.id.loginEmail);
         loginPassword = findViewById(R.id.loginPassword);
         loginButton = findViewById(R.id.loginButton);
@@ -130,6 +134,13 @@ public class AuthActivity extends AppCompatActivity {
                 fbLoginButton.performClick();
             }
         });
+
+        redirectRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AuthActivity.this, RegisterActivity.class));
+            }
+        });
     }
 
     public void createGoogleRequest() {
@@ -140,20 +151,16 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     public void createFacebookRequest() {
-
         AppEventsLogger.activateApp(getApplication());
-
         fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
-
             @Override
             public void onCancel() {
                 // App code
             }
-
             @Override
             public void onError(FacebookException exception) {
                 // App code
@@ -170,7 +177,7 @@ public class AuthActivity extends AppCompatActivity {
                     if(task.isSuccessful()) {
                         Log.d("SUCCESS", "USER LOGGED IN");
                     } else {
-                        Log.d("FAILED", "FAILED");
+                        //User.registerUser();
                     }
                 }
             });
