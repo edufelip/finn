@@ -23,12 +23,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        auth = FirebaseConfig.getFirebaseAuth();
+        auth.signOut();
         checkUserLogged();
     }
 
     public void checkUserLogged() {
-        auth = FirebaseConfig.getFirebaseAuth();
         if(auth.getCurrentUser() != null) {
             openMainMenu();
             return;

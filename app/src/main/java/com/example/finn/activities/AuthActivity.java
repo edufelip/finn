@@ -4,7 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -41,6 +45,8 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
 public class AuthActivity extends AppCompatActivity {
@@ -60,6 +66,13 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
 
+        initializeComponents();
+        createGoogleRequest();
+        createFacebookRequest();
+        setClickListeners();
+    }
+
+    public void initializeComponents() {
         redirectRegister = findViewById(R.id.redirectRegister);
         loginEmail = findViewById(R.id.loginEmail);
         loginPassword = findViewById(R.id.loginPassword);
@@ -71,10 +84,6 @@ public class AuthActivity extends AppCompatActivity {
         fbFakeButton = findViewById(R.id.fb_fake_button);
         auth = FirebaseConfig.getFirebaseAuth();
         callbackManager = CallbackManager.Factory.create();
-
-        createGoogleRequest();
-        createFacebookRequest();
-        setClickListeners();
     }
 
     public void authenticateUser() {
@@ -116,6 +125,7 @@ public class AuthActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("DONE", "BUTTON CLICKED");
                 authenticateUser();
             }
         });
@@ -145,6 +155,7 @@ public class AuthActivity extends AppCompatActivity {
 
     public void createGoogleRequest() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -166,21 +177,6 @@ public class AuthActivity extends AppCompatActivity {
                 // App code
             }
         });
-    }
-
-    public void handleFacebookAccessToken(AccessToken token) {
-        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        auth.signInWithCredential(credential)
-            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(task.isSuccessful()) {
-                        Log.d("SUCCESS", "USER LOGGED IN");
-                    } else {
-                        //User.registerUser();
-                    }
-                }
-            });
     }
 
     @Override
@@ -210,12 +206,26 @@ public class AuthActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        FirebaseUser user = auth.getCurrentUser();
-                        Toast.makeText(AuthActivity.this, "USUARIO " + user.getDisplayName(), Toast.LENGTH_SHORT).show();
+                        Log.d("Google Auth", "Successfully Logged in");
                     } else {
-                        //updateUI(null);
+                        Log.d("Google Auth", "User couldn't log in");
                     }
                 }
             });
+    }
+
+    public void handleFacebookAccessToken(AccessToken token) {
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()) {
+                            Log.d("Facebook Auth", "Successfully logged in");
+                        } else {
+                            Log.d("Facebook Auth", "User couldn't log in");
+                        }
+                    }
+                });
     }
 }
