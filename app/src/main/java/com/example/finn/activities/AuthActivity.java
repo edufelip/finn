@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.finn.R;
 import com.example.finn.config.FirebaseConfig;
 import com.example.finn.models.User;
+import com.example.finn.utils.Validation;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -86,46 +87,10 @@ public class AuthActivity extends AppCompatActivity {
         callbackManager = CallbackManager.Factory.create();
     }
 
-    public void authenticateUser() {
-        String email = loginEmail.getText().toString();
-        String password = loginPassword.getText().toString();
-        if(email.isEmpty()) {
-            Toast.makeText(this, "Please put your e-mail", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if(password.isEmpty()) {
-            Toast.makeText(this, "Please put your password", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        auth.signInWithEmailAndPassword(email, password)
-            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-                    if(task.isSuccessful()) {
-                        Toast.makeText(AuthActivity.this, "DEU BOM", Toast.LENGTH_SHORT);
-                    } else {
-                        String exception = "";
-                        try {
-                            throw task.getException();
-                        } catch (FirebaseAuthInvalidUserException e) {
-                            exception = "This user is not registered";
-                        } catch (FirebaseAuthInvalidCredentialsException e) {
-                            exception = "The password is incorrect";
-                        } catch (Exception e) {
-                            exception = "Error " +e.getMessage();
-                            e.printStackTrace();
-                        }
-                        Toast.makeText(AuthActivity.this, exception, Toast.LENGTH_SHORT);
-                    }
-                }
-            });
-    }
-
     public void setClickListeners() {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("DONE", "BUTTON CLICKED");
                 authenticateUser();
             }
         });
@@ -151,6 +116,45 @@ public class AuthActivity extends AppCompatActivity {
                 startActivity(new Intent(AuthActivity.this, RegisterActivity.class));
             }
         });
+    }
+
+    public void authenticateUser() {
+        String email = loginEmail.getText().toString();
+        String password = loginPassword.getText().toString();
+        if(email.isEmpty()) {
+            Toast.makeText(this, "Please enter your e-mail", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(!Validation.isEmailValid(email)) {
+            Toast.makeText(this, "The given email is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(password.isEmpty()) {
+            Toast.makeText(this, "Please enter your password", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()) {
+                        mainPageRedirect();
+                    } else {
+                        String exception = "";
+                        try {
+                            throw task.getException();
+                        } catch (FirebaseAuthInvalidUserException e) {
+                            exception = "This user is not registered";
+                        } catch (FirebaseAuthInvalidCredentialsException e) {
+                            exception = "The password is incorrect";
+                        } catch (Exception e) {
+                            exception = "Error " +e.getMessage();
+                            e.printStackTrace();
+                        }
+                        Toast.makeText(AuthActivity.this, "Error" + exception, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
     }
 
     public void createGoogleRequest() {
@@ -206,7 +210,7 @@ public class AuthActivity extends AppCompatActivity {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
-                        Log.d("Google Auth", "Successfully Logged in");
+                        mainPageRedirect();
                     } else {
                         Log.d("Google Auth", "User couldn't log in");
                     }
@@ -221,11 +225,16 @@ public class AuthActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()) {
-                            Log.d("Facebook Auth", "Successfully logged in");
+                            mainPageRedirect();
                         } else {
                             Log.d("Facebook Auth", "User couldn't log in");
                         }
                     }
                 });
+    }
+
+    public void mainPageRedirect() {
+        startActivity(new Intent(this, MainPage.class));
+        finish();
     }
 }

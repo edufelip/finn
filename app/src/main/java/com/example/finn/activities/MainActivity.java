@@ -16,31 +16,35 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
-
     private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         auth = FirebaseConfig.getFirebaseAuth();
-        auth.signOut();
         checkUserLogged();
     }
 
     public void checkUserLogged() {
         if(auth.getCurrentUser() != null) {
-            openMainMenu();
+            openMainPage();
             return;
         }
-        openAuthMenu();
+        openAuthActivity();
     }
 
-    public void openMainMenu() {
-        Toast.makeText(this, "DEU RUIM", Toast.LENGTH_SHORT);
+    public void openMainPage() {
+        startActivity(new Intent(this, MainPage.class));
+        finish();
     }
 
-    public void openAuthMenu() {
+    public void openAuthActivity() {
         startActivity(new Intent(this, AuthActivity.class));
         finish();
     }
