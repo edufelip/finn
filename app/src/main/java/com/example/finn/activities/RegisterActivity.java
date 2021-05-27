@@ -1,9 +1,7 @@
 package com.example.finn.activities;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -246,7 +244,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void mainPageRedirect() {
-        startActivity(new Intent(this, MainPage.class));
+        startActivity(new Intent(this, MainPageActivity.class));
         finish();
     }
 }
