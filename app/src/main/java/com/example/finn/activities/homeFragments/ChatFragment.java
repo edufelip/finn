@@ -1,4 +1,4 @@
-package com.example.finn.activities;
+package com.example.finn.activities.homeFragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,9 +10,9 @@ import androidx.fragment.app.Fragment;
 import com.example.finn.R;
 
 
-public class NotificationsFragment extends Fragment {
+public class ChatFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_notifications, container, false);
+        return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 }

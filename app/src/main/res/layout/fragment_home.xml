@@ -8,40 +8,50 @@
 
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:orientation="horizontal"
+        android:layout_height="45dp"
         android:layout_marginTop="10dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/profilePictureIcon"
-            android:layout_width="55dp"
+            android:id="@+id/cardView"
+            android:layout_width="45dp"
             android:layout_height="match_parent"
-            app:cardCornerRadius="50dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
+            app:cardCornerRadius="50dp"
 
             >
+
             <ImageView
-                android:id="@+id/roundedimage"
-                android:src="@drawable/facebook"
+                android:id="@+id/profilePictureIcon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                />
+                android:src="@drawable/facebook" />
         </androidx.cardview.widget.CardView>
 
         <SearchView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_marginRight="10dp"
+            android:layout_weight="1"
 
-            android:background="@drawable/custom_search_view"/>
+            android:background="@drawable/custom_search_view" />
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/feed_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 </androidx.constraintlayout.widget.ConstraintLayout>

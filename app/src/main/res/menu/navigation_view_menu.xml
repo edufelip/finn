@@ -9,4 +9,16 @@
     <item
         android:id="@+id/itemThree"
         android:title="item Three" />
+
+    <item android:title="Others" >
+
+        <menu>
+
+            <item android:id="@+id/profile"
+                android:title="profile" />
+
+        </menu>
+
+    </item>
+
 </menu>

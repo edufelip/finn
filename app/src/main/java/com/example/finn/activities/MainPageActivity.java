@@ -3,39 +3,41 @@ package com.example.finn.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.finn.R;
-import com.example.finn.config.FirebaseConfig;
+import com.example.finn.activities.homeFragments.AddFragment;
+import com.example.finn.activities.homeFragments.ChatFragment;
+import com.example.finn.activities.homeFragments.HandleClick;
+import com.example.finn.activities.homeFragments.HomeFragment;
+import com.example.finn.activities.homeFragments.NotificationsFragment;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.makeramen.roundedimageview.RoundedImageView;
 
-public class MainPageActivity extends AppCompatActivity {
+public class MainPageActivity extends AppCompatActivity implements HandleClick {
     private BottomNavigationView bottomNavigationView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private NavigationView navigationView;
-    private CardView profilePictureIcon;
+    private HomeFragment homeFragment;
+    private AddFragment addFragment;
+    private ChatFragment chatFragment;
+    private NotificationsFragment notificationsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_page);
-
         initializeComponents();
         setupNavigationView();
         setupBottomNavigationView();
@@ -46,7 +48,12 @@ public class MainPageActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navView);
-        profilePictureIcon = findViewById(R.id.profilePictureIcon);
+
+        homeFragment = new HomeFragment();
+        homeFragment.setInterface(MainPageActivity.this);
+        addFragment = new AddFragment();
+        chatFragment = new ChatFragment();
+        notificationsFragment = new NotificationsFragment();
     }
 
     public void setupNavigationView() {
@@ -71,10 +78,6 @@ public class MainPageActivity extends AppCompatActivity {
     }
 
     public void setupBottomNavigationView() {
-        Fragment homeFragment = new HomeFragment();
-        Fragment addFragment = new AddFragment();
-        Fragment chatFragment = new ChatFragment();
-        Fragment notificationsFragment = new NotificationsFragment();
 
         setCurrentFragment(homeFragment);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -104,12 +107,6 @@ public class MainPageActivity extends AppCompatActivity {
     }
 
     public void setupClickListeners() {
-        profilePictureIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
     }
 
     public int setCurrentFragment(Fragment fragment) {
@@ -127,4 +124,8 @@ public class MainPageActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void buttonClicked(View v) {
+        drawerLayout.openDrawer(GravityCompat.START);
+    }
 }
