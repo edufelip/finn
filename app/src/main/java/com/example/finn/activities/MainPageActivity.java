@@ -78,7 +78,6 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
     }
 
     public void setupBottomNavigationView() {
-
         setCurrentFragment(homeFragment);
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override

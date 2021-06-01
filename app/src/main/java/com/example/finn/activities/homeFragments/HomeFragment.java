@@ -1,5 +1,6 @@
 package com.example.finn.activities.homeFragments;
 
+import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,19 +17,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finn.R;
 import com.example.finn.activities.MainPageActivity;
+import com.example.finn.activities.PostActivity;
 import com.example.finn.adapters.FeedRecyclerAdapter;
 import com.example.finn.data.Post;
 
 import java.util.ArrayList;
 
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener {
     private HandleClick handleClick;
     private ImageView imageView;
     private RecyclerView feed;
     private ArrayList<Post> posts;
 
-    Post fakepost;
+    Post fakepost, fakepost2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,9 +51,18 @@ public class HomeFragment extends Fragment {
         fakepost.setComments(14);
         fakepost.setDescription("Sei lá, é isso ai, tururu");
 
-        posts.add(fakepost);
+        fakepost2 = new Post();
+        fakepost2.setUserName("Rodrigo Legal");
+        fakepost2.setCommunityName("SubredditDoRodrigo");
+        fakepost2.setTitle("1 razão para escolher programação");
+        fakepost2.setLikes(12);
+        fakepost2.setComments(7);
+        fakepost2.setDescription("Sei lá, é isso ai, HIWIWWIWIWIIW");
 
-        FeedRecyclerAdapter feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts);
+        posts.add(fakepost);
+        posts.add(fakepost2);
+
+        FeedRecyclerAdapter feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
         feed.setAdapter(feedRecyclerAdapter);
         feed.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -73,6 +84,13 @@ public class HomeFragment extends Fragment {
 
     public void setInterface(HandleClick handle){
         this.handleClick = handle;
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        //posts.get(position);
+        //Intent intent = new Intent(getContext(), PostActivity.class);
+        //startActivity(intent);
     }
 }
 
