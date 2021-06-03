@@ -3,6 +3,7 @@ package com.example.finn.data;
 import java.util.Date;
 
 public class Post {
+    private String id;
     private String userName;
     private String communityName;
     private String title;
@@ -16,6 +17,14 @@ public class Post {
 
     public Post() {
 
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getDescription() {

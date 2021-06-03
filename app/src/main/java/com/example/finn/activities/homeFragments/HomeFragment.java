@@ -44,6 +44,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         setClickListeners();
 
         fakepost = new Post();
+        fakepost.setId("1");
         fakepost.setUserName("Eduardo Felipe");
         fakepost.setCommunityName("SubredditDoEdu");
         fakepost.setTitle("30 razões para não escolher programação");
@@ -52,6 +53,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         fakepost.setDescription("Sei lá, é isso ai, tururu");
 
         fakepost2 = new Post();
+        fakepost2.setId("12");
         fakepost2.setUserName("Rodrigo Legal");
         fakepost2.setCommunityName("SubredditDoRodrigo");
         fakepost2.setTitle("1 razão para escolher programação");
@@ -88,9 +90,10 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
 
     @Override
     public void onItemClick(int position) {
-        //posts.get(position);
-        //Intent intent = new Intent(getContext(), PostActivity.class);
-        //startActivity(intent);
+//        Post post = posts.get(position);
+//        Intent intent = new Intent(getContext(), PostActivity.class);
+//        intent.putExtra("postId", post.getId());
+//        startActivity(intent);
     }
 }
 

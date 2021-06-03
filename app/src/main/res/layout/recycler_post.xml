@@ -29,7 +29,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
-                    android:id="@+id/profilePictureIcon"
+                    android:id="@+id/community_picture_icon"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
@@ -125,11 +125,11 @@
                     android:gravity="center"
                     >
 
-                    <Button
+                    <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/like_button"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
-                        android:background="@drawable/ic_baseline_keyboard_arrow_up_24"
+                        android:button="@drawable/custom_like_selector"
                         android:layout_gravity="center_vertical"
                         />
 
@@ -142,12 +142,13 @@
                         android:layout_marginRight="5dp"
                         android:text="21.1k" />
 
-                    <Button
+                    <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/dislike_button"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
+                        android:button="@drawable/ic_baseline_keyboard_arrow_down_24"
                         android:layout_gravity="center_vertical"
-                        android:background="@drawable/ic_baseline_keyboard_arrow_down_24" />
+                        app:backgroundTint="@null"/>
 
                 </LinearLayout>
 
@@ -159,12 +160,13 @@
                     android:gravity="center"
                     >
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/comment_button"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center_vertical"
-                        android:background="@drawable/ic_baseline_chat_24" />
+                        android:background="@drawable/ic_baseline_chat_24"
+                        app:backgroundTint="@null"/>
 
                     <TextView
                         android:id="@+id/comments_count"
@@ -186,15 +188,16 @@
                     android:gravity="center"
                     >
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/share_button"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center_vertical"
-                        android:background="@drawable/ic_baseline_share_24" />
+                        android:background="@drawable/ic_baseline_share_24"
+                        app:backgroundTint="@null"/>
 
                     <TextView
-                        android:id="@+id/share_count"
+                        android:id="@+id/share_text"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_gravity="center_vertical"

@@ -67,10 +67,15 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
                 switch (item.getItemId()) {
                     case (R.id.itemOne):
                         Toast.makeText(MainPageActivity.this, "CLICKED ITEM 1", Toast.LENGTH_SHORT).show();
+                        break;
                     case (R.id.itemTwo):
                         Toast.makeText(MainPageActivity.this, "CLICKED ITEM 2", Toast.LENGTH_SHORT).show();
+                        break;
                     case (R.id.itemThree):
                         Toast.makeText(MainPageActivity.this, "CLICKED ITEM 3", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        return false;
                 }
                 return true;
             }
@@ -82,20 +87,21 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                String itemName = item.getTitle().toString();
-                switch (itemName) {
-                    case "Home":
+                switch (item.getItemId()) {
+                    case (R.id.iconHome):
                         setCurrentFragment(homeFragment);
                         break;
-                    case "Add":
+                    case (R.id.iconAdd):
                         setCurrentFragment(addFragment);
                         break;
-                    case "Chat":
+                    case (R.id.iconChat):
                         setCurrentFragment(chatFragment);
                         break;
-                    case "Notifications":
+                    case (R.id.iconNotification):
                         setCurrentFragment(notificationsFragment);
                         break;
+                    default:
+                        return false;
                 }
                 return true;
             }
