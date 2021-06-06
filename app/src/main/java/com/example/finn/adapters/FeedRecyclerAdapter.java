@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.menu.MenuView;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -69,6 +71,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+        CardView recyclerCard;
         TextView postCommunity;
         TextView postSource;
         TextView postTitle;
@@ -100,10 +103,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
         @Override
         public void onClick(View v) {
-            recyclerClickListener.onItemClick(getBindingAdapterPosition());
+            recyclerClickListener.onItemClick(getAbsoluteAdapterPosition());
         }
 
         public void initializeComponents() {
+            recyclerCard = itemView.findViewById(R.id.recycler_card);
             postCommunity = itemView.findViewById(R.id.post_community);
             postSource = itemView.findViewById(R.id.post_source);
             postTitle = itemView.findViewById(R.id.post_title);
@@ -135,9 +139,12 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                         public boolean onMenuItemClick(MenuItem item) {
                             switch (item.getItemId()) {
                                 case (R.id.saveOption):
-                                    Toast.makeText(itemView.getContext(), "SAVE BUTTON CLICKED", Toast.LENGTH_SHORT).show();
+                                    // send request to save post
                                     break;
                                 case (R.id.hideOption):
+                                    // send request
+                                    recyclerCard.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.fade_out));
+                                    recyclerClickListener.onDeleteClick(getAbsoluteAdapterPosition());
                                     break;
                                 case (R.id.reportOption):
                                     break;
@@ -203,14 +210,14 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             shareButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // share option
+                    sharePost();
                 }
             });
 
             shareText.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // share option
+                    sharePost();
                 }
             });
         }
@@ -256,9 +263,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             isDislikeButtonClicked = !isDislikeButtonClicked;
             // send request
         }
+
+        public void sharePost() {
+            // Not yet implemented
+            Toast.makeText(itemView.getContext(), "Not available yet", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public interface RecyclerClickListener {
         void onItemClick(int position);
+        void onDeleteClick(int position);
     }
 }

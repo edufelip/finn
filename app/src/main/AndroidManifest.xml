@@ -12,7 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Finn">
         <activity android:name=".activities.CommunityActivity"></activity>
-        <activity android:name=".activities.PostActivity" />
+        <activity android:name=".activities.PostActivity">
+            <intent-filter android:label="post_activity_filter">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Accepts URIs that begin with "example://gizmos” -->
+                <data android:scheme="example"
+                    android:host="gizmos" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activities.MainPageActivity" />
         <activity
             android:name=".activities.RegisterActivity"

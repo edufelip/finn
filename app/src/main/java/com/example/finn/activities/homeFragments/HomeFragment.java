@@ -3,6 +3,8 @@ package com.example.finn.activities.homeFragments;
 import android.content.Intent;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +30,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     private HandleClick handleClick;
     private ImageView imageView;
     private RecyclerView feed;
+    private FeedRecyclerAdapter feedRecyclerAdapter;
     private ArrayList<Post> posts;
 
     Post fakepost, fakepost2;
@@ -64,7 +67,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         posts.add(fakepost);
         posts.add(fakepost2);
 
-        FeedRecyclerAdapter feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
+        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
         feed.setAdapter(feedRecyclerAdapter);
         feed.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -90,10 +93,20 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
 
     @Override
     public void onItemClick(int position) {
-//        Post post = posts.get(position);
-//        Intent intent = new Intent(getContext(), PostActivity.class);
-//        intent.putExtra("postId", post.getId());
-//        startActivity(intent);
+        Post post = posts.get(position);
+        Intent intent = new Intent(getContext(), PostActivity.class);
+        intent.putExtra("postId", post.getId());
+        startActivity(intent);
+    }
+
+    public void onDeleteClick(int position) {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                posts.remove(position);
+                feedRecyclerAdapter.notifyDataSetChanged();
+            }
+        }, 700);
     }
 }
 
