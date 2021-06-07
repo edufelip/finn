@@ -1,15 +1,11 @@
 package com.example.finn.activities.homeFragments;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finn.R;
-import com.example.finn.activities.MainPageActivity;
 import com.example.finn.activities.PostActivity;
 import com.example.finn.adapters.FeedRecyclerAdapter;
 import com.example.finn.data.Post;
@@ -100,13 +95,8 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     }
 
     public void onDeleteClick(int position) {
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                posts.remove(position);
-                feedRecyclerAdapter.notifyDataSetChanged();
-            }
-        }, 700);
+        posts.remove(position);
+        feedRecyclerAdapter.notifyItemRemoved(position);
     }
 }
 

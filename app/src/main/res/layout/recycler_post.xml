@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/recycler_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingBottom="10dp"
@@ -10,12 +11,12 @@
         android:id="@+id/recycler_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:selectableItemBackground"
         app:layout_constraintTop_toTopOf="parent"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:background="?android:selectableItemBackground"
             android:layout_height="match_parent">
 
             <androidx.cardview.widget.CardView
@@ -71,8 +72,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="16dp"
                 android:layout_marginRight="16dp"
-                android:paddingStart="6dp"
-                android:paddingEnd="6dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
                 android:textAppearance="?android:textAppearanceLarge" />
 
             <TextView
@@ -130,8 +131,8 @@
 
                     <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/like_button"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:button="@drawable/custom_like_selector"
                         android:layout_gravity="center_vertical"
                         />
@@ -147,8 +148,8 @@
 
                     <com.google.android.material.checkbox.MaterialCheckBox
                         android:id="@+id/dislike_button"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:button="@drawable/ic_baseline_keyboard_arrow_down_24"
                         android:layout_gravity="center_vertical"
                         app:backgroundTint="@null"/>

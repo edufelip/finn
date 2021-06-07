@@ -3,34 +3,27 @@ package com.example.finn.adapters;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.MenuView;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.finn.R;
 import com.example.finn.activities.CommunityActivity;
 import com.example.finn.activities.PostActivity;
 import com.example.finn.data.Post;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.checkbox.MaterialCheckBox;
 
 import java.util.ArrayList;
@@ -71,7 +64,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        CardView recyclerCard;
+        ConstraintLayout recyclerLayout;
         TextView postCommunity;
         TextView postSource;
         TextView postTitle;
@@ -107,7 +100,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         }
 
         public void initializeComponents() {
-            recyclerCard = itemView.findViewById(R.id.recycler_card);
+            recyclerLayout = itemView.findViewById(R.id.recycler_layout);
             postCommunity = itemView.findViewById(R.id.post_community);
             postSource = itemView.findViewById(R.id.post_source);
             postTitle = itemView.findViewById(R.id.post_title);
@@ -143,7 +136,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                                     break;
                                 case (R.id.hideOption):
                                     // send request
-                                    recyclerCard.startAnimation(AnimationUtils.loadAnimation(itemView.getContext(), R.anim.fade_out));
                                     recyclerClickListener.onDeleteClick(getAbsoluteAdapterPosition());
                                     break;
                                 case (R.id.reportOption):
@@ -218,6 +210,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                 @Override
                 public void onClick(View v) {
                     sharePost();
+                }
+            });
+
+            likesCount.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
                 }
             });
         }
