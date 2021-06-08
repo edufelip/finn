@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,8 +20,10 @@ import com.example.finn.R;
 import com.example.finn.activities.PostActivity;
 import com.example.finn.adapters.FeedRecyclerAdapter;
 import com.example.finn.data.Post;
+import com.example.finn.viewmodel.PostViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class HomeFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener {
@@ -27,6 +32,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     private RecyclerView feed;
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private ArrayList<Post> posts;
+
 
     Post fakepost, fakepost2;
 
@@ -41,30 +47,42 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         initializeComponents();
         setClickListeners();
 
-        fakepost = new Post();
-        fakepost.setId("1");
-        fakepost.setUserName("Eduardo Felipe");
-        fakepost.setCommunityName("SubredditDoEdu");
-        fakepost.setTitle("30 razões para não escolher programação");
-        fakepost.setLikes(212);
-        fakepost.setComments(14);
-        fakepost.setDescription("Sei lá, é isso ai, tururu");
+//        fakepost = new Post();
+//        fakepost.setId("1");
+//        fakepost.setUserName("Eduardo Felipe");
+//        fakepost.setCommunityName("SubredditDoEdu");
+//        fakepost.setTitle("30 razões para não escolher programação");
+//        fakepost.setLikes(212);
+//        fakepost.setComments(14);
+//        fakepost.setDescription("Sei lá, é isso ai, tururu");
+//
+//        fakepost2 = new Post();
+//        fakepost2.setId("12");
+//        fakepost2.setUserName("Rodrigo Legal");
+//        fakepost2.setCommunityName("SubredditDoRodrigo");
+//        fakepost2.setTitle("1 razão para escolher programação");
+//        fakepost2.setLikes(12);
+//        fakepost2.setComments(7);
+//        fakepost2.setDescription("Sei lá, é isso ai, HIWIWWIWIWIIW");
 
-        fakepost2 = new Post();
-        fakepost2.setId("12");
-        fakepost2.setUserName("Rodrigo Legal");
-        fakepost2.setCommunityName("SubredditDoRodrigo");
-        fakepost2.setTitle("1 razão para escolher programação");
-        fakepost2.setLikes(12);
-        fakepost2.setComments(7);
-        fakepost2.setDescription("Sei lá, é isso ai, HIWIWWIWIWIIW");
-
-        posts.add(fakepost);
-        posts.add(fakepost2);
+//        posts.add(fakepost);
+//        posts.add(fakepost2);
 
         feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
         feed.setAdapter(feedRecyclerAdapter);
         feed.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        PostViewModel mViewModel = new ViewModelProvider(this).get(PostViewModel.class);
+        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+            @Override
+            public void onChanged(List<Post> posts) {
+                if(posts != null) {
+                    posts = posts;
+                    feedRecyclerAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        mViewModel.makeApiCall();
     }
 
     public void initializeComponents() {

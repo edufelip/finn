@@ -5,6 +5,7 @@ import java.util.Date;
 public class Post {
     private String id;
     private String userName;
+    private String userImg;
     private String communityName;
     private String title;
     private String description;
@@ -97,5 +98,13 @@ public class Post {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getUserImg() {
+        return userImg;
+    }
+
+    public void setUserImg(String userImg) {
+        this.userImg = userImg;
     }
 }
