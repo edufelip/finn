@@ -4,15 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.example.finn.R;
 import com.example.finn.config.FirebaseConfig;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
@@ -22,11 +17,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         auth = FirebaseConfig.getFirebaseAuth();
         checkUserLogged();
     }
@@ -40,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openMainPage() {
-        startActivity(new Intent(this, MainPage.class));
+        startActivity(new Intent(this, MainPageActivity.class));
         finish();
     }
 

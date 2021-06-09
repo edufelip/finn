@@ -4,11 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,13 +14,11 @@ import android.widget.Toast;
 
 import com.example.finn.R;
 import com.example.finn.config.FirebaseConfig;
-import com.example.finn.models.User;
 import com.example.finn.utils.Validation;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -36,29 +30,24 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 public class AuthActivity extends AppCompatActivity {
     private TextView redirectRegister;
+    private TextView forgotPassButton;
     private EditText loginEmail, loginPassword;
     private Button loginButton;
+    private Button fbFakeButton;
     private SignInButton googleSignInButton;
     private FirebaseAuth auth;
     private GoogleSignInClient mGoogleSignInClient;
     private LoginButton fbLoginButton;
-    private Button fbFakeButton;
     private CallbackManager callbackManager;
     private final static int RC_SIGN_IN = 123;
 
@@ -78,6 +67,7 @@ public class AuthActivity extends AppCompatActivity {
         loginEmail = findViewById(R.id.loginEmail);
         loginPassword = findViewById(R.id.loginPassword);
         loginButton = findViewById(R.id.loginButton);
+        forgotPassButton = findViewById(R.id.forgot_pass_button);
         googleSignInButton = findViewById(R.id.google_sign_in_button);
         googleSignInButton.setSize(SignInButton.SIZE_WIDE);
         fbLoginButton = findViewById(R.id.facebook_sign_in_button);
@@ -114,6 +104,13 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(AuthActivity.this, RegisterActivity.class));
+            }
+        });
+
+        forgotPassButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AuthActivity.this, ForgotPassActivity.class));
             }
         });
     }
@@ -234,7 +231,7 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     public void mainPageRedirect() {
-        startActivity(new Intent(this, MainPage.class));
+        startActivity(new Intent(this, MainPageActivity.class));
         finish();
     }
 }
