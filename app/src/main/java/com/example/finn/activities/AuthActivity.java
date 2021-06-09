@@ -40,13 +40,14 @@ import com.google.firebase.auth.GoogleAuthProvider;
 
 public class AuthActivity extends AppCompatActivity {
     private TextView redirectRegister;
+    private TextView forgotPassButton;
     private EditText loginEmail, loginPassword;
     private Button loginButton;
+    private Button fbFakeButton;
     private SignInButton googleSignInButton;
     private FirebaseAuth auth;
     private GoogleSignInClient mGoogleSignInClient;
     private LoginButton fbLoginButton;
-    private Button fbFakeButton;
     private CallbackManager callbackManager;
     private final static int RC_SIGN_IN = 123;
 
@@ -66,6 +67,7 @@ public class AuthActivity extends AppCompatActivity {
         loginEmail = findViewById(R.id.loginEmail);
         loginPassword = findViewById(R.id.loginPassword);
         loginButton = findViewById(R.id.loginButton);
+        forgotPassButton = findViewById(R.id.forgot_pass_button);
         googleSignInButton = findViewById(R.id.google_sign_in_button);
         googleSignInButton.setSize(SignInButton.SIZE_WIDE);
         fbLoginButton = findViewById(R.id.facebook_sign_in_button);
@@ -102,6 +104,13 @@ public class AuthActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(AuthActivity.this, RegisterActivity.class));
+            }
+        });
+
+        forgotPassButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(AuthActivity.this, ForgotPassActivity.class));
             }
         });
     }
