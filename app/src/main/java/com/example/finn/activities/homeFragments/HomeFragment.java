@@ -47,42 +47,42 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         initializeComponents();
         setClickListeners();
 
-//        fakepost = new Post();
-//        fakepost.setId("1");
-//        fakepost.setUserName("Eduardo Felipe");
-//        fakepost.setCommunityName("SubredditDoEdu");
-//        fakepost.setTitle("30 razões para não escolher programação");
-//        fakepost.setLikes(212);
-//        fakepost.setComments(14);
-//        fakepost.setDescription("Sei lá, é isso ai, tururu");
-//
-//        fakepost2 = new Post();
-//        fakepost2.setId("12");
-//        fakepost2.setUserName("Rodrigo Legal");
-//        fakepost2.setCommunityName("SubredditDoRodrigo");
-//        fakepost2.setTitle("1 razão para escolher programação");
-//        fakepost2.setLikes(12);
-//        fakepost2.setComments(7);
-//        fakepost2.setDescription("Sei lá, é isso ai, HIWIWWIWIWIIW");
+        fakepost = new Post();
+        fakepost.setId("1");
+        fakepost.setUserName("Eduardo Felipe");
+        fakepost.setCommunityName("SubredditDoEdu");
+        fakepost.setTitle("30 razões para não escolher programação");
+        fakepost.setLikes(212);
+        fakepost.setComments(14);
+        fakepost.setDescription("Sei lá, é isso ai, tururu");
 
-//        posts.add(fakepost);
-//        posts.add(fakepost2);
+        fakepost2 = new Post();
+        fakepost2.setId("12");
+        fakepost2.setUserName("Rodrigo Legal");
+        fakepost2.setCommunityName("SubredditDoRodrigo");
+        fakepost2.setTitle("1 razão para escolher programação");
+        fakepost2.setLikes(12);
+        fakepost2.setComments(7);
+        fakepost2.setDescription("Sei lá, é isso ai, HIWIWWIWIWIIW");
+
+        posts.add(fakepost);
+        posts.add(fakepost2);
 
         feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
         feed.setAdapter(feedRecyclerAdapter);
         feed.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        PostViewModel mViewModel = new ViewModelProvider(this).get(PostViewModel.class);
-        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
-            @Override
-            public void onChanged(List<Post> posts) {
-                if(posts != null) {
-                    posts = posts;
-                    feedRecyclerAdapter.notifyDataSetChanged();
-                }
-            }
-        });
-        mViewModel.makeApiCall();
+//        PostViewModel mViewModel = new ViewModelProvider(this).get(PostViewModel.class);
+//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+//            @Override
+//            public void onChanged(List<Post> posts) {
+//                if(posts != null) {
+//                    posts = posts;
+//                    feedRecyclerAdapter.notifyDataSetChanged();
+//                }
+//            }
+//        });
+//        mViewModel.makeApiCall();
     }
 
     public void initializeComponents() {

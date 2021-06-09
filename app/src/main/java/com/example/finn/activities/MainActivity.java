@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.example.finn.R;
 import com.example.finn.config.FirebaseConfig;
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,11 +17,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         auth = FirebaseConfig.getFirebaseAuth();
         checkUserLogged();
     }
