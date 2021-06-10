@@ -72,14 +72,17 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case (R.id.itemOne):
-                        Toast.makeText(MainPageActivity.this, "CLICKED ITEM 1", Toast.LENGTH_SHORT).show();
+                    case (R.id.drawer_profile):
+                        // open profile activity
                         break;
-                    case (R.id.itemTwo):
-                        Toast.makeText(MainPageActivity.this, "CLICKED ITEM 2", Toast.LENGTH_SHORT).show();
+                    case (R.id.drawer_saved):
+                        // open saved posts activity
                         break;
-                    case (R.id.itemThree):
-                        Toast.makeText(MainPageActivity.this, "CLICKED ITEM 3", Toast.LENGTH_SHORT).show();
+                    case (R.id.drawer_posts):
+                        // open your posts activity
+                        break;
+                    case (R.id.drawer_settings):
+                        // open settings activity
                         break;
                     default:
                         return false;
