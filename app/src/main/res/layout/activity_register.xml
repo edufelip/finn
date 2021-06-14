@@ -6,15 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".activities.RegisterActivity">
 
-    <ImageView
-        android:id="@+id/backButton"
+    <ImageButton
+        android:id="@+id/register_back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
+        android:background="@drawable/ripple_back_button"
+        android:padding="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_arrow_back" />
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24" />
 
     <TextView
         android:id="@+id/textView4"

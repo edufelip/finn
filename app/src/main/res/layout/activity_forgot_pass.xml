@@ -99,5 +99,17 @@
         app:layout_constraintTop_toTopOf="@+id/forgot_email_field"
         app:srcCompat="@drawable/ic_baseline_check_circle_outline_24" />
 
+    <ImageButton
+        android:id="@+id/fgpass_back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/ripple_back_button"
+        android:padding="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

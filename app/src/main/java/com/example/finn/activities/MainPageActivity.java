@@ -73,7 +73,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case (R.id.drawer_profile):
-                        // open profile activity
+                        startActivity(new Intent(MainPageActivity.this, ProfileActivity.class));
                         break;
                     case (R.id.drawer_saved):
                         // open saved posts activity
