@@ -33,7 +33,6 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private ArrayList<Post> posts;
 
-
     Post fakepost, fakepost2;
 
     @Override
@@ -49,21 +48,21 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
 
         fakepost = new Post();
         fakepost.setId("1");
-        fakepost.setUserName("Eduardo Felipe");
-        fakepost.setCommunityName("SubredditDoEdu");
-        fakepost.setTitle("30 razões para não escolher programação");
+        fakepost.setUserName("Fake Username One");
+        fakepost.setCommunityName("FakeSubreddit");
+        fakepost.setTitle("Fake post title");
         fakepost.setLikes(212);
         fakepost.setComments(14);
-        fakepost.setDescription("Sei lá, é isso ai, tururu");
+        fakepost.setDescription("Fake description, random text, random words");
 
         fakepost2 = new Post();
         fakepost2.setId("12");
-        fakepost2.setUserName("Rodrigo Legal");
-        fakepost2.setCommunityName("SubredditDoRodrigo");
-        fakepost2.setTitle("1 razão para escolher programação");
+        fakepost2.setUserName("Faker Username Two");
+        fakepost2.setCommunityName("SecondFakeSubreddit");
+        fakepost2.setTitle("Another fake post title");
         fakepost2.setLikes(12);
         fakepost2.setComments(7);
-        fakepost2.setDescription("Sei lá, é isso ai, HIWIWWIWIWIIW");
+        fakepost2.setDescription("Another fake post description with another fake words");
 
         posts.add(fakepost);
         posts.add(fakepost2);
