@@ -71,31 +71,29 @@
         android:id="@+id/profile_linear_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/profile_user_name"
-        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="8dp"
         android:gravity="start"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="8dp" >
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/profile_user_name">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rio de Janeiro, Brasil"
             android:drawableLeft="@drawable/ic_baseline_location_on_24"
             android:drawablePadding="4dp"
             android:gravity="center"
-            />
+            android:text="Rio de Janeiro, Brasil" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Entrou em novembro de 2009"
+            android:layout_marginTop="6dp"
             android:drawableLeft="@drawable/ic_baseline_date_range_24"
             android:drawablePadding="4dp"
             android:gravity="center"
-            android:layout_marginTop="6dp"
-            />
+            android:text="Entrou em novembro de 2009" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -105,27 +103,27 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:text="221" />
+                android:text="221"
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Followers"
-                android:layout_marginLeft="4dp"/>
+                android:layout_marginLeft="4dp"
+                android:text="Followers" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
                 android:text="57"
-                android:textStyle="bold"
-                android:layout_marginLeft="12dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Following"
-                android:layout_marginLeft="4dp"/>
+                android:layout_marginLeft="4dp"
+                android:text="Following" />
 
         </LinearLayout>
 

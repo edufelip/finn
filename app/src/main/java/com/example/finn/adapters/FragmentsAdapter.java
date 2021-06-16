@@ -19,12 +19,12 @@ public class FragmentsAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position) {
-            case 1:
+            case 0:
                 return new PostsFragment();
-            case 2:
+            case 1:
                 return new CommentsFragment();
         }
-        // case 3
+        // case 2
         return new LikesFragment();
     }
 
