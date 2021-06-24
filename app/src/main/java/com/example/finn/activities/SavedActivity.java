@@ -1,44 +1,37 @@
-package com.example.finn.activities.profileFragments;
+package com.example.finn.activities;
 
-import android.content.Intent;
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import com.example.finn.R;
-import com.example.finn.activities.PostActivity;
 import com.example.finn.activities.homeFragments.HandleClick;
 import com.example.finn.adapters.FeedRecyclerAdapter;
 import com.example.finn.data.Post;
 
 import java.util.ArrayList;
 
-public class CommentsFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener  {
+public class SavedActivity extends AppCompatActivity implements FeedRecyclerAdapter.RecyclerClickListener {
 
     private RecyclerView feed;
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private ArrayList<Post> posts;
     private HandleClick handleClick;
+    private ImageButton backButton;
 
     Post fakepost, fakepost2;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_comments, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_saved);
         initializeComponents();
+        setClickListeners();
 
         fakepost = new Post();
         fakepost.setId("1");
@@ -61,26 +54,24 @@ public class CommentsFragment extends Fragment implements FeedRecyclerAdapter.Re
         posts.add(fakepost);
         posts.add(fakepost2);
 
-        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
+        feedRecyclerAdapter = new FeedRecyclerAdapter(this, posts, this);
         feed.setAdapter(feedRecyclerAdapter);
-        feed.setLayoutManager(new LinearLayoutManager(getContext()));
-
-//        CommentsFragmentViewModel mViewModel = new ViewModelProvider(this).get(CommentsFragmentViewModel.class);
-//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
-//            @Override
-//            public void onChanged(List<Post> posts) {
-//                if(posts != null) {
-//                    posts = posts;
-//                    feedRecyclerAdapter.notifyDataSetChanged();
-//                }
-//            }
-//        });
-//        mViewModel.makeApiCall();
+        feed.setLayoutManager(new LinearLayoutManager(this));
     }
 
     public void initializeComponents() {
-        feed = getView().findViewById(R.id.comments_recyclerview);
+        feed = findViewById(R.id.saved_recyclerview);
         posts = new ArrayList<Post>();
+        backButton = findViewById(R.id.saved_back_button);
+    }
+
+    public void setClickListeners() {
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     public void setInterface(HandleClick handle) {
@@ -90,7 +81,7 @@ public class CommentsFragment extends Fragment implements FeedRecyclerAdapter.Re
     @Override
     public void onItemClick(int position) {
         Post post = posts.get(position);
-        Intent intent = new Intent(getContext(), PostActivity.class);
+        Intent intent = new Intent(this, PostActivity.class);
         intent.putExtra("postId", post.getId());
         startActivity(intent);
     }

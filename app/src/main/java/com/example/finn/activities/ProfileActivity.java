@@ -5,6 +5,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.example.finn.R;
 import com.example.finn.adapters.FragmentsAdapter;
@@ -16,12 +18,14 @@ public class ProfileActivity extends AppCompatActivity {
     private ViewPager2 pager;
     private FragmentsAdapter pagerAdapter;
     private ViewPager2.OnPageChangeCallback callback;
+    private ImageButton backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        initializeItems();
+        initializeComponents();
+        setClickListeners();
         setupViewPager();
         pager.registerOnPageChangeCallback(callback);
     }
@@ -32,7 +36,7 @@ public class ProfileActivity extends AppCompatActivity {
         pager.unregisterOnPageChangeCallback(callback);
     }
 
-    public void initializeItems() {
+    public void initializeComponents() {
         tabLayout = findViewById(R.id.profile_tab_layout);
         pager = findViewById(R.id.profile_view_pager2);
         callback = new ViewPager2.OnPageChangeCallback() {
@@ -41,6 +45,16 @@ public class ProfileActivity extends AppCompatActivity {
                 tabLayout.selectTab(tabLayout.getTabAt(position));
             }
         };
+        backButton = findViewById(R.id.profile_back_button);
+    }
+
+    public void setClickListeners() {
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     public void setupViewPager() {

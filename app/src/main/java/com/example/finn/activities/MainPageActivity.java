@@ -10,8 +10,10 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +27,7 @@ import com.example.finn.activities.homeFragments.NotificationsFragment;
 import com.example.finn.config.FirebaseConfig;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -37,6 +40,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
     private AddFragment addFragment;
     private ChatFragment chatFragment;
     private NotificationsFragment notificationsFragment;
+    private BottomSheetDialog bottomSheetDialog;
     private TextView logoutButton;
     private FirebaseAuth auth;
 
@@ -73,16 +77,14 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case (R.id.drawer_profile):
+                    case (R.id.drawer_posts):
                         startActivity(new Intent(MainPageActivity.this, ProfileActivity.class));
                         break;
                     case (R.id.drawer_saved):
-                        // open saved posts activity
-                        break;
-                    case (R.id.drawer_posts):
-                        // open your posts activity
+                        startActivity(new Intent(MainPageActivity.this, SavedActivity.class));
                         break;
                     case (R.id.drawer_settings):
-                        // open settings activity
+                        startActivity(new Intent(MainPageActivity.this, SettingsActivity.class));
                         break;
                     default:
                         return false;
@@ -102,7 +104,11 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
                         setCurrentFragment(homeFragment);
                         break;
                     case (R.id.iconAdd):
-                        setCurrentFragment(addFragment);
+                        bottomSheetDialog = new BottomSheetDialog(MainPageActivity.this, R.style.BottomSheetTheme);
+                        View sheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bottom_sheet_layout,
+                                (ViewGroup) findViewById(R.id.bottom_sheet));
+                        bottomSheetDialog.setContentView(sheetView);
+                        bottomSheetDialog.show();
                         break;
                     case (R.id.iconChat):
                         setCurrentFragment(chatFragment);
