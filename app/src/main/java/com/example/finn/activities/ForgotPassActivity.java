@@ -6,24 +6,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.finn.R;
-import com.example.finn.config.FirebaseConfig;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 
 public class ForgotPassActivity extends AppCompatActivity {
@@ -32,6 +29,7 @@ public class ForgotPassActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private TextView statusMessage;
     private ImageView successCheck;
+    private ImageButton backButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +45,7 @@ public class ForgotPassActivity extends AppCompatActivity {
         emailField = findViewById(R.id.forgot_email_field);
         statusMessage = findViewById(R.id.status_message);
         successCheck = findViewById(R.id.success_check);
+        backButton = findViewById(R.id.fgpass_back_button);
         auth = FirebaseAuth.getInstance();
     }
 
@@ -55,6 +54,12 @@ public class ForgotPassActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendResetEmail();
+            }
+        });
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
             }
         });
     }

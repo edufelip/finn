@@ -68,7 +68,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void initializeComponents() {
-        backButton = findViewById(R.id.backButton);
+        backButton = findViewById(R.id.register_back_button);
         registerName = findViewById(R.id.registerName);
         registerEmail = findViewById(R.id.registerEmail);
         registerPassword = findViewById(R.id.registerPassword);

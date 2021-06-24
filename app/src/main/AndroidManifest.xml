@@ -12,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Finn"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.ForgotPassActivity"></activity>
+        <activity android:name=".activities.ProfileActivity"></activity>
+        <activity android:name=".activities.ForgotPassActivity" />
         <activity android:name=".activities.CommunityActivity" />
         <activity android:name=".activities.PostActivity">
             <intent-filter android:label="post_activity_filter">

@@ -1,48 +1,45 @@
-package com.example.finn.activities.homeFragments;
+package com.example.finn.activities.profileFragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
 import com.example.finn.R;
 import com.example.finn.activities.PostActivity;
+import com.example.finn.activities.homeFragments.HandleClick;
 import com.example.finn.adapters.FeedRecyclerAdapter;
 import com.example.finn.data.Post;
-import com.example.finn.viewmodel.PostViewModel;
 
 import java.util.ArrayList;
-import java.util.List;
 
+public class PostsFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener  {
 
-public class HomeFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener {
-    private HandleClick handleClick;
-    private ImageView imageView;
     private RecyclerView feed;
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private ArrayList<Post> posts;
+    private HandleClick handleClick;
 
-    Post fakepost, fakepost2;
+    Post fakepost, fakepost2, fakepost3, fakepost4;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_posts, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         initializeComponents();
         setClickListeners();
 
@@ -71,35 +68,18 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         feed.setAdapter(feedRecyclerAdapter);
         feed.setLayoutManager(new LinearLayoutManager(getContext()));
 
-//        PostViewModel mViewModel = new ViewModelProvider(this).get(PostViewModel.class);
-//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
-//            @Override
-//            public void onChanged(List<Post> posts) {
-//                if(posts != null) {
-//                    posts = posts;
-//                    feedRecyclerAdapter.notifyDataSetChanged();
-//                }
-//            }
-//        });
-//        mViewModel.makeApiCall();
     }
 
     public void initializeComponents() {
-        imageView = getView().findViewById(R.id.profilePictureIcon);
-        feed = getView().findViewById(R.id.feed_recycler_view);
+        feed = getView().findViewById(R.id.posts_recyclerview);
         posts = new ArrayList<Post>();
     }
 
     public void setClickListeners() {
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleClick.buttonClicked(v);
-            }
-        });
+
     }
 
-    public void setInterface(HandleClick handle){
+    public void setInterface(HandleClick handle) {
         this.handleClick = handle;
     }
 
@@ -111,9 +91,9 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         startActivity(intent);
     }
 
+    @Override
     public void onDeleteClick(int position) {
         posts.remove(position);
         feedRecyclerAdapter.notifyItemRemoved(position);
     }
 }
-
