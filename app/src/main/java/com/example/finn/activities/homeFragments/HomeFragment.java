@@ -12,7 +12,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,7 +19,7 @@ import com.example.finn.R;
 import com.example.finn.activities.PostActivity;
 import com.example.finn.adapters.FeedRecyclerAdapter;
 import com.example.finn.data.Post;
-import com.example.finn.viewmodel.PostViewModel;
+import com.example.finn.viewmodel.HomeFragmentViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,17 +70,17 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         feed.setAdapter(feedRecyclerAdapter);
         feed.setLayoutManager(new LinearLayoutManager(getContext()));
 
-//        PostViewModel mViewModel = new ViewModelProvider(this).get(PostViewModel.class);
-//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
-//            @Override
-//            public void onChanged(List<Post> posts) {
-//                if(posts != null) {
-//                    posts = posts;
-//                    feedRecyclerAdapter.notifyDataSetChanged();
-//                }
-//            }
-//        });
-//        mViewModel.makeApiCall();
+        HomeFragmentViewModel mViewModel = new ViewModelProvider(this).get(HomeFragmentViewModel.class);
+        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+            @Override
+            public void onChanged(List<Post> posts) {
+                if(posts != null) {
+                    posts = posts;
+                    feedRecyclerAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        mViewModel.makeApiCall();
     }
 
     public void initializeComponents() {

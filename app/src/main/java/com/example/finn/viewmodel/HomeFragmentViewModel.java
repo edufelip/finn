@@ -14,10 +14,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class PostViewModel extends ViewModel {
+public class HomeFragmentViewModel extends ViewModel {
     private MutableLiveData<List<Post>> postList;
 
-    public PostViewModel(){
+    public HomeFragmentViewModel(){
         postList = new MutableLiveData<>();
     }
 

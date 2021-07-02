@@ -28,20 +28,17 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     private ArrayList<Post> posts;
     private HandleClick handleClick;
 
-    Post fakepost, fakepost2, fakepost3, fakepost4;
+    Post fakepost, fakepost2;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_posts, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         initializeComponents();
-        setClickListeners();
 
         fakepost = new Post();
         fakepost.setId("1");
@@ -68,15 +65,22 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
         feed.setAdapter(feedRecyclerAdapter);
         feed.setLayoutManager(new LinearLayoutManager(getContext()));
 
+//        PostsFragmentViewModel mViewModel = new ViewModelProvider(this).get(PostsFragmentViewModel.class);
+//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+//            @Override
+//            public void onChanged(List<Post> posts) {
+//                if(posts != null) {
+//                    posts = posts;
+//                    feedRecyclerAdapter.notifyDataSetChanged();
+//                }
+//            }
+//        });
+//        mViewModel.makeApiCall();
     }
 
     public void initializeComponents() {
         feed = getView().findViewById(R.id.posts_recyclerview);
         posts = new ArrayList<Post>();
-    }
-
-    public void setClickListeners() {
-
     }
 
     public void setInterface(HandleClick handle) {

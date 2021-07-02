@@ -11,10 +11,11 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.Finn.BottomSheetDialog</item>
     </style>
 
     <style name="Theme.Finn.Launcher" parent="Theme.Finn">
         <item name="android:windowBackground">@drawable/launcher_background</item>
     </style>
+
 </resources>

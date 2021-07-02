@@ -104,7 +104,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
                         setCurrentFragment(homeFragment);
                         break;
                     case (R.id.iconAdd):
-                        bottomSheetDialog = new BottomSheetDialog(MainPageActivity.this, R.style.BottomSheetTheme);
+                        bottomSheetDialog = new BottomSheetDialog(MainPageActivity.this);
                         View sheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bottom_sheet_layout,
                                 (ViewGroup) findViewById(R.id.bottom_sheet));
                         bottomSheetDialog.setContentView(sheetView);
