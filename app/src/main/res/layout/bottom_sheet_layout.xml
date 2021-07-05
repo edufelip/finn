@@ -34,9 +34,9 @@
             android:layout_marginRight="16dp" >
 
             <ImageButton
+                android:id="@+id/create_bottom_dialog_community_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ripple_back_button"
                 android:padding="8dp"
                 android:src="@drawable/ic_baseline_keyboard_arrow_left_24"
                 />
@@ -55,9 +55,9 @@
             android:layout_marginLeft="16dp">
 
             <ImageButton
+                android:id="@+id/create_bottom_dialog_post_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ripple_back_button"
                 android:padding="8dp"
                 android:src="@drawable/ic_baseline_location_on_24"
                 />

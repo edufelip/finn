@@ -9,13 +9,20 @@
         <item name="android:navigationBarDividerColor" tools:ignore="NewApi">@android:color/transparent</item>
         <item name="android:textColor">?attr/colorOnPrimary</item>
         <item name="bottomSheetStyle">@style/Widget.Finn.BottomSheet.Modal</item>
-        <item name="android:imageButtonStyle">@style/Widget.Finn.ImageButton</item>
+        <item name="android:imageButtonStyle">@style/Widget.Finn.ImageButton.Dark</item>
     </style>
     <style name="Widget.Finn.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">
         <item name="shapeAppearance">@null</item>
         <item name="android:background">@drawable/bottom_sheet_background</item>
     </style>
-    <style name="Widget.Finn.ImageButton" parent="">
+
+    <style name="Widget.Finn.ImageButton" parent="Widget.AppCompat.ImageButton">
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+    </style>
+    <style name="Widget.Finn.ImageButton.Light" parent="Widget.Finn.ImageButton">
+        <item name="android:tint">@color/black</item>
+    </style>
+    <style name="Widget.Finn.ImageButton.Dark" parent="Widget.Finn.ImageButton">
         <item name="android:tint">@color/white</item>
     </style>
 </resources>

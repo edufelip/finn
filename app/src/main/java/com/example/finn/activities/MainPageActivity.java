@@ -108,6 +108,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
                         View sheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bottom_sheet_layout,
                                 (ViewGroup) findViewById(R.id.bottom_sheet));
                         bottomSheetDialog.setContentView(sheetView);
+                        setDialogClickListeners();
                         bottomSheetDialog.show();
                         break;
                     case (R.id.iconChat):
@@ -134,6 +135,24 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
                 auth.signOut();
                 startActivity(new Intent(MainPageActivity.this, AuthActivity.class));
                 finish();
+            }
+        });
+    }
+
+    public void setDialogClickListeners() {
+        bottomSheetDialog.findViewById(R.id.create_bottom_dialog_community_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainPageActivity.this, CreateCommunityActivity.class));
+                bottomSheetDialog.dismiss();
+            }
+        });
+
+        bottomSheetDialog.findViewById(R.id.create_bottom_dialog_post_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainPageActivity.this, CreatePostActivity.class));
+                bottomSheetDialog.dismiss();
             }
         });
     }
