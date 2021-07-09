@@ -1,12 +1,12 @@
 package com.example.finn.network;
 
-import com.example.finn.PrivateInfo;
+import com.example.finn.BuildConfig;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetroInstance {
-    public static String BASE_URL = PrivateInfo.url;
+    public static String BASE_URL = BuildConfig.BACKEND_IP;
 
     private static Retrofit retrofit;
 
