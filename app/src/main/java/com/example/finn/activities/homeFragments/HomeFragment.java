@@ -1,6 +1,9 @@
 package com.example.finn.activities.homeFragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +22,7 @@ import com.example.finn.R;
 import com.example.finn.activities.PostActivity;
 import com.example.finn.adapters.FeedRecyclerAdapter;
 import com.example.finn.data.Post;
+import com.example.finn.utils.Checkers;
 import com.example.finn.viewmodel.HomeFragmentViewModel;
 
 import java.util.ArrayList;
@@ -44,6 +48,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         super.onViewCreated(view, savedInstanceState);
         initializeComponents();
         setClickListeners();
+        Checkers.isInternetOn(getContext());
 
         fakepost = new Post();
         fakepost.setId("1");

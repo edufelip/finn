@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.example.finn.R;
 import com.example.finn.config.FirebaseConfig;
-import com.example.finn.utils.Validation;
+import com.example.finn.utils.Checkers;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -122,7 +122,7 @@ public class AuthActivity extends AppCompatActivity {
             Toast.makeText(this, "Please enter your e-mail", Toast.LENGTH_SHORT).show();
             return;
         }
-        if(!Validation.isEmailValid(email)) {
+        if(!Checkers.isEmailValid(email)) {
             Toast.makeText(this, "The given email is invalid", Toast.LENGTH_SHORT).show();
             return;
         }
