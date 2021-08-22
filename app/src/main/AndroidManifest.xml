@@ -1,34 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.finn">
+    package="com.projects.finn">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
+        android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Finn"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activities.CreatePostActivity"></activity>
-        <activity android:name=".activities.CreateCommunityActivity" />
-        <activity android:name=".activities.SettingsActivity" />
-        <activity android:name=".activities.SavedActivity" />
-        <activity android:name=".activities.ProfileActivity" />
-        <activity android:name=".activities.ForgotPassActivity" />
-        <activity android:name=".activities.CommunityActivity" />
-        <activity android:name=".activities.PostActivity" />
-        <activity android:name=".activities.MainPageActivity" />
+        <activity android:name="com.projects.finn.ui.activities.CreatePostActivity" />
+        <activity android:name="com.projects.finn.ui.activities.CreateCommunityActivity" />
+        <activity android:name="com.projects.finn.ui.activities.SettingsActivity" />
+        <activity android:name="com.projects.finn.ui.activities.SavedActivity" />
+        <activity android:name="com.projects.finn.ui.activities.ProfileActivity" />
+        <activity android:name="com.projects.finn.ui.activities.ForgotPassActivity" />
+        <activity android:name="com.projects.finn.ui.activities.CommunityActivity" />
+        <activity android:name="com.projects.finn.ui.activities.PostActivity" />
+        <activity android:name="com.projects.finn.ui.activities.MainPageActivity" />
         <activity
-            android:name=".activities.RegisterActivity"
-            android:parentActivityName=".activities.AuthActivity" />
+            android:name="com.projects.finn.ui.activities.RegisterActivity"
+            android:parentActivityName="com.projects.finn.ui.activities.AuthActivity" />
         <activity
-            android:name=".activities.MainActivity"
-            android:theme="@style/Theme.Finn.Launcher">
+            android:name="com.projects.finn.ui.activities.MainActivity"
+            android:theme="@style/Theme.Finn.Launcher"
+            android:exported="true"
+            >
             <intent-filter>
                 <action
                     android:name="android.intent.action.MAIN"
@@ -37,7 +41,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.AuthActivity" />
+        <activity android:name="com.projects.finn.ui.activities.AuthActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
