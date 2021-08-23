@@ -8,4 +8,6 @@
 
     <string name="open_nav_drawer">open</string>
     <string name="close_nav_drawer">close</string>
+
+    <string name="signgoogle">Sign in with Google</string>
 </resources>

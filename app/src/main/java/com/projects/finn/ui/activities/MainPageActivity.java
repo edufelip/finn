@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
@@ -13,63 +12,54 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.projects.finn.R;
-import com.projects.finn.ui.activities.homeFragments.AddFragment;
+import com.projects.finn.databinding.ActivityMainPageBinding;
 import com.projects.finn.ui.activities.homeFragments.ChatFragment;
 import com.projects.finn.ui.activities.homeFragments.HandleClick;
 import com.projects.finn.ui.activities.homeFragments.HomeFragment;
 import com.projects.finn.ui.activities.homeFragments.NotificationsFragment;
 import com.projects.finn.config.FirebaseConfig;
 import com.google.android.material.badge.BadgeDrawable;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainPageActivity extends AppCompatActivity implements HandleClick {
-    private BottomNavigationView bottomNavigationView;
-    private DrawerLayout drawerLayout;
+    private ActivityMainPageBinding binding;
     private ActionBarDrawerToggle toggle;
-    private NavigationView navigationView;
     private HomeFragment homeFragment;
-    private AddFragment addFragment;
     private ChatFragment chatFragment;
     private NotificationsFragment notificationsFragment;
     private BottomSheetDialog bottomSheetDialog;
-    private TextView logoutButton;
     private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_page);
+        binding = ActivityMainPageBinding.inflate(getLayoutInflater());
+
         initializeComponents();
         setupNavigationDrawer();
         setupBottomNavigationView();
         setupClickListeners();
+
+        setContentView(binding.getRoot());
     }
 
     public void initializeComponents() {
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        drawerLayout = findViewById(R.id.drawerLayout);
-        navigationView = findViewById(R.id.navView);
-        logoutButton = findViewById(R.id.logout_button);
         homeFragment = new HomeFragment();
         homeFragment.setInterface(MainPageActivity.this);
-        addFragment = new AddFragment();
         chatFragment = new ChatFragment();
         notificationsFragment = new NotificationsFragment();
         auth = FirebaseConfig.getFirebaseAuth();
     }
 
     public void setupNavigationDrawer() {
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open_nav_drawer, R.string.close_nav_drawer);
-        drawerLayout.addDrawerListener(toggle);
+        toggle = new ActionBarDrawerToggle(this, binding.drawerLayout, R.string.open_nav_drawer, R.string.close_nav_drawer);
+        binding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        navigationView.setNavigationItemSelectedListener(item -> {
+        binding.navView.setNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case (R.id.drawer_profile):
                 case (R.id.drawer_posts):
@@ -90,7 +80,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
 
     public void setupBottomNavigationView() {
         setCurrentFragment(homeFragment);
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+        binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case (R.id.iconHome):
                     setCurrentFragment(homeFragment);
@@ -114,13 +104,13 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
             }
             return true;
         });
-        BadgeDrawable badge = bottomNavigationView.getOrCreateBadge(R.id.iconNotification);
+        BadgeDrawable badge = binding.bottomNavigationView.getOrCreateBadge(R.id.iconNotification);
         badge.setNumber(1);
         badge.setVisible(true);
     }
 
     public void setupClickListeners() {
-        logoutButton.setOnClickListener(v -> {
+        binding.logoutButton.setOnClickListener(v -> {
             auth.signOut();
             startActivity(new Intent(MainPageActivity.this, AuthActivity.class));
             finish();
@@ -156,6 +146,6 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
 
     @Override
     public void buttonClicked(View v) {
-        drawerLayout.openDrawer(GravityCompat.START);
+        binding.drawerLayout.openDrawer(GravityCompat.START);
     }
 }

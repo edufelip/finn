@@ -2,14 +2,10 @@ package com.projects.finn.ui.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageButton;
-
-import com.projects.finn.R;
+import com.projects.finn.databinding.ActivitySavedBinding;
 import com.projects.finn.ui.activities.homeFragments.HandleClick;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
 import com.projects.finn.data.models.Post;
@@ -17,19 +13,17 @@ import com.projects.finn.data.models.Post;
 import java.util.ArrayList;
 
 public class SavedActivity extends AppCompatActivity implements FeedRecyclerAdapter.RecyclerClickListener {
-
-    private RecyclerView feed;
+    private ActivitySavedBinding binding;
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private ArrayList<Post> posts;
     private HandleClick handleClick;
-    private ImageButton backButton;
 
     Post fakepost, fakepost2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_saved);
+        binding = ActivitySavedBinding.inflate(getLayoutInflater());
         initializeComponents();
         setClickListeners();
 
@@ -55,18 +49,18 @@ public class SavedActivity extends AppCompatActivity implements FeedRecyclerAdap
         posts.add(fakepost2);
 
         feedRecyclerAdapter = new FeedRecyclerAdapter(this, posts, this);
-        feed.setAdapter(feedRecyclerAdapter);
-        feed.setLayoutManager(new LinearLayoutManager(this));
+        binding.savedRecyclerview.setAdapter(feedRecyclerAdapter);
+        binding.savedRecyclerview.setLayoutManager(new LinearLayoutManager(this));
+
+        setContentView(binding.getRoot());
     }
 
     public void initializeComponents() {
-        feed = findViewById(R.id.saved_recyclerview);
         posts = new ArrayList<Post>();
-        backButton = findViewById(R.id.saved_back_button);
     }
 
     public void setClickListeners() {
-        backButton.setOnClickListener(v -> finish());
+        binding.savedBackButton.setOnClickListener(v -> finish());
     }
 
     public void setInterface(HandleClick handle) {

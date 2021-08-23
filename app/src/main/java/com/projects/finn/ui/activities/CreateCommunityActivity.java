@@ -1,7 +1,6 @@
 package com.projects.finn.ui.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,60 +10,44 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.view.animation.AlphaAnimation;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.projects.finn.R;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.checkbox.MaterialCheckBox;
-import com.google.android.material.textfield.TextInputEditText;
+import com.projects.finn.databinding.ActivityCreateCommunityBinding;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.util.ArrayList;
 
 public class CreateCommunityActivity extends AppCompatActivity {
-    private TextInputEditText communityName;
-    private TextInputEditText communityAbout;
-    private MaterialCheckBox checkBox;
-    private MaterialButton nextButton;
-    private ImageButton backButton;
-    private ConstraintLayout iconPick;
-    private ImageView icon;
+    private ActivityCreateCommunityBinding binding;
     private Boolean isNextAllowed;
-    private int GALLERY_REQUEST_CODE = 1;
+    private final int GALLERY_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_community);
+        binding = ActivityCreateCommunityBinding.inflate(getLayoutInflater());
+
         initializeComponents();
         setClickListeners();
+
+        setContentView(binding.getRoot());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         fadeOutAnim();
-        nextButton.setClickable(false);
+        binding.createCommunityNextButton.setClickable(false);
     }
 
     public void initializeComponents() {
-        communityName = findViewById(R.id.create_community_name_input);
-        communityAbout = findViewById(R.id.create_community_about_input);
-        checkBox = findViewById(R.id.create_community_checkbox);
-        nextButton = findViewById(R.id.create_community_next_button);
-        backButton = findViewById(R.id.create_community_back_button);
-        iconPick = findViewById(R.id.create_community_icon_select);
-        icon = findViewById(R.id.create_community_icon);
         isNextAllowed = false;
     }
 
     public void setClickListeners() {
-        communityName.addTextChangedListener(new TextWatcher() {
+        binding.createCommunityNameInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -81,7 +64,7 @@ public class CreateCommunityActivity extends AppCompatActivity {
             }
         });
 
-        communityAbout.addTextChangedListener(new TextWatcher() {
+        binding.createCommunityAboutInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -98,19 +81,19 @@ public class CreateCommunityActivity extends AppCompatActivity {
             }
         });
 
-        nextButton.setOnClickListener(v -> {
+        binding.createCommunityNextButton.setOnClickListener(v -> {
             //send request to check
         });
 
-        backButton.setOnClickListener(v -> finish());
-        
-        iconPick.setOnClickListener(v -> pickImageFromGalery());
+        binding.createCommunityBackButton.setOnClickListener(v -> finish());
+
+        binding.createCommunityIconSelect.setOnClickListener(v -> pickImageFromGalery());
     }
 
     public void checkCanGoNext() {
-        String name = communityName.getText().toString();
-        String about = communityAbout.getText().toString();
-        Boolean checked = checkBox.isChecked();
+        String name = binding.createCommunityNameInput.getText().toString();
+        String about = binding.createCommunityAboutInput.getText().toString();
+        Boolean checked = binding.createCommunityCheckbox.isChecked();
         if(name.isEmpty() || about.isEmpty() || checked) {
             if(isNextAllowed) {
                 switchNextAllowed();
@@ -126,23 +109,23 @@ public class CreateCommunityActivity extends AppCompatActivity {
 
     public void switchNextAllowed() {
         isNextAllowed = !isNextAllowed;
-        nextButton.setClickable(isNextAllowed);
+        binding.createCommunityNextButton.setClickable(isNextAllowed);
     }
 
     public void fadeInAnim() {
         AlphaAnimation fadeInAnim = new AlphaAnimation(0.5f, 1.0f);
         fadeInAnim.setDuration(600);
         fadeInAnim.setFillAfter(true);
-        nextButton.startAnimation(fadeInAnim);
+        binding.createCommunityNextButton.startAnimation(fadeInAnim);
     }
 
     public void fadeOutAnim() {
         AlphaAnimation fadeOutAnim = new AlphaAnimation(1.0f, 0.5f);
         fadeOutAnim.setDuration(600);
         fadeOutAnim.setFillAfter(true);
-        nextButton.startAnimation(fadeOutAnim);
+        binding.createCommunityNextButton.startAnimation(fadeOutAnim);
     }
-    
+
     public void pickImageFromGalery() {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         gallery.setType("image/*");
@@ -164,7 +147,7 @@ public class CreateCommunityActivity extends AppCompatActivity {
             try {
                 launchImageCrop(imageUri);
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                icon.setImageBitmap(bitmap);
+                binding.createCommunityIcon.setImageBitmap(bitmap);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -183,14 +166,14 @@ public class CreateCommunityActivity extends AppCompatActivity {
     private void setIcon(Uri uri) {
         Glide.with(this)
                 .load(uri)
-                .into(icon);
+                .into(binding.createCommunityIcon);
     }
 
     private void launchImageCrop(Uri imageUri) {
         CropImage.activity(imageUri)
-            .setGuidelines(CropImageView.Guidelines.ON)
-            .setAspectRatio(1, 1)
-            .setCropShape(CropImageView.CropShape.OVAL)
-            .start(this);
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setAspectRatio(1, 1)
+                .setCropShape(CropImageView.CropShape.OVAL)
+                .start(this);
     }
 }
