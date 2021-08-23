@@ -1,19 +1,17 @@
 package com.projects.finn.ui.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.config.FirebaseConfig;
+import com.projects.finn.databinding.ActivityAuthBinding;
 import com.projects.finn.utils.Checkers;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -21,17 +19,14 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -39,62 +34,53 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 public class AuthActivity extends AppCompatActivity {
-    private TextView redirectRegister;
-    private TextView forgotPassButton;
-    private EditText loginEmail, loginPassword;
-    private Button loginButton;
-    private Button fbFakeButton;
-    private SignInButton googleSignInButton;
+    private ActivityAuthBinding binding;
     private FirebaseAuth auth;
     private GoogleSignInClient mGoogleSignInClient;
-    private LoginButton fbLoginButton;
     private CallbackManager callbackManager;
     private final static int RC_SIGN_IN = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_auth);
+        binding = ActivityAuthBinding.inflate(getLayoutInflater());
 
         initializeComponents();
         createGoogleRequest();
         createFacebookRequest();
         setClickListeners();
+
+        TextView tv = (TextView) binding.googleSignInButton.getChildAt(0);
+        tv.setText(getString(R.string.signgoogle));
+
+        setContentView(binding.getRoot());
     }
 
     public void initializeComponents() {
-        redirectRegister = findViewById(R.id.redirectRegister);
-        loginEmail = findViewById(R.id.loginEmail);
-        loginPassword = findViewById(R.id.loginPassword);
-        loginButton = findViewById(R.id.loginButton);
-        forgotPassButton = findViewById(R.id.forgot_pass_button);
-        googleSignInButton = findViewById(R.id.google_sign_in_button);
-        googleSignInButton.setSize(SignInButton.SIZE_WIDE);
-        fbLoginButton = findViewById(R.id.facebook_sign_in_button);
-        fbLoginButton.setPermissions("email", "public_profile");
-        fbFakeButton = findViewById(R.id.fb_fake_button);
-        auth = FirebaseConfig.getFirebaseAuth();
+        binding.googleSignInButton.setSize(SignInButton.SIZE_WIDE);
+        binding.facebookSignInButton.setPermissions("email", "public_profile");
         callbackManager = CallbackManager.Factory.create();
+        auth = FirebaseConfig.getFirebaseAuth();
     }
 
     public void setClickListeners() {
-        loginButton.setOnClickListener(v -> authenticateUser());
+        binding.loginButton.setOnClickListener(v -> authenticateUser());
 
-        googleSignInButton.setOnClickListener(v -> {
+        binding.googleSignInButton.setOnClickListener(v -> {
             Intent signInIntent = mGoogleSignInClient.getSignInIntent();
             startActivityForResult(signInIntent, RC_SIGN_IN);
         });
 
-        fbFakeButton.setOnClickListener(v -> fbLoginButton.performClick());
+        binding.fbFakeButton.setOnClickListener(v -> binding.facebookSignInButton.performClick());
 
-        redirectRegister.setOnClickListener(v -> startActivity(new Intent(AuthActivity.this, RegisterActivity.class)));
+        binding.redirectRegister.setOnClickListener(v -> startActivity(new Intent(AuthActivity.this, RegisterActivity.class)));
 
-        forgotPassButton.setOnClickListener(v -> startActivity(new Intent(AuthActivity.this, ForgotPassActivity.class)));
+        binding.forgotPassButton.setOnClickListener(v -> startActivity(new Intent(AuthActivity.this, ForgotPassActivity.class)));
     }
 
     public void authenticateUser() {
-        String email = loginEmail.getText().toString();
-        String password = loginPassword.getText().toString();
+        String email = binding.loginEmail.getText().toString();
+        String password = binding.loginPassword.getText().toString();
         if(email.isEmpty()) {
             Toast.makeText(this, "Please enter your e-mail", Toast.LENGTH_SHORT).show();
             return;
@@ -130,6 +116,7 @@ public class AuthActivity extends AppCompatActivity {
 
     public void createGoogleRequest() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(BuildConfig.FIREBASE_GOOGLE_ID)
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
@@ -137,7 +124,7 @@ public class AuthActivity extends AppCompatActivity {
 
     public void createFacebookRequest() {
         AppEventsLogger.activateApp(getApplication());
-        fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        binding.facebookSignInButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());

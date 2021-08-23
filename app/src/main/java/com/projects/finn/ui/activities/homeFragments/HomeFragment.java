@@ -72,14 +72,14 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         feed.setAdapter(feedRecyclerAdapter);
         feed.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        HomeFragmentViewModel mViewModel = new ViewModelProvider(this).get(HomeFragmentViewModel.class);
-        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), posts -> {
-            if(posts != null) {
-                posts = posts;
-                feedRecyclerAdapter.notifyDataSetChanged();
-            }
-        });
-        mViewModel.makeApiCall();
+//        HomeFragmentViewModel mViewModel = new ViewModelProvider(this).get(HomeFragmentViewModel.class);
+//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), posts -> {
+//            if(posts != null) {
+//                posts = posts;
+//                feedRecyclerAdapter.notifyDataSetChanged();
+//            }
+//        });
+//        mViewModel.makeApiCall();
     }
 
     public void initializeComponents() {

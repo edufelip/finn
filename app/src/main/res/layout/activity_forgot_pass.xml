@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
-        android:text="Confirm your email and we willsend the instructions"
+        android:text="Confirm your email and we will send the instructions"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/forgot_email_field"
         app:layout_constraintEnd_toEndOf="parent"
