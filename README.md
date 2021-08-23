@@ -8,10 +8,10 @@ A network of communities where people can share their interests! [Under Construc
 <br>
   <p align="left">
             <img alt="splash screen"
-            src="https://github.com/edufelip/finn/blob/main/app/src/main/res/drawable-v24/print1.jpg" width="20%" height="410px"
+            src="https://github.com/edufelip/finn/blob/main/app/src/main/res/drawable-v24/print1.jpg" width="20%" 
             title="splash screen">
             <img alt="auth screen"
-            src="https://github.com/edufelip/finn/blob/main/app/src/main/res/drawable-v24/print2.jpg" width="20%" height="410px"
+            src="https://github.com/edufelip/finn/blob/main/app/src/main/res/drawable-v24/print2.jpg" width="20%" 
             title="auth screen">
 
 ## Installation
