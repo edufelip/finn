@@ -9,12 +9,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.LoginStatusCallback;
 import com.facebook.login.LoginBehavior;
+import com.facebook.login.LoginManager;
 import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.config.FirebaseConfig;
@@ -40,6 +46,9 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class AuthActivity extends AppCompatActivity {
     private ActivityAuthBinding binding;
     private FirebaseAuth auth;
@@ -58,7 +67,6 @@ public class AuthActivity extends AppCompatActivity {
 
         TextView tv = (TextView) binding.googleSignInButton.getChildAt(0);
         tv.setText(getString(R.string.signgoogle));
-        binding.facebookSignInButton.setLoginBehavior(LoginBehavior.NATIVE_ONLY);
 
         setContentView(binding.getRoot());
     }
@@ -141,7 +149,7 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     public void createFacebookRequest() {
-        AppEventsLogger.activateApp(getApplication());
+//        AppEventsLogger.activateApp(getApplication());
         binding.facebookSignInButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
