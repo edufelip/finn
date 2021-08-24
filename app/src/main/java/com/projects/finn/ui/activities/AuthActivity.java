@@ -1,13 +1,26 @@
 package com.projects.finn.ui.activities;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContract;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.LoginStatusCallback;
+import com.facebook.login.LoginBehavior;
+import com.facebook.login.LoginManager;
 import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.config.FirebaseConfig;
@@ -33,12 +46,14 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class AuthActivity extends AppCompatActivity {
     private ActivityAuthBinding binding;
     private FirebaseAuth auth;
     private GoogleSignInClient mGoogleSignInClient;
     private CallbackManager callbackManager;
-    private final static int RC_SIGN_IN = 123;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +81,7 @@ public class AuthActivity extends AppCompatActivity {
     public void setClickListeners() {
         binding.loginButton.setOnClickListener(v -> authenticateUser());
 
-        binding.googleSignInButton.setOnClickListener(v -> {
-            Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-            startActivityForResult(signInIntent, RC_SIGN_IN);
-        });
+        binding.googleSignInButton.setOnClickListener(v -> resultLauncher.launch(new Intent(mGoogleSignInClient.getSignInIntent())));
 
         binding.fbFakeButton.setOnClickListener(v -> binding.facebookSignInButton.performClick());
 
@@ -77,6 +89,20 @@ public class AuthActivity extends AppCompatActivity {
 
         binding.forgotPassButton.setOnClickListener(v -> startActivity(new Intent(AuthActivity.this, ForgotPassActivity.class)));
     }
+
+    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if(result.getResultCode() == Activity.RESULT_OK) {
+            Intent intent = result.getData();
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(intent);
+            try {
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                handleGoogleAccessToken(account.getIdToken());
+            } catch (ApiException e) {
+                Toast.makeText(AuthActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    );
 
     public void authenticateUser() {
         String email = binding.loginEmail.getText().toString();
@@ -123,7 +149,7 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     public void createFacebookRequest() {
-        AppEventsLogger.activateApp(getApplication());
+//        AppEventsLogger.activateApp(getApplication());
         binding.facebookSignInButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -143,21 +169,7 @@ public class AuthActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == RC_SIGN_IN) {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            try {
-                // Google Sign In was successful, authenticate with Firebase
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                handleGoogleAccessToken(account.getIdToken());
-            } catch (ApiException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                // Google Sign In failed, update UI appropriately
-            }
-        } else {
-            callbackManager.onActivityResult(requestCode, resultCode, data);
-        }
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void handleGoogleAccessToken(String idToken) {
@@ -175,13 +187,13 @@ public class AuthActivity extends AppCompatActivity {
     public void handleFacebookAccessToken(AccessToken token) {
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
         auth.signInWithCredential(credential)
-                .addOnCompleteListener(this, task -> {
-                    if(task.isSuccessful()) {
-                        mainPageRedirect();
-                    } else {
-                        Log.d("Facebook Auth", "User couldn't log in");
-                    }
-                });
+            .addOnCompleteListener(this, task -> {
+                if(task.isSuccessful()) {
+                    mainPageRedirect();
+                } else {
+                    Toast.makeText(this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     public void mainPageRedirect() {
