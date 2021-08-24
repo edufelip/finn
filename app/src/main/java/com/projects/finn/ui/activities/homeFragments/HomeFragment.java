@@ -7,26 +7,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.projects.finn.R;
+import com.projects.finn.databinding.FragmentHomeBinding;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
 import com.projects.finn.data.models.Post;
-import com.projects.finn.utils.Checkers;
-import com.projects.finn.ui.viewmodel.HomeFragmentViewModel;
+import com.projects.finn.utils.Check;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class HomeFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener {
+    private FragmentHomeBinding binding;
     private HandleClick handleClick;
     private ImageView imageView;
     private RecyclerView feed;
@@ -37,16 +33,29 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+        binding = FragmentHomeBinding.inflate(inflater, container, false);
         initializeComponents();
         setClickListeners();
-        Checkers.isInternetOn(getContext());
+        seeds();
+        Check.isInternetOn(getContext());
 
+        // setup recyclerview
+        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
+        feed.setAdapter(feedRecyclerAdapter);
+        feed.setLayoutManager(new LinearLayoutManager(getContext()));
+
+//        HomeFragmentViewModel mViewModel = new ViewModelProvider(this).get(HomeFragmentViewModel.class);
+//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), posts -> {
+//            if(posts != null) {
+//                posts = posts;
+//                feedRecyclerAdapter.notifyDataSetChanged();
+//            }
+//        });
+//        mViewModel.makeApiCall();
+        return binding.getRoot();
+    }
+
+    private void seeds() {
         fakepost = new Post();
         fakepost.setId("1");
         fakepost.setUserName("Fake Username One");
@@ -67,19 +76,6 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
 
         posts.add(fakepost);
         posts.add(fakepost2);
-
-        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
-        feed.setAdapter(feedRecyclerAdapter);
-        feed.setLayoutManager(new LinearLayoutManager(getContext()));
-
-//        HomeFragmentViewModel mViewModel = new ViewModelProvider(this).get(HomeFragmentViewModel.class);
-//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), posts -> {
-//            if(posts != null) {
-//                posts = posts;
-//                feedRecyclerAdapter.notifyDataSetChanged();
-//            }
-//        });
-//        mViewModel.makeApiCall();
     }
 
     public void initializeComponents() {
@@ -112,6 +108,12 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     public void onDeleteClick(int position) {
         posts.remove(position);
         feedRecyclerAdapter.notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
 

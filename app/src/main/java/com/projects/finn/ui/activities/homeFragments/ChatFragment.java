@@ -8,11 +8,16 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 import com.projects.finn.R;
+import com.projects.finn.databinding.FragmentChatBinding;
 
 
 public class ChatFragment extends Fragment {
+    FragmentChatBinding binding;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_chat, container, false);
+        binding = FragmentChatBinding.inflate(inflater, container, false);
+
+        return binding.getRoot();
     }
 }

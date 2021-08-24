@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.projects.finn.R;
+import com.projects.finn.databinding.FragmentPostsBinding;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.ui.activities.homeFragments.HandleClick;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
@@ -22,24 +23,39 @@ import com.projects.finn.data.models.Post;
 import java.util.ArrayList;
 
 public class PostsFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener  {
-
-    private RecyclerView feed;
+    private FragmentPostsBinding binding;
     private FeedRecyclerAdapter feedRecyclerAdapter;
-    private ArrayList<Post> posts;
+    private ArrayList<Post> posts = new ArrayList<>();
     private HandleClick handleClick;
 
     Post fakepost, fakepost2;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_posts, container, false);
+        binding = FragmentPostsBinding.inflate(inflater, container, false);
+        seeds();
+
+        // set recyclerview
+        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
+        binding.postsRecyclerview.setAdapter(feedRecyclerAdapter);
+        binding.postsRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+
+//        PostsFragmentViewModel mViewModel = new ViewModelProvider(this).get(PostsFragmentViewModel.class);
+//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
+//            @Override
+//            public void onChanged(List<Post> posts) {
+//                if(posts != null) {
+//                    posts = posts;
+//                    feedRecyclerAdapter.notifyDataSetChanged();
+//                }
+//            }
+//        });
+//        mViewModel.makeApiCall();
+
+        return binding.getRoot();
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initializeComponents();
-
+    private void seeds() {
         fakepost = new Post();
         fakepost.setId("1");
         fakepost.setUserName("Fake Username One");
@@ -60,27 +76,6 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
 
         posts.add(fakepost);
         posts.add(fakepost2);
-
-        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
-        feed.setAdapter(feedRecyclerAdapter);
-        feed.setLayoutManager(new LinearLayoutManager(getContext()));
-
-//        PostsFragmentViewModel mViewModel = new ViewModelProvider(this).get(PostsFragmentViewModel.class);
-//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
-//            @Override
-//            public void onChanged(List<Post> posts) {
-//                if(posts != null) {
-//                    posts = posts;
-//                    feedRecyclerAdapter.notifyDataSetChanged();
-//                }
-//            }
-//        });
-//        mViewModel.makeApiCall();
-    }
-
-    public void initializeComponents() {
-        feed = getView().findViewById(R.id.posts_recyclerview);
-        posts = new ArrayList<Post>();
     }
 
     public void setInterface(HandleClick handle) {
@@ -99,5 +94,11 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     public void onDeleteClick(int position) {
         posts.remove(position);
         feedRecyclerAdapter.notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 }
