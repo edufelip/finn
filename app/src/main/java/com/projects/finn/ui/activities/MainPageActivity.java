@@ -12,26 +12,39 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
+import com.bumptech.glide.RequestManager;
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.databinding.ActivityMainPageBinding;
+import com.projects.finn.databinding.NavHeaderBinding;
 import com.projects.finn.ui.activities.homeFragments.ChatFragment;
 import com.projects.finn.ui.activities.homeFragments.HandleClick;
 import com.projects.finn.ui.activities.homeFragments.HomeFragment;
 import com.projects.finn.ui.activities.homeFragments.NotificationsFragment;
-import com.projects.finn.config.FirebaseConfig;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainPageActivity extends AppCompatActivity implements HandleClick {
+    @Inject
+    FirebaseAuth auth;
+    @Inject
+    RequestManager glide;
     private ActivityMainPageBinding binding;
     private ActionBarDrawerToggle toggle;
     private HomeFragment homeFragment;
     private ChatFragment chatFragment;
     private NotificationsFragment notificationsFragment;
     private BottomSheetDialog bottomSheetDialog;
-    private FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,11 +52,18 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
         binding = ActivityMainPageBinding.inflate(getLayoutInflater());
 
         initializeComponents();
+        setupBottomNavigationView(savedInstanceState);
         setupNavigationDrawer();
-        setupBottomNavigationView();
+        updateNavUserInfo();
         setupClickListeners();
-
         setContentView(binding.getRoot());
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putInt("opened_fragment", binding.bottomNavigationView.getSelectedItemId());
+        super.onSaveInstanceState(outState);
     }
 
     public void initializeComponents() {
@@ -51,7 +71,13 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
         homeFragment.setInterface(MainPageActivity.this);
         chatFragment = new ChatFragment();
         notificationsFragment = new NotificationsFragment();
-        auth = FirebaseConfig.getFirebaseAuth();
+    }
+
+    public void updateNavUserInfo() {
+        NavHeaderBinding headerBinding = NavHeaderBinding.bind(binding.navView.getHeaderView(0));
+        headerBinding.displayName.setText(auth.getCurrentUser().getDisplayName());
+        headerBinding.displayEmail.setText(auth.getCurrentUser().getEmail());
+        glide.load(auth.getCurrentUser().getPhotoUrl().toString()).into(headerBinding.profilePictureIv);
     }
 
     public void setupNavigationDrawer() {
@@ -78,9 +104,8 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
         });
     }
 
-    public void setupBottomNavigationView() {
-        setCurrentFragment(homeFragment);
-        binding.bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+    public void setupBottomNavigationView(Bundle savedInstanceState) {
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case (R.id.iconHome):
                     setCurrentFragment(homeFragment);
@@ -88,7 +113,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
                 case (R.id.iconAdd):
                     bottomSheetDialog = new BottomSheetDialog(MainPageActivity.this);
                     View sheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.bottom_sheet_layout,
-                            (ViewGroup) findViewById(R.id.bottom_sheet));
+                            findViewById(R.id.bottom_sheet));
                     bottomSheetDialog.setContentView(sheetView);
                     setDialogClickListeners();
                     bottomSheetDialog.show();
@@ -107,11 +132,24 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
         BadgeDrawable badge = binding.bottomNavigationView.getOrCreateBadge(R.id.iconNotification);
         badge.setNumber(1);
         badge.setVisible(true);
+
+        if(savedInstanceState==null) setCurrentFragment(homeFragment);
     }
 
     public void setupClickListeners() {
         binding.logoutButton.setOnClickListener(v -> {
+            //Firebase
             auth.signOut();
+            //Google
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(BuildConfig.FIREBASE_GOOGLE_ID)
+                    .requestEmail()
+                    .build();
+            GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+            mGoogleSignInClient.signOut();
+            //Facebook
+            LoginManager.getInstance().logOut();
+
             startActivity(new Intent(MainPageActivity.this, AuthActivity.class));
             finish();
         });
@@ -129,11 +167,11 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
         });
     }
 
-    public int setCurrentFragment(Fragment fragment) {
-        return getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.flFragment, fragment)
-                .commit();
+    public void setCurrentFragment(Fragment fragment) {
+        getSupportFragmentManager()
+            .beginTransaction()
+            .replace(R.id.flFragment, fragment)
+            .commit();
     }
 
     @Override

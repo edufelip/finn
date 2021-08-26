@@ -1,43 +1,34 @@
 package com.projects.finn.ui.viewmodel;
 
-import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
+import com.projects.finn.data.models.User;
+import com.projects.finn.repositories.IUserRepository;
+import com.projects.finn.repositories.UserRepository;
+import javax.inject.Inject;
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
-import com.projects.finn.data.models.Post;
-import com.projects.finn.data.network.APIService;
-import com.projects.finn.data.network.RetroInstance;
-
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
+@HiltViewModel
 public class HomeFragmentViewModel extends ViewModel {
-    private MutableLiveData<List<Post>> postList;
+    private final IUserRepository userRepository;
+    private final SavedStateHandle savedStateHandle;
+    private MutableLiveData<User> _user = new MutableLiveData<>();
+    private LiveData<User> user = _user;
 
-    public HomeFragmentViewModel(){
-        postList = new MutableLiveData<>();
+    @Inject
+    public HomeFragmentViewModel(SavedStateHandle handle, UserRepository userRepository){
+        this.userRepository = userRepository;
+        this.savedStateHandle = handle;
     }
 
-    public MutableLiveData<List<Post>> getUserListObserver() {
-        return postList;
+    public LiveData<User> getUser() {
+        return user;
     }
 
-    public void makeApiCall(){
-        APIService apiService = RetroInstance.getRetroClient().create(APIService.class);
-        Call<List<Post>> call = apiService.getPostList();
-        call.enqueue(new Callback<List<Post>>() {
-            @Override
-            public void onResponse(@NonNull Call<List<Post>> call, @NonNull Response<List<Post>> response) {
-                postList.postValue(response.body());
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<List<Post>> call, @NonNull Throwable t) {
-                postList.postValue(null);
-            }
-        });
+    public void getOrCreate(User user) {
+        User repoUser = userRepository.getOrCreate(user);
+        this._user.postValue(repoUser);
     }
 }

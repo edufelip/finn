@@ -6,7 +6,7 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.Patterns;
 
-public class Checkers {
+public class Verify {
     public static boolean isEmailValid(CharSequence target) {
             return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
     }

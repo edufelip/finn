@@ -8,6 +8,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.projects.finn.adapters.FragmentsAdapter;
 import com.projects.finn.databinding.ActivityProfileBinding;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class ProfileActivity extends AppCompatActivity {
     private ActivityProfileBinding binding;
     private FragmentsAdapter pagerAdapter;
@@ -22,7 +25,7 @@ public class ProfileActivity extends AppCompatActivity {
         setClickListeners();
         setupViewPager();
         binding.profileViewPager2.registerOnPageChangeCallback(callback);
-        
+
         setContentView(binding.getRoot());
     }
 

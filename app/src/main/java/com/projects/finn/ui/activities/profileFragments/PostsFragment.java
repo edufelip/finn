@@ -31,7 +31,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     Post fakepost, fakepost2;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentPostsBinding.inflate(inflater, container, false);
         seeds();
 
@@ -39,18 +39,6 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
         feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
         binding.postsRecyclerview.setAdapter(feedRecyclerAdapter);
         binding.postsRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
-
-//        PostsFragmentViewModel mViewModel = new ViewModelProvider(this).get(PostsFragmentViewModel.class);
-//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), new Observer<List<Post>>() {
-//            @Override
-//            public void onChanged(List<Post> posts) {
-//                if(posts != null) {
-//                    posts = posts;
-//                    feedRecyclerAdapter.notifyDataSetChanged();
-//                }
-//            }
-//        });
-//        mViewModel.makeApiCall();
 
         return binding.getRoot();
     }

@@ -5,54 +5,67 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.projects.finn.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.projects.finn.data.models.User;
 import com.projects.finn.databinding.FragmentHomeBinding;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
 import com.projects.finn.data.models.Post;
-import com.projects.finn.utils.Check;
-
+import com.projects.finn.ui.viewmodel.HomeFragmentViewModel;
+import dagger.hilt.android.AndroidEntryPoint;
 import java.util.ArrayList;
 
+import javax.inject.Inject;
 
+@AndroidEntryPoint
 public class HomeFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener {
+    @Inject
+    FirebaseAuth auth;
     private FragmentHomeBinding binding;
     private HandleClick handleClick;
-    private ImageView imageView;
-    private RecyclerView feed;
     private FeedRecyclerAdapter feedRecyclerAdapter;
+    private User user;
     private ArrayList<Post> posts;
-
+    private HomeFragmentViewModel mHomeFragmentViewModel;
     Post fakepost, fakepost2;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
+
+        initializeViewModel();
+        checkLoggedUser();
         initializeComponents();
         setClickListeners();
         seeds();
-        Check.isInternetOn(getContext());
+        initializeRecyclerView();
 
-        // setup recyclerview
-        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
-        feed.setAdapter(feedRecyclerAdapter);
-        feed.setLayoutManager(new LinearLayoutManager(getContext()));
-
-//        HomeFragmentViewModel mViewModel = new ViewModelProvider(this).get(HomeFragmentViewModel.class);
-//        mViewModel.getUserListObserver().observe(getViewLifecycleOwner(), posts -> {
-//            if(posts != null) {
-//                posts = posts;
-//                feedRecyclerAdapter.notifyDataSetChanged();
-//            }
-//        });
-//        mViewModel.makeApiCall();
         return binding.getRoot();
+    }
+
+    public void checkLoggedUser() {
+        User tempUser = new User("1", auth.getCurrentUser().getDisplayName());
+        new Thread(() -> mHomeFragmentViewModel.getOrCreate(tempUser)).start();
+    }
+
+    public void initializeViewModel() {
+        mHomeFragmentViewModel = new ViewModelProvider(this).get(HomeFragmentViewModel.class);
+        mHomeFragmentViewModel.getUser().observe(getViewLifecycleOwner(), user -> this.user = user);
+    }
+
+    public void initializeRecyclerView() {
+        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
+        binding.feedRecyclerView.setAdapter(feedRecyclerAdapter);
+        binding.feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
 
     private void seeds() {
@@ -79,18 +92,11 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     }
 
     public void initializeComponents() {
-        imageView = getView().findViewById(R.id.profilePictureIcon);
-        feed = getView().findViewById(R.id.feed_recycler_view);
-        posts = new ArrayList<Post>();
+        posts = new ArrayList<>();
     }
 
     public void setClickListeners() {
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                handleClick.buttonClicked(v);
-            }
-        });
+        binding.profilePictureIcon.setOnClickListener(v -> handleClick.buttonClicked(v));
     }
 
     public void setInterface(HandleClick handle){

@@ -4,19 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import com.projects.finn.R;
-import com.projects.finn.config.FirebaseConfig;
 import com.google.firebase.auth.FirebaseAuth;
+import javax.inject.Inject;
+import dagger.hilt.android.AndroidEntryPoint;
 
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
-    private FirebaseAuth auth;
+    @Inject
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        auth = FirebaseConfig.getFirebaseAuth();
         checkUserLogged();
     }
 

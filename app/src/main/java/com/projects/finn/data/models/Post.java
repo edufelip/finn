@@ -15,7 +15,6 @@ public class Post {
     private int comments;
     private Date date;
 
-
     public Post() {
 
     }
