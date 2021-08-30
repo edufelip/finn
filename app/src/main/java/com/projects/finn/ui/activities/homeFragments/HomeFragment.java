@@ -2,6 +2,7 @@ package com.projects.finn.ui.activities.homeFragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +11,19 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.zxing.qrcode.decoder.Version;
 import com.projects.finn.data.models.User;
 import com.projects.finn.databinding.FragmentHomeBinding;
+import com.projects.finn.ui.activities.AuthActivity;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
 import com.projects.finn.data.models.Post;
 import com.projects.finn.ui.viewmodel.HomeFragmentViewModel;
+import com.projects.finn.utils.Authentication;
+
 import dagger.hilt.android.AndroidEntryPoint;
+import io.reactivex.rxjava3.core.Flowable;
+
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -41,7 +48,6 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-
         initializeViewModel();
         checkLoggedUser();
         initializeComponents();
@@ -54,12 +60,27 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
 
     public void checkLoggedUser() {
         User tempUser = new User("1", auth.getCurrentUser().getDisplayName());
-        new Thread(() -> mHomeFragmentViewModel.getOrCreate(tempUser)).start();
+        mHomeFragmentViewModel.getUser(tempUser);
     }
 
     public void initializeViewModel() {
         mHomeFragmentViewModel = new ViewModelProvider(this).get(HomeFragmentViewModel.class);
-        mHomeFragmentViewModel.getUser().observe(getViewLifecycleOwner(), user -> this.user = user);
+        mHomeFragmentViewModel.observeUser().observe(getViewLifecycleOwner(), user -> {
+                if(user.getId().equals("-1")) {
+                    forceLogout();
+                    return;
+                }
+                this.user = user;
+            }
+        );
+    }
+
+    public void forceLogout() {
+        Authentication.logout(auth, requireActivity());
+        Intent intent = new Intent(requireActivity(), AuthActivity.class);
+        intent.putExtra("Error", "An error has ocurred, please log again later");
+        startActivity(intent);
+        requireActivity().finish();
     }
 
     public void initializeRecyclerView() {

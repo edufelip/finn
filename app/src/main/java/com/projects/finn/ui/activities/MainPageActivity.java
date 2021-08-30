@@ -28,6 +28,7 @@ import com.projects.finn.ui.activities.homeFragments.NotificationsFragment;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
+import com.projects.finn.utils.Authentication;
 
 import javax.inject.Inject;
 
@@ -138,18 +139,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
 
     public void setupClickListeners() {
         binding.logoutButton.setOnClickListener(v -> {
-            //Firebase
-            auth.signOut();
-            //Google
-            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                    .requestIdToken(BuildConfig.FIREBASE_GOOGLE_ID)
-                    .requestEmail()
-                    .build();
-            GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-            mGoogleSignInClient.signOut();
-            //Facebook
-            LoginManager.getInstance().logOut();
-
+            Authentication.logout(auth, this);
             startActivity(new Intent(MainPageActivity.this, AuthActivity.class));
             finish();
         });

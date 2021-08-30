@@ -63,6 +63,11 @@ public class AuthActivity extends AppCompatActivity {
         TextView tv = (TextView) binding.googleSignInButton.getChildAt(0);
         tv.setText(getString(R.string.signgoogle));
 
+        String error = getIntent().getStringExtra("Error");
+        if(error != null) {
+            Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+        }
+
         setContentView(binding.getRoot());
     }
 

@@ -18,6 +18,7 @@ import dagger.hilt.InstallIn;
 import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 @Module
@@ -29,6 +30,7 @@ abstract class AppModule {
         String baseUrl = BuildConfig.BACKEND_IP;
         return new Retrofit.Builder()
                 .baseUrl(baseUrl)
+                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .addConverterFactory(factory)
                 .build()
                 .create(ApiService.class);
