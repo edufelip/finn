@@ -17,22 +17,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Finn"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.projects.finn.ui.activities.CreatePostActivity" />
-        <activity android:name="com.projects.finn.ui.activities.CreateCommunityActivity" />
-        <activity android:name="com.projects.finn.ui.activities.SettingsActivity" />
-        <activity android:name="com.projects.finn.ui.activities.SavedActivity" />
-        <activity android:name="com.projects.finn.ui.activities.ProfileActivity" />
-        <activity android:name="com.projects.finn.ui.activities.ForgotPassActivity" />
-        <activity android:name="com.projects.finn.ui.activities.CommunityActivity" />
-        <activity android:name="com.projects.finn.ui.activities.PostActivity" />
-        <activity android:name="com.projects.finn.ui.activities.MainPageActivity" />
+        <activity android:name="com.projects.finn.ui.activities.CreatePostActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.projects.finn.ui.activities.CreateCommunityActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.projects.finn.ui.activities.SettingsActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.projects.finn.ui.activities.SavedActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.projects.finn.ui.activities.ProfileActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.projects.finn.ui.activities.ForgotPassActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.projects.finn.ui.activities.CommunityActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.projects.finn.ui.activities.PostActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.projects.finn.ui.activities.MainPageActivity" android:screenOrientation="portrait"/>
         <activity
             android:name="com.projects.finn.ui.activities.RegisterActivity"
-            android:parentActivityName="com.projects.finn.ui.activities.AuthActivity" />
+            android:parentActivityName="com.projects.finn.ui.activities.AuthActivity"
+            android:screenOrientation="portrait"/>
         <activity
             android:name="com.projects.finn.ui.activities.MainActivity"
             android:theme="@style/Theme.Finn.Launcher"
             android:exported="true"
+            android:screenOrientation="portrait"
             >
             <intent-filter>
                 <action
