@@ -1,4 +1,4 @@
-package com.projects.finn.data.models;
+package com.projects.finn.models;
 
 public class User {
     private String id;

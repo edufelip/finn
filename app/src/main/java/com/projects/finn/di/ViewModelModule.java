@@ -1,8 +1,14 @@
 package com.projects.finn.di;
 
 import com.projects.finn.data.network.ApiService;
-import com.projects.finn.repositories.IUserRepository;
-import com.projects.finn.repositories.UserRepository;
+import com.projects.finn.data.repositories.CommentRepository;
+import com.projects.finn.data.repositories.CommunityRepository;
+import com.projects.finn.data.repositories.interfaces.ICommentRepository;
+import com.projects.finn.data.repositories.interfaces.ICommunityRepository;
+import com.projects.finn.data.repositories.interfaces.IPostRepository;
+import com.projects.finn.data.repositories.interfaces.IUserRepository;
+import com.projects.finn.data.repositories.PostRepository;
+import com.projects.finn.data.repositories.UserRepository;
 
 import dagger.Module;
 import dagger.Provides;
@@ -17,5 +23,23 @@ abstract class ViewModelModule {
     @ViewModelScoped
     static IUserRepository providesUserRepository(ApiService apiService) {
         return new UserRepository(apiService);
+    }
+
+    @Provides
+    @ViewModelScoped
+    static IPostRepository providesPostRepository(ApiService apiService) {
+        return new PostRepository(apiService);
+    }
+
+    @Provides
+    @ViewModelScoped
+    static ICommunityRepository providesCommunityRepository(ApiService apiService) {
+        return new CommunityRepository(apiService);
+    }
+
+    @Provides
+    @ViewModelScoped
+    static ICommentRepository providesCommentRepository(ApiService apiService) {
+        return new CommentRepository(apiService);
     }
 }

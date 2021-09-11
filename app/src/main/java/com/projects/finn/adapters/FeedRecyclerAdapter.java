@@ -6,26 +6,23 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.projects.finn.R;
+import com.projects.finn.databinding.RecyclerPostBinding;
 import com.projects.finn.ui.activities.CommunityActivity;
 import com.projects.finn.ui.activities.PostActivity;
-import com.projects.finn.data.models.Post;
-import com.google.android.material.checkbox.MaterialCheckBox;
+import com.projects.finn.models.Post;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.MyViewHolder> {
     private ArrayList<Post> posts;
@@ -42,19 +39,17 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.recycler_post, parent,false);
-        return new MyViewHolder(view, recyclerClickListener);
+        return new MyViewHolder(RecyclerPostBinding.inflate(inflater, parent, false), recyclerClickListener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull FeedRecyclerAdapter.MyViewHolder holder, int position) {
-        String source = "Posted by: " + posts.get(position).getUserName();
-        holder.postTitle.setText(posts.get(position).getTitle());
-        holder.postSource.setText(source);
-        holder.postCommunity.setText(posts.get(position).getCommunityName());
-        holder.postDescription.setText(posts.get(position).getDescription());
-        holder.likesCount.setText(String.valueOf(posts.get(position).getLikes()));
-        holder.commentsCount.setText(String.valueOf(posts.get(position).getComments()));
+        String source = "Posted by: " + posts.get(position).getUser_name();
+        holder.binding.postContent.setText(posts.get(position).getContent());
+        holder.binding.postSource.setText(source);
+        holder.binding.postCommunity.setText(posts.get(position).getCommunity_name());
+        holder.binding.likesCount.setText(String.valueOf(posts.get(position).getLikes_count()));
+        holder.binding.commentsCount.setText(String.valueOf(posts.get(position).getComments_count()));
         //holder.postImage.setImageResource(posts.get(position).getImgSource());
     }
 
@@ -64,28 +59,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        ConstraintLayout recyclerLayout;
-        TextView postCommunity;
-        TextView postSource;
-        TextView postTitle;
-        TextView postDescription;
-        TextView likesCount;
-        TextView commentsCount;
-        TextView optionsButton;
-        TextView shareText;
-        ImageView postImage;
-        ImageView postIcon;
-        MaterialCheckBox likeButton;
-        MaterialCheckBox dislikeButton;
-        Button commentsButton;
-        Button shareButton;
+        RecyclerPostBinding binding;
         Dialog userPopup;
         Boolean isLikeButtonClicked;
         Boolean isDislikeButtonClicked;
         RecyclerClickListener recyclerClickListener;
 
-        public MyViewHolder(@NonNull View itemView, RecyclerClickListener recyclerClickListener) {
-            super(itemView);
+        public MyViewHolder(RecyclerPostBinding b, RecyclerClickListener recyclerClickListener) {
+            super(b.getRoot());
+            binding = b;
             initializeComponents();
             setupClickListeners(itemView);
 
@@ -100,21 +82,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         }
 
         public void initializeComponents() {
-            recyclerLayout = itemView.findViewById(R.id.recycler_layout);
-            postCommunity = itemView.findViewById(R.id.post_community);
-            postSource = itemView.findViewById(R.id.post_source);
-            postTitle = itemView.findViewById(R.id.post_title);
-            postDescription = itemView.findViewById(R.id.post_description);
-            postImage = itemView.findViewById(R.id.post_image);
-            postIcon = itemView.findViewById(R.id.community_picture_icon);
-            likesCount = itemView.findViewById(R.id.likes_count);
-            likeButton = itemView.findViewById(R.id.like_button);
-            dislikeButton = itemView.findViewById(R.id.dislike_button);
-            optionsButton = itemView.findViewById(R.id.textViewOptions);
-            commentsCount = itemView.findViewById(R.id.comments_count);
-            commentsButton = itemView.findViewById(R.id.comment_button);
-            shareButton = itemView.findViewById(R.id.share_button);
-            shareText = itemView.findViewById(R.id.share_text);
             // Pull from db
             isLikeButtonClicked = false;
             isDislikeButtonClicked = false;
@@ -122,8 +89,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         }
 
         public void setupClickListeners(View itemView) {
-            optionsButton.setOnClickListener(v -> {
-                PopupMenu popupMenu = new PopupMenu(itemView.getContext(), optionsButton);
+            binding.textViewOptions.setOnClickListener(v -> {
+                PopupMenu popupMenu = new PopupMenu(itemView.getContext(), binding.textViewOptions);
                 popupMenu.inflate(R.menu.recycler_options_menu);
                 popupMenu.setOnMenuItemClickListener(item -> {
                     switch (item.getItemId()) {
@@ -144,25 +111,16 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                 popupMenu.show();
             });
 
-            postIcon.setOnClickListener(v -> openCommunityActivity());
-
-            postCommunity.setOnClickListener(v -> openCommunityActivity());
-
-            postSource.setOnClickListener(v -> openUserPopup());
-
-            likeButton.setOnClickListener(v -> likePost());
-
-            dislikeButton.setOnClickListener(v -> dislikePost());
-
-            commentsButton.setOnClickListener(v -> openPostActivity());
-
-            commentsCount.setOnClickListener(v -> openPostActivity());
-
-            shareButton.setOnClickListener(v -> sharePost());
-
-            shareText.setOnClickListener(v -> sharePost());
-
-            likesCount.setOnClickListener(v -> {
+            binding.communityPictureIcon.setOnClickListener(v -> openCommunityActivity());
+            binding.postCommunity.setOnClickListener(v -> openCommunityActivity());
+            binding.postSource.setOnClickListener(v -> openUserPopup());
+            binding.likeButton.setOnClickListener(v -> likePost());
+            binding.dislikeButton.setOnClickListener(v -> dislikePost());
+            binding.commentButton.setOnClickListener(v -> openPostActivity());
+            binding.commentsCount.setOnClickListener(v -> openPostActivity());
+            binding.shareButton.setOnClickListener(v -> sharePost());
+            binding.shareText.setOnClickListener(v -> sharePost());
+            binding.likesCount.setOnClickListener(v -> {
 
             });
         }
@@ -189,16 +147,16 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         }
 
         public void likePost() {
-            if(dislikeButton.isChecked()) {
-                dislikeButton.toggle();
+            if(binding.dislikeButton.isChecked()) {
+                binding.dislikeButton.toggle();
             }
             isLikeButtonClicked = !isLikeButtonClicked;
             // send request
         }
 
         public void dislikePost() {
-            if(likeButton.isChecked()) {
-                likeButton.toggle();
+            if(binding.likeButton.isChecked()) {
+                binding.likeButton.toggle();
             }
             isDislikeButtonClicked = !isDislikeButtonClicked;
             // send request
@@ -208,6 +166,16 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             // Not yet implemented
             Toast.makeText(itemView.getContext(), "Not available yet", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void setPosts(ArrayList<Post> posts) {
+        this.posts = posts;
+        notifyDataSetChanged();
+    }
+
+    public void updatePost(Post post) {
+        posts.set(posts.indexOf(post), post);
+        notifyItemChanged(posts.indexOf(post));
     }
 
     public interface RecyclerClickListener {

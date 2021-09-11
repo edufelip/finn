@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.databinding.ActivityAuthBinding;
-import com.projects.finn.repositories.UserRepository;
+import com.projects.finn.data.repositories.UserRepository;
 import com.projects.finn.utils.Verify;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;

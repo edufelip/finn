@@ -8,7 +8,7 @@ import android.os.Bundle;
 import com.projects.finn.databinding.ActivitySavedBinding;
 import com.projects.finn.ui.activities.homeFragments.HandleClick;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
-import com.projects.finn.data.models.Post;
+import com.projects.finn.models.Post;
 
 import java.util.ArrayList;
 
@@ -28,22 +28,20 @@ public class SavedActivity extends AppCompatActivity implements FeedRecyclerAdap
         setClickListeners();
 
         fakepost = new Post();
-        fakepost.setId("1");
-        fakepost.setUserName("Fake Username One");
-        fakepost.setCommunityName("FakeSubreddit");
-        fakepost.setTitle("Fake post title");
-        fakepost.setLikes(212);
-        fakepost.setComments(14);
-        fakepost.setDescription("Fake description, random text, random words");
+        fakepost.setId(1);
+        fakepost.setUser_name("Fake Username One");
+        fakepost.setCommunity_name("FakeSubreddit");
+        fakepost.setContent("Fake post title");
+        fakepost.setLikes_count(212);
+        fakepost.setComments_count(14);
 
         fakepost2 = new Post();
-        fakepost2.setId("12");
-        fakepost2.setUserName("Faker Username Two");
-        fakepost2.setCommunityName("SecondFakeSubreddit");
-        fakepost2.setTitle("Another fake post title");
-        fakepost2.setLikes(12);
-        fakepost2.setComments(7);
-        fakepost2.setDescription("Another fake post description with another fake words");
+        fakepost2.setId(12);
+        fakepost2.setUser_name("Faker Username Two");
+        fakepost2.setCommunity_name("SecondFakeSubreddit");
+        fakepost2.setContent("Another fake post title");
+        fakepost2.setLikes_count(12);
+        fakepost2.setComments_count(7);
 
         posts.add(fakepost);
         posts.add(fakepost2);

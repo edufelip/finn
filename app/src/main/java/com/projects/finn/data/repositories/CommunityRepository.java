@@ -7,6 +7,8 @@ import com.projects.finn.models.Community;
 import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Flowable;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class CommunityRepository implements ICommunityRepository {
     private final ApiService apiService;
@@ -22,7 +24,7 @@ public class CommunityRepository implements ICommunityRepository {
     }
 
     @Override
-    public Flowable<Community> saveCommunity(Community community) {
-        return apiService.saveCommunity(community);
+    public Flowable<Community> saveCommunity(RequestBody requestBody, MultipartBody.Part image) {
+        return apiService.saveCommunity(requestBody, image);
     }
 }

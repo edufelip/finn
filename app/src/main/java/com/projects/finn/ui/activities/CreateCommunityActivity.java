@@ -1,52 +1,124 @@
 package com.projects.finn.ui.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.animation.AlphaAnimation;
-
+import android.widget.Toast;
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.databinding.ActivityCreateCommunityBinding;
+import com.projects.finn.models.Community;
+import com.projects.finn.ui.viewmodels.CreateCommunityViewModel;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+
+@AndroidEntryPoint
 public class CreateCommunityActivity extends AppCompatActivity {
     private ActivityCreateCommunityBinding binding;
     private Boolean isNextAllowed;
+    private CreateCommunityViewModel mCreateCommunityViewModel;
     private final int GALLERY_REQUEST_CODE = 1;
+    private Uri imageUri;
+    @Inject
+    FirebaseAuth auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityCreateCommunityBinding.inflate(getLayoutInflater());
 
+        initializeViewModel();
         initializeComponents();
+        setTextChangeListeners();
         setClickListeners();
-
         setContentView(binding.getRoot());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        fadeOutAnim();
-        binding.createCommunityNextButton.setClickable(false);
+        if(!isNextAllowed) {
+            fadeOutAnim();
+        }
+        checkCanGoNext();
+        binding.createCommunityNextButton.setClickable(isNextAllowed);
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
     }
 
     public void initializeComponents() {
         isNextAllowed = false;
     }
 
+    public void initializeViewModel() {
+        mCreateCommunityViewModel = new ViewModelProvider(this).get(CreateCommunityViewModel.class);
+        mCreateCommunityViewModel.observeCommunity().observe(this, community -> {
+                if(community.getId() == (-1)) {
+                    switch (community.getTitle()) {
+                        case "Conflict":
+                            Toast.makeText(this, "This name is unavailable", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(this, "Something wrong happened, try again later", Toast.LENGTH_SHORT).show();
+                            finish();
+                            break;
+                    }
+                    return;
+                }
+                redirectToNewCommunity(community);
+            }
+        );
+    }
+
     public void setClickListeners() {
+        binding.createCommunityNextButton.setOnClickListener(v -> {
+            Community createComm = new Community();
+            createComm.setTitle(binding.createCommunityNameInput.getText().toString());
+            createComm.setDescription(binding.createCommunityAboutInput.getText().toString());
+            createComm.setUser_id(auth.getCurrentUser().getUid());
+            Bitmap bitmap = ((BitmapDrawable)binding.createCommunityIcon.getDrawable()).getBitmap();
+            MultipartBody.Part commImage = buildImageBodyPart("community", bitmap);
+            RequestBody requestBody = RequestBody.create(MultipartBody.FORM, createComm.toJson());
+            mCreateCommunityViewModel.createCommunity(requestBody, commImage);
+        });
+
+        binding.createCommunityCheckbox.setOnClickListener(v -> {
+            checkCanGoNext();
+        });
+
+        binding.createCommunityBackButton.setOnClickListener(v -> finish());
+
+        binding.createCommunityIconSelect.setOnClickListener(v -> pickImageFromGalery());
+    }
+
+    public void setTextChangeListeners() {
         binding.createCommunityNameInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -80,21 +152,20 @@ public class CreateCommunityActivity extends AppCompatActivity {
 
             }
         });
+    }
 
-        binding.createCommunityNextButton.setOnClickListener(v -> {
-            //send request to check
-        });
-
-        binding.createCommunityBackButton.setOnClickListener(v -> finish());
-
-        binding.createCommunityIconSelect.setOnClickListener(v -> pickImageFromGalery());
+    public void redirectToNewCommunity(Community community) {
+        Intent intent = new Intent(this, CommunityActivity.class);
+        intent.putExtra("community", community);
+        startActivity(intent);
+        finish();
     }
 
     public void checkCanGoNext() {
         String name = binding.createCommunityNameInput.getText().toString();
         String about = binding.createCommunityAboutInput.getText().toString();
         Boolean checked = binding.createCommunityCheckbox.isChecked();
-        if(name.isEmpty() || about.isEmpty() || checked) {
+        if(name.isEmpty() || about.isEmpty() || !checked) {
             if(isNextAllowed) {
                 switchNextAllowed();
                 fadeOutAnim();
@@ -138,7 +209,6 @@ public class CreateCommunityActivity extends AppCompatActivity {
         startActivityForResult(gallery, GALLERY_REQUEST_CODE);
     }
 
-    Uri imageUri;
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -148,7 +218,6 @@ public class CreateCommunityActivity extends AppCompatActivity {
                 launchImageCrop(imageUri);
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 binding.createCommunityIcon.setImageBitmap(bitmap);
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -175,5 +244,40 @@ public class CreateCommunityActivity extends AppCompatActivity {
                 .setAspectRatio(1, 1)
                 .setCropShape(CropImageView.CropShape.OVAL)
                 .start(this);
+    }
+
+
+    private MultipartBody.Part buildImageBodyPart(String fileName, Bitmap bitmap) {
+        File leftImageFile = convertBitmapToFile(fileName, bitmap);
+        RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), leftImageFile);
+        return MultipartBody.Part.createFormData(fileName, leftImageFile.getName(), reqFile);
+    }
+
+    private File convertBitmapToFile(String fileName, Bitmap bitmap) {
+        File file = new File(getApplicationContext().getFilesDir(), fileName + ".png");
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, bos);
+        byte[] bitMapData = bos.toByteArray();
+
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            fos.write(bitMapData);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 }

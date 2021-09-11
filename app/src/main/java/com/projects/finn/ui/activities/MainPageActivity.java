@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -45,6 +46,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
     private HomeFragment homeFragment;
     private ChatFragment chatFragment;
     private NotificationsFragment notificationsFragment;
+    private Fragment activeFragment;
     private BottomSheetDialog bottomSheetDialog;
 
     @Override
@@ -53,7 +55,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
         binding = ActivityMainPageBinding.inflate(getLayoutInflater());
 
         initializeComponents();
-        setupBottomNavigationView(savedInstanceState);
+        setupBottomNavigationView();
         setupNavigationDrawer();
         updateNavUserInfo();
         setupClickListeners();
@@ -61,17 +63,12 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
 
     }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putInt("opened_fragment", binding.bottomNavigationView.getSelectedItemId());
-        super.onSaveInstanceState(outState);
-    }
-
     public void initializeComponents() {
         homeFragment = new HomeFragment();
         homeFragment.setInterface(MainPageActivity.this);
         chatFragment = new ChatFragment();
         notificationsFragment = new NotificationsFragment();
+        activeFragment = homeFragment;
     }
 
     public void updateNavUserInfo() {
@@ -105,7 +102,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
         });
     }
 
-    public void setupBottomNavigationView(Bundle savedInstanceState) {
+    public void setupBottomNavigationView() {
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
                 case (R.id.iconHome):
@@ -134,7 +131,12 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
         badge.setNumber(1);
         badge.setVisible(true);
 
-        if(savedInstanceState==null) setCurrentFragment(homeFragment);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.flFragment, homeFragment);
+        transaction.add(R.id.flFragment, chatFragment).hide(chatFragment);
+        transaction.add(R.id.flFragment, notificationsFragment).hide(notificationsFragment);
+        transaction.commit();
     }
 
     public void setupClickListeners() {
@@ -159,9 +161,11 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
 
     public void setCurrentFragment(Fragment fragment) {
         getSupportFragmentManager()
-            .beginTransaction()
-            .replace(R.id.flFragment, fragment)
-            .commit();
+                .beginTransaction()
+                .hide(activeFragment)
+                .show(fragment)
+                .commit();
+        activeFragment = fragment;
     }
 
     @Override
