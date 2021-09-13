@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.models.User;
 import com.projects.finn.databinding.FragmentHomeBinding;
@@ -37,6 +38,8 @@ import javax.inject.Inject;
 public class HomeFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener {
     @Inject
     FirebaseAuth auth;
+    @Inject
+    RequestManager glide;
     private FragmentHomeBinding binding;
     private HandleClick handleClick;
     private FeedRecyclerAdapter feedRecyclerAdapter;
@@ -49,20 +52,16 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     private int nextPage = 1;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt("check_user", 1);
         super.onSaveInstanceState(outState);
-    }
 
+    }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         initializeViewModel();
+        loadUserPhoto();
         if(savedInstanceState == null) {
             checkLoggedUser();
             requestPosts();
@@ -70,6 +69,10 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         initializeRecyclerView();
         setClickListeners();
         return binding.getRoot();
+    }
+
+    public void loadUserPhoto() {
+        glide.load(auth.getCurrentUser().getPhotoUrl()).into(binding.profilePictureIcon);
     }
 
     public void checkLoggedUser() {
@@ -114,7 +117,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
 
     public void initializeRecyclerView() {
         this.posts = new ArrayList<>();
-        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
+        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this, glide);
         binding.feedRecyclerView.setAdapter(feedRecyclerAdapter);
         binding.feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.feedRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -168,6 +171,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         startActivity(intent);
     }
 
+    @Override
     public void onDeleteClick(int position) {
         posts.remove(position);
         feedRecyclerAdapter.notifyItemRemoved(position);

@@ -109,7 +109,7 @@
                 android:layout_width="64dp"
                 android:layout_height="64dp"
                 android:scaleType="fitXY"
-                android:src="@drawable/facebook" />
+                android:src="@drawable/user_icon" />
 
         </androidx.cardview.widget.CardView>
 

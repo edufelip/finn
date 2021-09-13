@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.RequestManager;
 import com.projects.finn.R;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.ui.activities.homeFragments.HandleClick;
@@ -21,8 +22,14 @@ import com.projects.finn.models.Post;
 
 import java.util.ArrayList;
 
-public class CommentsFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener  {
+import javax.inject.Inject;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class CommentsFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener  {
+    @Inject
+    RequestManager glide;
     private RecyclerView feed;
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private ArrayList<Post> posts;
@@ -43,7 +50,7 @@ public class CommentsFragment extends Fragment implements FeedRecyclerAdapter.Re
         fakepost = new Post();
         fakepost.setId(1);
         fakepost.setUser_name("Fake Username One");
-        fakepost.setCommunity_name("FakeSubreddit");
+        fakepost.setCommunity_title("FakeSubreddit");
         fakepost.setContent("Fake post title");
         fakepost.setLikes_count(212);
         fakepost.setComments_count(14);
@@ -51,7 +58,7 @@ public class CommentsFragment extends Fragment implements FeedRecyclerAdapter.Re
         fakepost2 = new Post();
         fakepost2.setId(12);
         fakepost2.setUser_name("Faker Username Two");
-        fakepost2.setCommunity_name("SecondFakeSubreddit");
+        fakepost2.setCommunity_title("SecondFakeSubreddit");
         fakepost2.setContent("Another fake post title");
         fakepost2.setLikes_count(12);
         fakepost2.setComments_count(7);
@@ -59,7 +66,7 @@ public class CommentsFragment extends Fragment implements FeedRecyclerAdapter.Re
         posts.add(fakepost);
         posts.add(fakepost2);
 
-        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
+        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this, glide);
         feed.setAdapter(feedRecyclerAdapter);
         feed.setLayoutManager(new LinearLayoutManager(getContext()));
 

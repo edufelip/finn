@@ -204,8 +204,8 @@ public class HomeFragmentViewModel extends ViewModel {
                 .map(new Function<Community, Post>() {
                     @Override
                     public Post apply(Community community) throws Throwable {
-                        post.setCommunity_photo(community.getImage());
-                        post.setCommunity_name(community.getTitle());
+                        post.setCommunity_image(community.getImage());
+                        post.setCommunity_title(community.getTitle());
                         post.setCommunity_id(community.getId());
                         return post;
                     }
