@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,24 +16,31 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.RequestManager;
+import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.databinding.RecyclerPostBinding;
+import com.projects.finn.models.Community;
 import com.projects.finn.ui.activities.CommunityActivity;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.models.Post;
 
 import java.util.ArrayList;
-import java.util.List;
+
+import javax.inject.Inject;
+
 
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.MyViewHolder> {
+    private RequestManager glide;
     private ArrayList<Post> posts;
     private Context context;
     private RecyclerClickListener recyclerClickListener;
 
-    public FeedRecyclerAdapter(Context context, ArrayList<Post> posts, RecyclerClickListener recyclerClickListener) {
+    public FeedRecyclerAdapter(Context context, ArrayList<Post> posts, RecyclerClickListener recyclerClickListener, RequestManager glide) {
         this.context = context;
         this.posts = posts;
         this.recyclerClickListener = recyclerClickListener;
+        this.glide = glide;
     }
 
     @NonNull
@@ -47,10 +55,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         String source = "Posted by: " + posts.get(position).getUser_name();
         holder.binding.postContent.setText(posts.get(position).getContent());
         holder.binding.postSource.setText(source);
-        holder.binding.postCommunity.setText(posts.get(position).getCommunity_name());
+        holder.binding.postCommunity.setText(posts.get(position).getCommunity_title());
         holder.binding.likesCount.setText(String.valueOf(posts.get(position).getLikes_count()));
         holder.binding.commentsCount.setText(String.valueOf(posts.get(position).getComments_count()));
-        //holder.postImage.setImageResource(posts.get(position).getImgSource());
+        glide.load(BuildConfig.BACKEND_IP + "/" + posts.get(position).getCommunity_image()).into(holder.binding.communityPictureIcon);
     }
 
     @Override
@@ -127,7 +135,12 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
         public void openCommunityActivity() {
             Intent intent = new Intent(itemView.getContext(), CommunityActivity.class);
-            // put extras
+            Post post = posts.get(getAbsoluteAdapterPosition());
+            Community community = new Community();
+            community.setTitle(post.getCommunity_title());
+            community.setImage(post.getCommunity_image());
+            community.setId(post.getCommunity_id());
+            intent.putExtra("community", community);
             itemView.getContext().startActivity(intent);
         }
 

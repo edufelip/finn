@@ -12,6 +12,7 @@ public class Community implements Parcelable {
     private String image;
     private String user_id;
     private Date date;
+    private int subscribersCount;
 
     public Community() {
 
@@ -83,6 +84,14 @@ public class Community implements Parcelable {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public int getSubscribersCount() {
+        return subscribersCount;
+    }
+
+    public void setSubscribersCount(int subscribersCount) {
+        this.subscribersCount = subscribersCount;
     }
 
     public String toJson() {

@@ -28,6 +28,9 @@ public interface ApiService {
     @GET("/posts/users/{id}/feed")
     Flowable<List<Post>> getUserFeed(@Path("id") String id, @Query("page") int page);
 
+    @GET("/posts/communities/{id}")
+    Flowable<List<Post>> getPostsFromCommunity(@Path("id") int id, @Query("page") int page);
+
     @GET("/posts/{id}/likes")
     Flowable<Integer> getPostLikes(@Path("id") int id);
 
@@ -36,6 +39,9 @@ public interface ApiService {
 
     @GET("/communities/{id}")
     Flowable<Community> getCommunity(@Path("id") int id);
+
+    @GET("/communities/{id}/subscribers")
+    Flowable<Integer> getCommunitySubscribersCount(@Path("id") int id);
 
     @Multipart
     @POST("/communities")

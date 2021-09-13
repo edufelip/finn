@@ -24,6 +24,11 @@ public class CommunityRepository implements ICommunityRepository {
     }
 
     @Override
+    public Flowable<Integer> getCommunitySubscribersCount(int communityId) {
+        return apiService.getCommunitySubscribersCount(communityId);
+    }
+
+    @Override
     public Flowable<Community> saveCommunity(RequestBody requestBody, MultipartBody.Part image) {
         return apiService.saveCommunity(requestBody, image);
     }

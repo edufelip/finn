@@ -10,4 +10,6 @@ public interface ICommunityRepository {
     Flowable<Community> getCommunity(int id);
 
     Flowable<Community> saveCommunity(RequestBody requestBody, MultipartBody.Part image);
+
+    Flowable<Integer> getCommunitySubscribersCount(int communityId);
 }

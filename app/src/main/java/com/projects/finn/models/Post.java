@@ -7,7 +7,7 @@ public class Post {
     private int id;
     private String content;
     private Date date;
-    private String community_name;
+    private String community_title;
     private String community_image;
     private String user_id;
     private String user_name;
@@ -52,20 +52,20 @@ public class Post {
         this.community_id = community_id;
     }
 
-    public String getCommunity_name() {
-        return community_name;
+    public String getCommunity_title() {
+        return community_title;
     }
 
-    public void setCommunity_name(String community_name) {
-        this.community_name = community_name;
+    public void setCommunity_title(String community_title) {
+        this.community_title = community_title;
     }
 
-    public String getCommunity_photo() {
+    public String getCommunity_image() {
         return community_image;
     }
 
-    public void setCommunity_photo(String community_photo) {
-        this.community_image = community_photo;
+    public void setCommunity_image(String community_image) {
+        this.community_image = community_image;
     }
 
     public String getUser_id() {
