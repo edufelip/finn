@@ -12,7 +12,6 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_marginTop="10dp"
-        android:paddingBottom="10dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,10 +19,9 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_gravity="center"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             app:cardCornerRadius="50dp"
@@ -31,6 +29,7 @@
 
             <ImageView
                 android:id="@+id/profilePictureIcon"
+                android:contentDescription="profile image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
@@ -38,11 +37,12 @@
         </androidx.cardview.widget.CardView>
 
         <SearchView
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
-
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="4dp"
             android:background="@drawable/custom_search_view" />
     </LinearLayout>
 
@@ -81,10 +81,11 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/feed_recycler_view"
+            android:background="#f7f7f7"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:listitem="@layout/recycler_post"
-            tools:itemCount="4"
+            tools:itemCount="3"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -7,6 +7,7 @@ public class Post {
     private int id;
     private String content;
     private Date date;
+    private String image;
     private String community_title;
     private String community_image;
     private String user_id;
@@ -106,5 +107,24 @@ public class Post {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public String toJson() {
+        return "{" +
+                "\"id\":" + "\"" + id + "\"" +
+                ", \"content\":" + "\"" + content + "\"" +
+                ", \"date\":" + "\"" + date + "\"" +
+                ", \"image\":" + "\"" + image + "\"" +
+                ", \"user_id\":" + "\"" + user_id + "\"" +
+                ", \"community_id\":" + "\"" + community_id + "\"" +
+                '}';
     }
 }

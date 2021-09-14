@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
@@ -12,12 +13,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.RequestManager;
+import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.databinding.FragmentPostsBinding;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.ui.activities.homeFragments.HandleClick;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
 import com.projects.finn.models.Post;
+import com.projects.finn.ui.viewmodels.PostsFragmentViewModel;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -28,45 +32,48 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class PostsFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener  {
     @Inject
     RequestManager glide;
+    @Inject
+    FirebaseAuth auth;
+    private PostsFragmentViewModel mPostsFragmentViewModel;
     private FragmentPostsBinding binding;
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private ArrayList<Post> posts = new ArrayList<>();
     private HandleClick handleClick;
 
-    Post fakepost, fakepost2;
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentPostsBinding.inflate(inflater, container, false);
-        seeds();
 
-        // set recyclerview
-        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this, glide);
-        binding.postsRecyclerview.setAdapter(feedRecyclerAdapter);
-        binding.postsRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+        initializeRecyclerView();
+        initializeViewModel();
 
         return binding.getRoot();
     }
 
-    private void seeds() {
-        fakepost = new Post();
-        fakepost.setId(1);
-        fakepost.setUser_name("Fake Username One");
-        fakepost.setCommunity_title("FakeSubreddit");
-        fakepost.setContent("Fake post title");
-        fakepost.setLikes_count(212);
-        fakepost.setComments_count(14);
+    public void initializeRecyclerView() {
+        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this, glide);
+        binding.postsRecyclerview.setAdapter(feedRecyclerAdapter);
+        binding.postsRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
 
-        fakepost2 = new Post();
-        fakepost2.setId(12);
-        fakepost2.setUser_name("Faker Username Two");
-        fakepost2.setCommunity_title("SecondFakeSubreddit");
-        fakepost2.setContent("Another fake post title");
-        fakepost2.setLikes_count(12);
-        fakepost2.setComments_count(7);
+    public void initializeViewModel() {
+        String id = auth.getCurrentUser().getUid();
+        String name = auth.getCurrentUser().getDisplayName();
 
-        posts.add(fakepost);
-        posts.add(fakepost2);
+        mPostsFragmentViewModel = new ViewModelProvider(this).get(PostsFragmentViewModel.class);
+
+        mPostsFragmentViewModel.setUserName(name);
+
+        mPostsFragmentViewModel.observePosts().observe(getViewLifecycleOwner(), posts -> {
+            this.posts = new ArrayList<>(posts);
+            feedRecyclerAdapter.setPosts(this.posts);
+        });
+
+        mPostsFragmentViewModel.observeUpdatedPost().observe(getViewLifecycleOwner(), post -> {
+            feedRecyclerAdapter.updatePost(post);
+        });
+
+        mPostsFragmentViewModel.getUserPosts(id, 1);
     }
 
     public void setInterface(HandleClick handle) {

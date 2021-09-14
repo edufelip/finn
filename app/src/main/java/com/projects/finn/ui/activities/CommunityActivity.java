@@ -5,23 +5,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-
 import com.bumptech.glide.RequestManager;
 import com.projects.finn.BuildConfig;
-import com.projects.finn.R;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
 import com.projects.finn.databinding.ActivityCommunityBinding;
 import com.projects.finn.models.Community;
 import com.projects.finn.models.Post;
 import com.projects.finn.ui.viewmodels.CommunityViewModel;
-import com.projects.finn.ui.viewmodels.HomeFragmentViewModel;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
 import javax.inject.Inject;
@@ -53,11 +45,8 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
 
     public void initializeViewModel() {
         mCommunityViewModel = new ViewModelProvider(this).get(CommunityViewModel.class);
-
         mCommunityViewModel.setCommunityExtra(this.community);
-
         mCommunityViewModel.getCommunityPosts(community.getId(), 1);
-
         mCommunityViewModel.getCommunity(community.getId());
 
         mCommunityViewModel.observeCommunity().observe(this, community -> {

@@ -19,26 +19,40 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
+    //user
     @GET("/users/{id}")
     Flowable<User> getUser(@Path("id") String id);
 
     @POST("/users")
     Flowable<User> createUser(@Body User user);
 
+    //posts
     @GET("/posts/users/{id}/feed")
     Flowable<List<Post>> getUserFeed(@Path("id") String id, @Query("page") int page);
 
     @GET("/posts/communities/{id}")
     Flowable<List<Post>> getPostsFromCommunity(@Path("id") int id, @Query("page") int page);
 
+    @GET("/posts/users/{id}")
+    Flowable<List<Post>> getPostsFromUser(@Path("id") String id, @Query("page") int page);
+
     @GET("/posts/{id}/likes")
     Flowable<Integer> getPostLikes(@Path("id") int id);
 
+    @Multipart
+    @POST("/posts")
+    Flowable<Post> savePost(@Part("post")RequestBody requestBody, @Part MultipartBody.Part image);
+
+    //comments
     @GET("/comments/posts/{id}")
     Flowable<List<Comment>> getCommentsPost(@Path("id") int id);
 
+    //communities
     @GET("/communities/{id}")
     Flowable<Community> getCommunity(@Path("id") int id);
+
+    @GET("/communities/users/{id}")
+    Flowable<List<Community>> getCommunitiesFromUser(@Path("id") String userId);
 
     @GET("/communities/{id}/subscribers")
     Flowable<Integer> getCommunitySubscribersCount(@Path("id") int id);

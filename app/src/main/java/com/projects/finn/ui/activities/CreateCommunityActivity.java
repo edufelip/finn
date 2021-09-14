@@ -1,5 +1,9 @@
 package com.projects.finn.ui.activities;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -206,22 +210,28 @@ public class CreateCommunityActivity extends AppCompatActivity {
         mimeTypes.add("image/jpg");
         gallery.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         gallery.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(gallery, GALLERY_REQUEST_CODE);
+        pickGalleryResultLauncher.launch(gallery);
     }
+
+    ActivityResultLauncher<Intent> pickGalleryResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    imageUri = result.getData().getData();
+                    try {
+                        launchImageCrop(imageUri);
+                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                        binding.createCommunityIcon.setImageBitmap(bitmap);
+                    } catch (Exception e) {
+                        Toast.makeText(CreateCommunityActivity.this, "Something wrong happened", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK) {
-            imageUri = data.getData();
-            try {
-                launchImageCrop(imageUri);
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                binding.createCommunityIcon.setImageBitmap(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if(resultCode == Activity.RESULT_OK) {

@@ -9,6 +9,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Flowable;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 
 public class PostRepository implements IPostRepository {
     private final ApiService apiService;
@@ -28,7 +30,17 @@ public class PostRepository implements IPostRepository {
     }
 
     @Override
+    public Flowable<List<Post>> getPostsFromUser(String userId, int page) {
+        return apiService.getPostsFromUser(userId, page);
+    }
+
+    @Override
     public Flowable<Integer> getPostLikes(int postId) {
         return apiService.getPostLikes(postId);
+    }
+
+    @Override
+    public Flowable<Post> savePost(RequestBody requestBody, MultipartBody.Part image) {
+        return apiService.savePost(requestBody, image);
     }
 }

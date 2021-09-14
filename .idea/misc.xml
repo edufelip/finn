@@ -6,13 +6,15 @@
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/drawable/down_shadow.xml" value="0.2203125" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/drawable/ic_community.xml" value="0.20260416666666667" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_auth.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_community.xml" value="0.33" />
+        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_community.xml" value="0.25" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_create_community.xml" value="0.33" />
-        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_create_post.xml" value="0.1" />
+        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_create_post.xml" value="0.2" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_forgot_pass.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_main_page.xml" value="0.1" />
-        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_profile.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/fragment_home.xml" value="0.25" />
+        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_profile.xml" value="0.33" />
+        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/dropdown_item.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/fragment_home.xml" value="0.33" />
+        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/fragment_posts.xml" value="0.33" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/nav_header.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/recycler_post.xml" value="0.25" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/menu/navigation_view_menu.xml" value="0.20416666666666666" />

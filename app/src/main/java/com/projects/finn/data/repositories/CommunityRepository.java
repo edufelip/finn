@@ -4,6 +4,8 @@ import com.projects.finn.data.network.ApiService;
 import com.projects.finn.data.repositories.interfaces.ICommunityRepository;
 import com.projects.finn.models.Community;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import io.reactivex.rxjava3.core.Flowable;
@@ -21,6 +23,11 @@ public class CommunityRepository implements ICommunityRepository {
     @Override
     public Flowable<Community> getCommunity(int id) {
         return apiService.getCommunity(id);
+    }
+
+    @Override
+    public Flowable<List<Community>> getCommunitiesFromUser(String userId) {
+        return apiService.getCommunitiesFromUser(userId);
     }
 
     @Override

@@ -52,13 +52,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     @Override
     public void onBindViewHolder(@NonNull FeedRecyclerAdapter.MyViewHolder holder, int position) {
-        String source = "Posted by: " + posts.get(position).getUser_name();
-        holder.binding.postContent.setText(posts.get(position).getContent());
-        holder.binding.postSource.setText(source);
-        holder.binding.postCommunity.setText(posts.get(position).getCommunity_title());
-        holder.binding.likesCount.setText(String.valueOf(posts.get(position).getLikes_count()));
-        holder.binding.commentsCount.setText(String.valueOf(posts.get(position).getComments_count()));
-        glide.load(BuildConfig.BACKEND_IP + "/" + posts.get(position).getCommunity_image()).into(holder.binding.communityPictureIcon);
+        holder.binding(posts.get(position));
     }
 
     @Override
@@ -82,6 +76,20 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             this.recyclerClickListener = recyclerClickListener;
             itemView.setOnClickListener(this);
             userPopup = new Dialog(itemView.getContext());
+        }
+
+        public void binding(Post post) {
+            String source = "Posted by: " + post.getUser_name();
+            binding.postContent.setText(post.getContent());
+            binding.postSource.setText(source);
+            binding.postCommunity.setText(post.getCommunity_title());
+            binding.likesCount.setText(String.valueOf(post.getLikes_count()));
+            binding.commentsCount.setText(String.valueOf(post.getComments_count()));
+            glide.load(BuildConfig.BACKEND_IP + "/" + post.getCommunity_image()).into(binding.communityPictureIcon);
+            String image = post.getImage();
+            if(image != null) {
+                glide.load(BuildConfig.BACKEND_IP + "/" + image).into(binding.postImage);
+            }
         }
 
         @Override
@@ -123,7 +131,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             binding.postCommunity.setOnClickListener(v -> openCommunityActivity());
             binding.postSource.setOnClickListener(v -> openUserPopup());
             binding.likeButton.setOnClickListener(v -> likePost());
-            binding.dislikeButton.setOnClickListener(v -> dislikePost());
             binding.commentButton.setOnClickListener(v -> openPostActivity());
             binding.commentsCount.setOnClickListener(v -> openPostActivity());
             binding.shareButton.setOnClickListener(v -> sharePost());
@@ -160,9 +167,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         }
 
         public void likePost() {
-            if(binding.dislikeButton.isChecked()) {
-                binding.dislikeButton.toggle();
-            }
+//            if(binding.dislikeButton.isChecked()) {
+//                binding.dislikeButton.toggle();
+//            }
             isLikeButtonClicked = !isLikeButtonClicked;
             // send request
         }
@@ -194,5 +201,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     public interface RecyclerClickListener {
         void onItemClick(int position);
         void onDeleteClick(int position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
     }
 }
