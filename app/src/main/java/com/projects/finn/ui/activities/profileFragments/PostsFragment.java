@@ -107,12 +107,22 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
 
     @Override
     public void onLikePost(int position) {
+        Post post = posts.get(position);
+        post.setLiked(true);
+        post.setLikes_count(post.getLikes_count() + 1);
+        feedRecyclerAdapter.updatePost(post);
+        feedRecyclerAdapter.notifyItemChanged(position);
         String id = auth.getCurrentUser().getUid();
         mSharedLikeViewModel.likePost(id, this.posts.get(position).getId());
     }
 
     @Override
     public void onDislikePost(int position) {
+        Post post = posts.get(position);
+        post.setLiked(true);
+        post.setLikes_count(post.getLikes_count() - 1);
+        feedRecyclerAdapter.updatePost(post);
+        feedRecyclerAdapter.notifyItemChanged(position);
         User user = new User();
         user.setId(auth.getCurrentUser().getUid());
         mSharedLikeViewModel.dislikePost(this.posts.get(position).getId(), user);
