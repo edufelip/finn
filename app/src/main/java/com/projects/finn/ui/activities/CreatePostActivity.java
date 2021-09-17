@@ -106,7 +106,9 @@ public class CreatePostActivity extends AppCompatActivity {
         });
 
         binding.createButton.setOnClickListener(view -> {
-            createPost();
+            if(checkInputs()) {
+                createPost();
+            }
         });
     }
 
@@ -147,6 +149,16 @@ public class CreatePostActivity extends AppCompatActivity {
                 .into(binding.postImage);
     }
 
+    public boolean checkInputs() {
+        boolean isPickCommunityEmpty = binding.communityField.getText().toString().equals("Pick a community");
+        boolean isPostContentEmpty = binding.postTextarea.getText().toString().isEmpty();
+        if(isPickCommunityEmpty || isPostContentEmpty) {
+            Toast.makeText(this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
     public void createPost() {
         String communityTitle = binding.communityField.getText().toString();
         int commId = this.communities.stream()
@@ -161,13 +173,15 @@ public class CreatePostActivity extends AppCompatActivity {
         post.setCommunity_id(commId);
         post.setUser_id(userId);
 
-        Bitmap bitmap = ((BitmapDrawable)binding.postImage.getDrawable()).getBitmap();
+
+        Bitmap bitmap = binding.postImage.getDrawable() != null ? ((BitmapDrawable)binding.postImage.getDrawable()).getBitmap() : null;
         MultipartBody.Part postImage = buildImageBodyPart("post", bitmap);
         RequestBody requestBody = RequestBody.create(MultipartBody.FORM, post.toJson());
         mCreatePostViewModel.createPost(requestBody, postImage);
     }
 
     private MultipartBody.Part buildImageBodyPart(String fileName, Bitmap bitmap) {
+        if(bitmap == null) return MultipartBody.Part.createFormData(fileName, "", RequestBody.create(MediaType.parse("image/*"), ""));
         File leftImageFile = convertBitmapToFile(fileName, bitmap);
         RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), leftImageFile);
         return MultipartBody.Part.createFormData(fileName, leftImageFile.getName(), reqFile);

@@ -131,7 +131,7 @@ public class CommunityViewModel extends ViewModel {
             });
     }
 
-    public void getCommunityPosts(int communityId, int page) {
+    public void getCommunityPosts(int communityId, String userId, int page) {
         getPostsObservable(communityId, page)
                 .subscribeOn(Schedulers.io())
                 .flatMap(new Function<Post, ObservableSource<Post>>() {
@@ -150,6 +150,12 @@ public class CommunityViewModel extends ViewModel {
                     @Override
                     public ObservableSource<Post> apply(Post post) throws Throwable {
                         return getPostLikesObservable(post);
+                    }
+                })
+                .flatMap(new Function<Post, ObservableSource<Post>>() {
+                    @Override
+                    public ObservableSource<Post> apply(Post post) throws Throwable {
+                        return getIsPostLiked(post, userId);
                     }
                 })
                 .map(new Function<Post, Post>() {
@@ -224,6 +230,18 @@ public class CommunityViewModel extends ViewModel {
                     }
                 })
                 .subscribeOn(Schedulers.io());
+    }
+
+    private Observable<Post> getIsPostLiked(final Post post, String userId) {
+        return postRepository.findLike(post.getId(), userId)
+                .toObservable()
+                .map(new Function<Integer, Post>() {
+                    @Override
+                    public Post apply(Integer integer) throws Throwable {
+                        post.setLiked(integer == 1);
+                        return post;
+                    }
+                });
     }
 
     public void setCommunityExtra(Community community) {

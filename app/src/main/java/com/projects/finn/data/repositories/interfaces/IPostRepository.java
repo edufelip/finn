@@ -1,6 +1,8 @@
 package com.projects.finn.data.repositories.interfaces;
 
+import com.projects.finn.models.Like;
 import com.projects.finn.models.Post;
+import com.projects.finn.models.User;
 
 import java.util.List;
 
@@ -18,4 +20,10 @@ public interface IPostRepository {
     Flowable<List<Post>> getPostsFromUser(String userId, int page);
 
     Flowable<Post> savePost(RequestBody requestBody, MultipartBody.Part image);
+
+    Flowable<Integer> findLike(int postId, String userId);
+
+    Flowable<Like> likePost(Like like);
+
+    Flowable<Void> dislikePost(int postId, User user);
 }

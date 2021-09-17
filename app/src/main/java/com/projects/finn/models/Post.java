@@ -15,6 +15,7 @@ public class Post {
     private int community_id;
     private int likes_count;
     private int comments_count;
+    private boolean isLiked;
     private List<Comment> comments;
 
     public Post() {
@@ -115,6 +116,14 @@ public class Post {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 
     public String toJson() {

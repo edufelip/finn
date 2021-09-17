@@ -16,7 +16,7 @@ import com.bumptech.glide.RequestManager;
 import com.projects.finn.R;
 import com.projects.finn.databinding.ActivityMainPageBinding;
 import com.projects.finn.databinding.NavHeaderBinding;
-import com.projects.finn.ui.activities.homeFragments.ChatFragment;
+import com.projects.finn.ui.activities.homeFragments.SearchFragment;
 import com.projects.finn.ui.activities.homeFragments.HandleClick;
 import com.projects.finn.ui.activities.homeFragments.HomeFragment;
 import com.projects.finn.ui.activities.homeFragments.NotificationsFragment;
@@ -38,7 +38,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
     private ActivityMainPageBinding binding;
     private ActionBarDrawerToggle toggle;
     private HomeFragment homeFragment;
-    private ChatFragment chatFragment;
+    private SearchFragment searchFragment;
     private NotificationsFragment notificationsFragment;
     private Fragment activeFragment;
     private BottomSheetDialog bottomSheetDialog;
@@ -54,13 +54,13 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
         updateNavUserInfo();
         setupClickListeners();
         setContentView(binding.getRoot());
-
     }
 
     public void initializeComponents() {
         homeFragment = new HomeFragment();
         homeFragment.setInterface(MainPageActivity.this);
-        chatFragment = new ChatFragment();
+        searchFragment = new SearchFragment();
+        searchFragment.setInterface(MainPageActivity.this);
         notificationsFragment = new NotificationsFragment();
         activeFragment = homeFragment;
     }
@@ -109,9 +109,9 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
                     bottomSheetDialog.setContentView(sheetView);
                     setDialogClickListeners();
                     bottomSheetDialog.show();
-                    break;
+                    return false;
                 case (R.id.iconChat):
-                    setCurrentFragment(chatFragment);
+                    setCurrentFragment(searchFragment);
                     break;
                 case (R.id.iconNotification):
                     setCurrentFragment(notificationsFragment);
@@ -121,14 +121,13 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
             }
             return true;
         });
-        BadgeDrawable badge = binding.bottomNavigationView.getOrCreateBadge(R.id.iconNotification);
-        badge.setNumber(1);
-        badge.setVisible(true);
-
+//        BadgeDrawable badge = binding.bottomNavigationView.getOrCreateBadge(R.id.iconNotification);
+//        badge.setNumber(1);
+//        badge.setVisible(true);
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.add(R.id.flFragment, homeFragment);
-        transaction.add(R.id.flFragment, chatFragment).hide(chatFragment);
+        transaction.add(R.id.flFragment, searchFragment).hide(searchFragment);
         transaction.add(R.id.flFragment, notificationsFragment).hide(notificationsFragment);
         transaction.commit();
     }
@@ -173,5 +172,11 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
     @Override
     public void buttonClicked(View v) {
         binding.drawerLayout.openDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public void searchClicked(View v) {
+        binding.bottomNavigationView.setSelectedItemId(R.id.iconChat);
+        searchFragment.clickSearchView();
     }
 }

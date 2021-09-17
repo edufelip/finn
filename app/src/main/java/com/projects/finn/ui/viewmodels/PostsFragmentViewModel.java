@@ -81,6 +81,7 @@ public class PostsFragmentViewModel extends ViewModel {
                 .flatMap((Function<Post, ObservableSource<Post>>) this::getPostCommentsObservable)
                 .flatMap((Function<Post, ObservableSource<Post>>) this::getPostLikesObservable)
                 .flatMap((Function<Post, ObservableSource<Post>>) this::getPostCommunityObservable)
+                .flatMap((Function<Post, ObservableSource<Post>>) post -> getIsPostLiked(post, userId))
                 .map(post -> {
                     if(_userName.getValue() != null) {
                         post.setUser_name(_userName.getValue());
@@ -141,6 +142,18 @@ public class PostsFragmentViewModel extends ViewModel {
                     return post;
                 })
                 .subscribeOn(Schedulers.io());
+    }
+
+    private Observable<Post> getIsPostLiked(final Post post, String userId) {
+        return postRepository.findLike(post.getId(), userId)
+                .toObservable()
+                .map(new Function<Integer, Post>() {
+                    @Override
+                    public Post apply(Integer integer) throws Throwable {
+                        post.setLiked(integer == 1);
+                        return post;
+                    }
+                });
     }
 
     public LiveData<List<Post>> observePosts() { return posts; }

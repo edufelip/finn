@@ -87,4 +87,14 @@ public class SavedActivity extends AppCompatActivity implements FeedRecyclerAdap
         posts.remove(position);
         feedRecyclerAdapter.notifyItemRemoved(position);
     }
+
+    @Override
+    public void onLikePost(int position) {
+
+    }
+
+    @Override
+    public void onDislikePost(int position) {
+
+    }
 }

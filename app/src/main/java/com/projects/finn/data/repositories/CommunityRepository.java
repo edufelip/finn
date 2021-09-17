@@ -21,6 +21,11 @@ public class CommunityRepository implements ICommunityRepository {
     }
 
     @Override
+    public Flowable<List<Community>> getCommunities(String search) {
+        return apiService.getCommunities(search);
+    }
+
+    @Override
     public Flowable<Community> getCommunity(int id) {
         return apiService.getCommunity(id);
     }

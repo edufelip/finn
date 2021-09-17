@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
@@ -24,6 +25,7 @@ import com.projects.finn.models.Community;
 import com.projects.finn.ui.activities.CommunityActivity;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.models.Post;
+import com.projects.finn.utils.PostDiffUtil;
 
 import java.util.ArrayList;
 
@@ -52,7 +54,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     @Override
     public void onBindViewHolder(@NonNull FeedRecyclerAdapter.MyViewHolder holder, int position) {
-        holder.binding(posts.get(position));
+        holder.bind(posts.get(position));
     }
 
     @Override
@@ -64,30 +66,39 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         RecyclerPostBinding binding;
         Dialog userPopup;
         Boolean isLikeButtonClicked;
-        Boolean isDislikeButtonClicked;
         RecyclerClickListener recyclerClickListener;
 
         public MyViewHolder(RecyclerPostBinding b, RecyclerClickListener recyclerClickListener) {
             super(b.getRoot());
             binding = b;
-            initializeComponents();
+            isLikeButtonClicked = false;
             setupClickListeners(itemView);
-
             this.recyclerClickListener = recyclerClickListener;
             itemView.setOnClickListener(this);
             userPopup = new Dialog(itemView.getContext());
         }
 
-        public void binding(Post post) {
+        public void bind(Post post) {
             String source = "Posted by: " + post.getUser_name();
             binding.postContent.setText(post.getContent());
             binding.postSource.setText(source);
             binding.postCommunity.setText(post.getCommunity_title());
             binding.likesCount.setText(String.valueOf(post.getLikes_count()));
             binding.commentsCount.setText(String.valueOf(post.getComments_count()));
+            binding.likeButton.setChecked(false);
+            if(post.isLiked()) {
+                binding.likeButton.setChecked(true);
+                this.isLikeButtonClicked = true;
+            }
+
+            binding.postImage.setImageDrawable(null);
+            binding.communityPictureIcon.setImageDrawable(null);
+            glide.clear(binding.communityPictureIcon);
             glide.load(BuildConfig.BACKEND_IP + "/" + post.getCommunity_image()).into(binding.communityPictureIcon);
             String image = post.getImage();
             if(image != null) {
+                binding.postImage.layout(0,0,0,0);
+                glide.clear(binding.postImage);
                 glide.load(BuildConfig.BACKEND_IP + "/" + image).into(binding.postImage);
             }
         }
@@ -95,13 +106,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         @Override
         public void onClick(View v) {
             recyclerClickListener.onItemClick(getAbsoluteAdapterPosition());
-        }
-
-        public void initializeComponents() {
-            // Pull from db
-            isLikeButtonClicked = false;
-            isDislikeButtonClicked = false;
-            //
         }
 
         public void setupClickListeners(View itemView) {
@@ -130,23 +134,26 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             binding.communityPictureIcon.setOnClickListener(v -> openCommunityActivity());
             binding.postCommunity.setOnClickListener(v -> openCommunityActivity());
             binding.postSource.setOnClickListener(v -> openUserPopup());
-            binding.likeButton.setOnClickListener(v -> likePost());
+            binding.likeButton.setOnClickListener(v -> {
+                if(!this.isLikeButtonClicked) {
+                    likePost();
+                } else {
+                    dislikePost();
+                }
+            });
             binding.commentButton.setOnClickListener(v -> openPostActivity());
             binding.commentsCount.setOnClickListener(v -> openPostActivity());
             binding.shareButton.setOnClickListener(v -> sharePost());
             binding.shareText.setOnClickListener(v -> sharePost());
-            binding.likesCount.setOnClickListener(v -> {
-
-            });
         }
 
         public void openCommunityActivity() {
             Intent intent = new Intent(itemView.getContext(), CommunityActivity.class);
             Post post = posts.get(getAbsoluteAdapterPosition());
             Community community = new Community();
+            community.setId(post.getCommunity_id());
             community.setTitle(post.getCommunity_title());
             community.setImage(post.getCommunity_image());
-            community.setId(post.getCommunity_id());
             intent.putExtra("community", community);
             itemView.getContext().startActivity(intent);
         }
@@ -167,19 +174,17 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         }
 
         public void likePost() {
-//            if(binding.dislikeButton.isChecked()) {
-//                binding.dislikeButton.toggle();
-//            }
             isLikeButtonClicked = !isLikeButtonClicked;
-            // send request
+            int likes = Integer.parseInt(binding.likesCount.getText().toString()) + 1;
+            binding.likesCount.setText(String.valueOf(likes));
+            recyclerClickListener.onLikePost(getAbsoluteAdapterPosition());
         }
 
         public void dislikePost() {
-            if(binding.likeButton.isChecked()) {
-                binding.likeButton.toggle();
-            }
-            isDislikeButtonClicked = !isDislikeButtonClicked;
-            // send request
+            isLikeButtonClicked = !isLikeButtonClicked;
+            int likes = Integer.parseInt(binding.likesCount.getText().toString()) - 1;
+            binding.likesCount.setText(String.valueOf(likes));
+            recyclerClickListener.onDislikePost(getAbsoluteAdapterPosition());
         }
 
         public void sharePost() {
@@ -189,8 +194,10 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     }
 
     public void setPosts(ArrayList<Post> posts) {
+        PostDiffUtil util = new PostDiffUtil(this.posts, posts);
+        DiffUtil.DiffResult result = DiffUtil.calculateDiff(util);
         this.posts = posts;
-        notifyDataSetChanged();
+        result.dispatchUpdatesTo(this);
     }
 
     public void updatePost(Post post) {
@@ -201,6 +208,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     public interface RecyclerClickListener {
         void onItemClick(int position);
         void onDeleteClick(int position);
+        void onLikePost(int position);
+        void onDislikePost(int position);
     }
 
     @Override

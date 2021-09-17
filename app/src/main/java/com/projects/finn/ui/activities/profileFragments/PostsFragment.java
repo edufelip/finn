@@ -11,15 +11,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.databinding.FragmentPostsBinding;
+import com.projects.finn.models.User;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.ui.activities.homeFragments.HandleClick;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
 import com.projects.finn.models.Post;
 import com.projects.finn.ui.viewmodels.PostsFragmentViewModel;
+import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -35,6 +38,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     @Inject
     FirebaseAuth auth;
     private PostsFragmentViewModel mPostsFragmentViewModel;
+    private SharedLikeViewModel mSharedLikeViewModel;
     private FragmentPostsBinding binding;
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private ArrayList<Post> posts = new ArrayList<>();
@@ -61,6 +65,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
         String name = auth.getCurrentUser().getDisplayName();
 
         mPostsFragmentViewModel = new ViewModelProvider(this).get(PostsFragmentViewModel.class);
+        mSharedLikeViewModel = new ViewModelProvider(this).get(SharedLikeViewModel.class);
 
         mPostsFragmentViewModel.setUserName(name);
 
@@ -74,6 +79,12 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
         });
 
         mPostsFragmentViewModel.getUserPosts(id, 1);
+
+        mSharedLikeViewModel.observeLike().observe(getViewLifecycleOwner(), like -> {
+            if(like.getId() == -1) {
+                Toast.makeText(getContext(), "Something wrong happened, try liking again later", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void setInterface(HandleClick handle) {
@@ -92,6 +103,19 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     public void onDeleteClick(int position) {
         posts.remove(position);
         feedRecyclerAdapter.notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onLikePost(int position) {
+        String id = auth.getCurrentUser().getUid();
+        mSharedLikeViewModel.likePost(id, this.posts.get(position).getId());
+    }
+
+    @Override
+    public void onDislikePost(int position) {
+        User user = new User();
+        user.setId(auth.getCurrentUser().getUid());
+        mSharedLikeViewModel.dislikePost(this.posts.get(position).getId(), user);
     }
 
     @Override

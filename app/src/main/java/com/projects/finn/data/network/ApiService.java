@@ -2,6 +2,7 @@ package com.projects.finn.data.network;
 
 import com.projects.finn.models.Comment;
 import com.projects.finn.models.Community;
+import com.projects.finn.models.Like;
 import com.projects.finn.models.Post;
 import com.projects.finn.models.User;
 
@@ -39,6 +40,15 @@ public interface ApiService {
     @GET("/posts/{id}/likes")
     Flowable<Integer> getPostLikes(@Path("id") int id);
 
+    @GET("/posts/{postId}/users/{userId}")
+    Flowable<Integer> findLike(@Path("postId") int postId, @Path("userId") String userId);
+
+    @POST("/posts/likes")
+    Flowable<Like> likePost(@Body Like like);
+
+    @POST("/posts/likes/{id}")
+    Flowable<Void> dislikePost(@Path("id") int postId, @Body User user);
+
     @Multipart
     @POST("/posts")
     Flowable<Post> savePost(@Part("post")RequestBody requestBody, @Part MultipartBody.Part image);
@@ -48,6 +58,9 @@ public interface ApiService {
     Flowable<List<Comment>> getCommentsPost(@Path("id") int id);
 
     //communities
+    @GET("/communities")
+    Flowable<List<Community>> getCommunities(@Query("search") String search);
+
     @GET("/communities/{id}")
     Flowable<Community> getCommunity(@Path("id") int id);
 

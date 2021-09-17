@@ -55,8 +55,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintBottom_toTopOf="@id/pick_bar"
+        app:layout_constraintBottom_toTopOf="@id/post_textarea"
         >
+
+        <LinearLayout
+            android:id="@+id/pick_bar"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/down_shadow"
+            android:orientation="horizontal" />
 
         <AutoCompleteTextView
             android:id="@+id/community_field"
@@ -70,16 +77,6 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <LinearLayout
-        android:id="@+id/pick_bar"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@drawable/down_shadow"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/community_pick"
-        app:layout_constraintBottom_toTopOf="@id/post_textarea"
-        android:orientation="horizontal" />
 
     <EditText
         android:id="@+id/post_textarea"
@@ -93,7 +90,7 @@
         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pick_bar" />
+        app:layout_constraintTop_toBottomOf="@id/community_pick" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"

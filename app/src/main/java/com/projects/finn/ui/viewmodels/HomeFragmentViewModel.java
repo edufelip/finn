@@ -13,6 +13,7 @@ import com.projects.finn.data.repositories.interfaces.ICommentRepository;
 import com.projects.finn.data.repositories.interfaces.ICommunityRepository;
 import com.projects.finn.models.Comment;
 import com.projects.finn.models.Community;
+import com.projects.finn.models.Like;
 import com.projects.finn.models.Post;
 import com.projects.finn.models.User;
 import com.projects.finn.data.repositories.interfaces.IPostRepository;
@@ -126,7 +127,7 @@ public class HomeFragmentViewModel extends ViewModel {
         });
     }
 
-    public Observable<Post> getPostsObservable(String userId, int page) {
+    public Observable<Post> getPostsObservable(String userId, int page, boolean refresh) {
         return postRepository.getUserFeed(userId, page)
                 .toObservable()
                 .subscribeOn(Schedulers.io())
@@ -134,18 +135,22 @@ public class HomeFragmentViewModel extends ViewModel {
                 .flatMap(new Function<List<Post>, ObservableSource<Post>>() {
                     @Override
                     public ObservableSource<Post> apply(List<Post> receivedPosts) throws Throwable {
-                        List<Post> list = new ArrayList<>();
-                        if(posts.getValue() != null) list.addAll(posts.getValue());
-                        list.addAll(receivedPosts);
-                        _posts.postValue(list);
+                        if(refresh) {
+                            _posts.postValue(receivedPosts);
+                        } else {
+                            List<Post> list = new ArrayList<>();
+                            if(posts.getValue() != null) list.addAll(posts.getValue());
+                            list.addAll(receivedPosts);
+                            _posts.postValue(list);
+                        }
                         return Observable.fromIterable(receivedPosts)
                                 .subscribeOn(Schedulers.io());
                     }
                 });
     }
 
-    public void getPosts(String userId, int page) {
-        getPostsObservable(userId, page)
+    public void getPosts(String userId, int page, boolean refresh) {
+        getPostsObservable(userId, page, refresh)
                 .subscribeOn(Schedulers.io())
                 .flatMap(new Function<Post, ObservableSource<Post>>() {
                     @Override
@@ -171,6 +176,12 @@ public class HomeFragmentViewModel extends ViewModel {
                         return getPostUserObservable(post);
                     }
                 })
+                .flatMap(new Function<Post, ObservableSource<Post>>() {
+                    @Override
+                    public ObservableSource<Post> apply(Post post) throws Throwable {
+                        return getIsPostLiked(post, userId);
+                    }
+                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<Post>() {
                     @Override
@@ -181,9 +192,6 @@ public class HomeFragmentViewModel extends ViewModel {
                     @Override
                     public void onNext(@NonNull Post post) {
                         _updatedPost.setValue(post);
-                        if(nextPage.getValue() != null) {
-                            _nextPage.postValue(page + 1);
-                        }
                     }
 
                     @Override
@@ -193,6 +201,7 @@ public class HomeFragmentViewModel extends ViewModel {
 
                     @Override
                     public void onComplete() {
+                        _nextPage.postValue(page + 1);
 
                     }
                 });
@@ -253,6 +262,18 @@ public class HomeFragmentViewModel extends ViewModel {
                 .subscribeOn(Schedulers.io());
     }
 
+    private Observable<Post> getIsPostLiked(final Post post, String userId) {
+        return postRepository.findLike(post.getId(), userId)
+                .toObservable()
+                .map(new Function<Integer, Post>() {
+                    @Override
+                    public Post apply(Integer integer) throws Throwable {
+                        post.setLiked(integer == 1);
+                        return post;
+                    }
+                });
+    }
+
     public LiveData<User> observeUser() {
         return user;
     }
@@ -266,6 +287,7 @@ public class HomeFragmentViewModel extends ViewModel {
     }
 
     public LiveData<Integer> observeNextPage() { return nextPage; }
+
 
     @Override
     protected void onCleared() {

@@ -107,6 +107,7 @@ public class CreateCommunityActivity extends AppCompatActivity {
             createComm.setTitle(binding.createCommunityNameInput.getText().toString());
             createComm.setDescription(binding.createCommunityAboutInput.getText().toString());
             createComm.setUser_id(auth.getCurrentUser().getUid());
+
             Bitmap bitmap = ((BitmapDrawable)binding.createCommunityIcon.getDrawable()).getBitmap();
             MultipartBody.Part commImage = buildImageBodyPart("community", bitmap);
             RequestBody requestBody = RequestBody.create(MultipartBody.FORM, createComm.toJson());

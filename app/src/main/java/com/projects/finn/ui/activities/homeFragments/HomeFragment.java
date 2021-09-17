@@ -4,7 +4,6 @@ import static com.projects.finn.utils.Constants.QUERY_PAGE_SIZE;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.models.User;
@@ -26,6 +24,7 @@ import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
 import com.projects.finn.models.Post;
 import com.projects.finn.ui.viewmodels.HomeFragmentViewModel;
+import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
 import com.projects.finn.utils.Authentication;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -46,6 +45,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     private User user;
     private ArrayList<Post> posts;
     private HomeFragmentViewModel mHomeFragmentViewModel;
+    private SharedLikeViewModel mSharedLikeViewModel;
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private boolean isScrolling = false;
@@ -55,8 +55,8 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     public void onSaveInstanceState(@NonNull Bundle outState) {
         outState.putInt("check_user", 1);
         super.onSaveInstanceState(outState);
-
     }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -64,10 +64,11 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         loadUserPhoto();
         if(savedInstanceState == null) {
             checkLoggedUser();
-            requestPosts();
+            mHomeFragmentViewModel.getPosts(auth.getCurrentUser().getUid(), nextPage, false);
         }
         initializeRecyclerView();
         setClickListeners();
+        setSwipeRefresh();
         return binding.getRoot();
     }
 
@@ -80,12 +81,10 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         mHomeFragmentViewModel.getUser(tempUser);
     }
 
-    public void requestPosts() {
-        mHomeFragmentViewModel.getPosts(auth.getCurrentUser().getUid(), nextPage);
-    }
-
     public void initializeViewModel() {
         mHomeFragmentViewModel = new ViewModelProvider(this).get(HomeFragmentViewModel.class);
+        mSharedLikeViewModel = new ViewModelProvider(this).get(SharedLikeViewModel.class);
+
         mHomeFragmentViewModel.observeUser().observe(getViewLifecycleOwner(), user -> {
                 if(user.getId().equals("-1")) {
                     forceLogout();
@@ -97,6 +96,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         mHomeFragmentViewModel.observePosts().observe(getViewLifecycleOwner(), posts -> {
             this.posts = new ArrayList<>(posts);
             feedRecyclerAdapter.setPosts(this.posts);
+            binding.swipeLayout.setRefreshing(false);
         });
         mHomeFragmentViewModel.observeUpdatedPost().observe(getViewLifecycleOwner(), updatedPost -> {
             feedRecyclerAdapter.updatePost(updatedPost);
@@ -104,6 +104,11 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         });
         mHomeFragmentViewModel.observeNextPage().observe(getViewLifecycleOwner(), number -> {
             this.nextPage = number;
+        });
+        mSharedLikeViewModel.observeLike().observe(getViewLifecycleOwner(), like -> {
+            if(like.getId() == -1) {
+                Toast.makeText(getContext(), "Something wrong happened, try liking again later", Toast.LENGTH_SHORT).show();
+            }
         });
     }
 
@@ -145,7 +150,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
                 boolean shouldPaginate = isNotLoadingNotLastPage && isAtLastItem && isNotAtBeginning
                         && isTotalMoreThanVisible && isScrolling && isListFullOrOdd;
                 if(shouldPaginate) {
-                    mHomeFragmentViewModel.getPosts(user.getId(), nextPage);
+                    mHomeFragmentViewModel.getPosts(user.getId(), nextPage, false);
                     isScrolling = false;
                     isLoading = true;
                 } else {
@@ -157,6 +162,16 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
 
     public void setClickListeners() {
         binding.profilePictureIcon.setOnClickListener(v -> handleClick.buttonClicked(v));
+
+        binding.fakeSearchView.setOnClickListener(v -> {
+            handleClick.searchClicked(v);
+        });
+    }
+
+    public void setSwipeRefresh() {
+        binding.swipeLayout.setOnRefreshListener(() -> {
+            mHomeFragmentViewModel.getPosts(user.getId(), 1, true);
+        });
     }
 
     public void setInterface(HandleClick handle){
@@ -175,6 +190,16 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     public void onDeleteClick(int position) {
         posts.remove(position);
         feedRecyclerAdapter.notifyItemRemoved(position);
+    }
+
+    @Override
+    public void onLikePost(int position) {
+        mSharedLikeViewModel.likePost(this.user.getId(), this.posts.get(position).getId());
+    }
+
+    @Override
+    public void onDislikePost(int position) {
+        mSharedLikeViewModel.dislikePost(this.posts.get(position).getId(), this.user);
     }
 
     @Override

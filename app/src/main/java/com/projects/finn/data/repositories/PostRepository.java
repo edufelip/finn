@@ -1,8 +1,10 @@
 package com.projects.finn.data.repositories;
 
 import com.projects.finn.data.repositories.interfaces.IPostRepository;
+import com.projects.finn.models.Like;
 import com.projects.finn.models.Post;
 import com.projects.finn.data.network.ApiService;
+import com.projects.finn.models.User;
 
 import java.util.List;
 
@@ -42,5 +44,20 @@ public class PostRepository implements IPostRepository {
     @Override
     public Flowable<Post> savePost(RequestBody requestBody, MultipartBody.Part image) {
         return apiService.savePost(requestBody, image);
+    }
+
+    @Override
+    public Flowable<Integer> findLike(int postId, String userId) {
+        return apiService.findLike(postId, userId);
+    }
+
+    @Override
+    public Flowable<Like> likePost(Like like) {
+        return apiService.likePost(like);
+    }
+
+    @Override
+    public Flowable<Void> dislikePost(int postId, User user) {
+        return apiService.dislikePost(postId, user);
     }
 }
