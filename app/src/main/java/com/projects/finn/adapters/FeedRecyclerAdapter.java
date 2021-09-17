@@ -71,7 +71,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         public MyViewHolder(RecyclerPostBinding b, RecyclerClickListener recyclerClickListener) {
             super(b.getRoot());
             binding = b;
-            isLikeButtonClicked = false;
             setupClickListeners(itemView);
             this.recyclerClickListener = recyclerClickListener;
             itemView.setOnClickListener(this);
@@ -80,6 +79,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
         public void bind(Post post) {
             String source = "Posted by: " + post.getUser_name();
+            isLikeButtonClicked = post.isLiked();
             binding.postContent.setText(post.getContent());
             binding.postSource.setText(source);
             binding.postCommunity.setText(post.getCommunity_title());
