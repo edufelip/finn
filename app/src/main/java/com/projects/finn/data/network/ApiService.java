@@ -57,6 +57,9 @@ public interface ApiService {
     @GET("/comments/posts/{id}")
     Flowable<List<Comment>> getCommentsPost(@Path("id") int id);
 
+    @POST("/comments")
+    Flowable<Comment> saveComment(@Body Comment comment);
+
     //communities
     @GET("/communities")
     Flowable<List<Community>> getCommunities(@Query("search") String search);

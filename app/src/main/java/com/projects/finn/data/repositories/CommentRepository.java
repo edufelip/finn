@@ -22,4 +22,9 @@ public class CommentRepository implements ICommentRepository {
     public Flowable<List<Comment>> getCommentsPost(int postId) {
         return apiService.getCommentsPost(postId);
     }
+
+    @Override
+    public Flowable<Comment> saveComment(Comment comment) {
+        return apiService.saveComment(comment);
+    }
 }

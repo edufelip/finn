@@ -4,6 +4,7 @@ import static com.projects.finn.utils.Constants.QUERY_PAGE_SIZE;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +78,13 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     }
 
     public void checkLoggedUser() {
-        User tempUser = new User(auth.getCurrentUser().getUid(), auth.getCurrentUser().getDisplayName());
+        String id = auth.getCurrentUser().getUid();
+        String photo = auth.getCurrentUser().getPhotoUrl().toString();
+        String displayName = auth.getCurrentUser().getDisplayName();
+        User tempUser = new User();
+        tempUser.setId(id);
+        tempUser.setName(displayName);
+        tempUser.setPhoto(photo);
         mHomeFragmentViewModel.getUser(tempUser);
     }
 
@@ -182,7 +189,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     public void onItemClick(int position) {
         Post post = posts.get(position);
         Intent intent = new Intent(getContext(), PostActivity.class);
-        intent.putExtra("postId", post.getId());
+        intent.putExtra("post", post);
         startActivity(intent);
     }
 

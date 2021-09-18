@@ -8,4 +8,6 @@ import io.reactivex.rxjava3.core.Flowable;
 
 public interface ICommentRepository {
     Flowable<List<Comment>> getCommentsPost(int id);
+
+    Flowable<Comment> saveComment(Comment comment);
 }

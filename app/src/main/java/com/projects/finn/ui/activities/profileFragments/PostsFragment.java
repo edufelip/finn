@@ -95,7 +95,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     public void onItemClick(int position) {
         Post post = posts.get(position);
         Intent intent = new Intent(getContext(), PostActivity.class);
-        intent.putExtra("postId", post.getId());
+        intent.putExtra("post", post);
         startActivity(intent);
     }
 

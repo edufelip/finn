@@ -1,9 +1,12 @@
 package com.projects.finn.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.Date;
 import java.util.List;
 
-public class Post {
+public class Post implements Parcelable {
     private int id;
     private String content;
     private Date date;
@@ -21,6 +24,32 @@ public class Post {
     public Post() {
 
     }
+
+    protected Post(Parcel in) {
+        id = in.readInt();
+        content = in.readString();
+        image = in.readString();
+        community_title = in.readString();
+        community_image = in.readString();
+        user_id = in.readString();
+        user_name = in.readString();
+        community_id = in.readInt();
+        likes_count = in.readInt();
+        comments_count = in.readInt();
+        isLiked = in.readByte() != 0;
+    }
+
+    public static final Creator<Post> CREATOR = new Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -135,5 +164,25 @@ public class Post {
                 ", \"user_id\":" + "\"" + user_id + "\"" +
                 ", \"community_id\":" + "\"" + community_id + "\"" +
                 '}';
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(content);
+        parcel.writeString(image);
+        parcel.writeString(community_title);
+        parcel.writeString(community_image);
+        parcel.writeString(user_id);
+        parcel.writeString(user_name);
+        parcel.writeInt(community_id);
+        parcel.writeInt(likes_count);
+        parcel.writeInt(comments_count);
+        parcel.writeByte((byte) (isLiked ? 1 : 0));
     }
 }

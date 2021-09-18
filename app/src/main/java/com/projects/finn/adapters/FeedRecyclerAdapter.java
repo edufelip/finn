@@ -70,9 +70,9 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
         public MyViewHolder(RecyclerPostBinding b, RecyclerClickListener recyclerClickListener) {
             super(b.getRoot());
-            binding = b;
-            setupClickListeners(itemView);
+            this.binding = b;
             this.recyclerClickListener = recyclerClickListener;
+            setupClickListeners(itemView);
             itemView.setOnClickListener(this);
             userPopup = new Dialog(itemView.getContext());
         }

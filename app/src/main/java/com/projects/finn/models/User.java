@@ -5,14 +5,10 @@ import java.util.Date;
 public class User {
     private String id;
     private String name;
+    private String photo;
     private Date date;
 
     public User() {
-    }
-
-    public User(String id, String name) {
-        this.id = id;
-        this.name = name;
     }
 
     public String getId() {
@@ -37,5 +33,13 @@ public class User {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
     }
 }

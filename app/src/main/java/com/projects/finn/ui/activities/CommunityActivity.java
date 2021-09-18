@@ -45,7 +45,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
         super.onCreate(savedInstanceState);
         binding = ActivityCommunityBinding.inflate(getLayoutInflater());
 
-        setCommunityExtras();
+        getCommunityExtras();
         initializeViewModel();
         initializeRecyclerView();
         setSupportActionBar(binding.customToolbar);
@@ -87,7 +87,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
         });
     }
 
-    public void setCommunityExtras() {
+    public void getCommunityExtras() {
         community = (Community) getIntent().getParcelableExtra("community");
         if(community != null) {
             binding.communityTitle.setText(community.getTitle());
@@ -113,7 +113,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
     public void onItemClick(int position) {
         Post post = posts.get(position);
         Intent intent = new Intent(this, PostActivity.class);
-        intent.putExtra("postId", post.getId());
+        intent.putExtra("post", post);
         startActivity(intent);
     }
 

@@ -54,7 +54,7 @@ public class SearchFragmentViewModel extends ViewModel {
 
                     @Override
                     public void onNext(@NonNull Community community) {
-                        _updatedCommunity.postValue(community);
+                        _updatedCommunity.setValue(community);
                     }
 
                     @Override
