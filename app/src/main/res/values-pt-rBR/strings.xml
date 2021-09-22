@@ -104,4 +104,5 @@
     <string name="sure_delete_account">Tem certeza que deseja excluir sua conta?</string>
     <string name="option_not_available">Essa opção não está disponível ainda</string>
     <string name="error_occurred_log_later">Um erro ocorreu, por favor tente se autenticar novamente mais tarde</string>
+    <string name="user_created_successfully">Usuário criado com sucesso</string>
 </resources>

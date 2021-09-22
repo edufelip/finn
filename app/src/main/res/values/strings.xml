@@ -115,4 +115,5 @@
     <string name="sure_delete_account">Are you sure you want to delete your account?</string>
     <string name="option_not_available">This option is not available yet</string>
     <string name="error_occurred_log_later">An error has occurred, please log again later</string>
+    <string name="user_created_successfully">User created successfully</string>
 </resources>
