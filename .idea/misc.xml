@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/drawable/custom_search_view.xml" value="0.12916666666666668" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/drawable/custom_settings_arrow.xml" value="0.2203125" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/drawable/down_shadow.xml" value="0.2203125" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/drawable/ic_baseline_more_vert_24.xml" value="0.2203125" />
@@ -39,6 +40,7 @@
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/menu/community_menu.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/menu/navigation_view_menu.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/menu/post_menu.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2203125" />
       </map>
     </option>
   </component>

@@ -22,7 +22,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.adapters.CommunitySearchAdapter;
 import com.projects.finn.databinding.FragmentSearchBinding;
 import com.projects.finn.models.Community;
-import com.projects.finn.models.Post;
 import com.projects.finn.ui.activities.CommunityActivity;
 import com.projects.finn.ui.viewmodels.SearchFragmentViewModel;
 

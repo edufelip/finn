@@ -1,7 +1,5 @@
 package com.projects.finn.ui.viewmodels;
 
-import android.view.accessibility.AccessibilityNodeInfo;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
@@ -9,10 +7,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.projects.finn.data.repositories.CommunityRepository;
 import com.projects.finn.data.repositories.PostRepository;
-import com.projects.finn.data.repositories.interfaces.ICommentRepository;
 import com.projects.finn.data.repositories.interfaces.ICommunityRepository;
 import com.projects.finn.data.repositories.interfaces.IPostRepository;
-import com.projects.finn.data.repositories.interfaces.IUserRepository;
 import com.projects.finn.models.Community;
 import com.projects.finn.models.Post;
 

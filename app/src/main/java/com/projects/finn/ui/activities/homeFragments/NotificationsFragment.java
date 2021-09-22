@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import androidx.fragment.app.Fragment;
 
-import com.projects.finn.R;
 import com.projects.finn.databinding.FragmentNotificationsBinding;
 
 

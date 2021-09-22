@@ -21,7 +21,6 @@ import com.projects.finn.ui.activities.homeFragments.SearchFragment;
 import com.projects.finn.ui.activities.homeFragments.HandleClick;
 import com.projects.finn.ui.activities.homeFragments.HomeFragment;
 import com.projects.finn.ui.activities.homeFragments.NotificationsFragment;
-import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.utils.Authentication;
@@ -69,10 +68,13 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
     }
 
     public void updateNavUserInfo() {
-        NavHeaderBinding headerBinding = NavHeaderBinding.bind(binding.navView.getHeaderView(0));
-        headerBinding.displayName.setText(auth.getCurrentUser().getDisplayName());
-        headerBinding.displayEmail.setText(auth.getCurrentUser().getEmail());
-        glide.load(auth.getCurrentUser().getPhotoUrl().toString()).into(headerBinding.profilePictureIv);
+        if(auth.getCurrentUser() != null) {
+            NavHeaderBinding headerBinding = NavHeaderBinding.bind(binding.navView.getHeaderView(0));
+            headerBinding.displayName.setText(auth.getCurrentUser().getDisplayName());
+            headerBinding.displayEmail.setText(auth.getCurrentUser().getEmail());
+            String photoUrl = auth.getCurrentUser().getPhotoUrl() != null ? auth.getCurrentUser().getPhotoUrl().toString() : "";
+            glide.load(photoUrl).into(headerBinding.profilePictureIv);
+        }
     }
 
     public void setupNavigationDrawer() {

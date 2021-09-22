@@ -75,13 +75,13 @@
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_layout"
             android:layout_width="match_parent"
+            android:layout_below="@id/line1"
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_trending"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/line1"
                 android:background="#f7f7f7" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -30,7 +30,6 @@ import com.projects.finn.models.Post;
 import com.projects.finn.ui.viewmodels.PostsFragmentViewModel;
 import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.inject.Inject;

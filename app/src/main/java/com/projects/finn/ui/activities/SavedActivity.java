@@ -3,12 +3,10 @@ package com.projects.finn.ui.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import com.bumptech.glide.RequestManager;
 import com.projects.finn.databinding.ActivitySavedBinding;
-import com.projects.finn.ui.activities.homeFragments.HandleClick;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
 import com.projects.finn.models.Post;
 

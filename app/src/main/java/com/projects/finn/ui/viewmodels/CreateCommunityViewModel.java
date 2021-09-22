@@ -1,8 +1,5 @@
 package com.projects.finn.ui.viewmodels;
 
-
-import android.graphics.Bitmap;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
@@ -10,10 +7,6 @@ import androidx.lifecycle.ViewModel;
 import com.projects.finn.data.repositories.CommunityRepository;
 import com.projects.finn.models.Community;
 import com.projects.finn.data.repositories.interfaces.ICommunityRepository;
-import com.projects.finn.models.Subscription;
-
-import java.io.File;
-
 import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -24,7 +17,6 @@ import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
-import retrofit2.http.Multipart;
 
 @HiltViewModel
 public class CreateCommunityViewModel extends ViewModel {

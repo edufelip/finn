@@ -13,7 +13,6 @@ import com.projects.finn.data.repositories.interfaces.ICommentRepository;
 import com.projects.finn.data.repositories.interfaces.ICommunityRepository;
 import com.projects.finn.models.Comment;
 import com.projects.finn.models.Community;
-import com.projects.finn.models.Like;
 import com.projects.finn.models.Post;
 import com.projects.finn.models.User;
 import com.projects.finn.data.repositories.interfaces.IPostRepository;

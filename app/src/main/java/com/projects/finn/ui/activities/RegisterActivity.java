@@ -2,7 +2,6 @@ package com.projects.finn.ui.activities;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
@@ -11,12 +10,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.projects.finn.BuildConfig;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -24,10 +23,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
@@ -121,6 +118,13 @@ public class RegisterActivity extends AppCompatActivity {
 
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
             if(task.isSuccessful()) {
+                if(auth.getCurrentUser() != null) {
+                    UserProfileChangeRequest profileChangeRequest = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(name).build();
+                    auth.getCurrentUser().updateProfile(profileChangeRequest).addOnCompleteListener(task1 -> {
+                        Toast.makeText(this, getResources().getString(R.string.user_created_successfully), Toast.LENGTH_SHORT).show();
+                    });
+                }
                 mainPageRedirect();
             } else {
                 String exception;
