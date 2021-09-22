@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
 import com.projects.finn.BuildConfig;
+import com.projects.finn.R;
 import com.projects.finn.databinding.RecyclerTrendingBinding;
 import com.projects.finn.models.Community;
 
@@ -49,7 +50,7 @@ public class CommunitySearchAdapter extends RecyclerView.Adapter<CommunitySearch
             String title = community.getTitle();
             String description = community.getDescription();
             int count = community.getSubscribersCount();
-            String subscribers = String.valueOf(count) + " Subscribers";
+            String subscribers = count + " " + context.getResources().getString(R.string.subscriber_s);
             binding.tvTitle.setText(title);
             binding.tvAbout.setText(description);
             binding.tvFollowers.setText(subscribers);

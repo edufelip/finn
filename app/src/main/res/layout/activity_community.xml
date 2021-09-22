@@ -25,13 +25,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:elevation="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    >
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
+                        android:layout_height="match_parent">
 
                         <androidx.appcompat.widget.Toolbar
                             android:id="@+id/custom_toolbar"
@@ -39,12 +39,11 @@
                             android:layout_height="wrap_content"
                             android:background="?attr/colorPrimaryVariant"
                             android:minHeight="?attr/actionBarSize"
-                            app:title=" "
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            />
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:title=" " />
 
                         <ImageButton
                             android:id="@+id/back_button"
@@ -52,10 +51,11 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
                             android:background="@drawable/ripple_back_button"
+                            android:contentDescription="@string/back_button"
                             android:padding="8dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24"
                             app:tint="@color/white" />
 
@@ -63,16 +63,16 @@
                             android:id="@+id/textViewOptions"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="&#8942;"
-                            android:visibility="gone"
-                            android:textColor="@color/white"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
                             android:layout_marginTop="16dp"
                             android:layout_marginEnd="16dp"
                             android:paddingStart="12dp"
                             android:paddingEnd="12dp"
-                            android:textAppearance="?android:textAppearanceLarge" />
+                            android:text="@string/three_dots"
+                            android:textAppearance="?android:textAppearanceLarge"
+                            android:textColor="@color/white"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -82,8 +82,8 @@
                     android:id="@+id/linearLayout2"
                     android:layout_width="match_parent"
                     android:layout_height="72dp"
-                    android:orientation="vertical"
                     android:background="@color/purple_700"
+                    android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/app_bar_layout" />
@@ -108,6 +108,7 @@
                             android:id="@+id/community_image"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:contentDescription="@string/community_image"
                             tools:src="@drawable/user_icon" />
 
                     </androidx.cardview.widget.CardView>
@@ -118,12 +119,12 @@
                     android:id="@+id/community_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
+                    android:layout_marginStart="24dp"
                     android:layout_marginTop="12dp"
-                    tools:text="Custom Community"
                     android:textSize="20sp"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/community_image_cardview" />
+                    app:layout_constraintTop_toBottomOf="@id/community_image_cardview"
+                    tools:text="Custom Community" />
 
                 <RelativeLayout
                     android:id="@+id/community_info_layout"
@@ -131,8 +132,7 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/community_title"
-                    >
+                    app:layout_constraintTop_toBottomOf="@id/community_title">
 
                     <TextView
                         android:id="@+id/community_description"
@@ -169,13 +169,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="Subscriber(s)" />
+                            android:text="@string/subscriber_s" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="24dp"
-                            android:text="Since"
+                            android:text="@string/since"
                             android:textStyle="bold" />
 
                         <TextView
@@ -199,14 +199,14 @@
                     android:id="@+id/follow_btn"
                     android:layout_width="120dp"
                     android:layout_height="32dp"
-                    android:text="@string/subscribe"
-                    android:textSize="10sp"
-                    android:textColor="?attr/colorPrimary"
-                    app:cornerRadius="20dp"
-                    app:backgroundTint="@null"
-                    android:background="@drawable/custom_buttom"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="20dp"
+                    android:background="@drawable/custom_buttom"
+                    android:text="@string/subscribe"
+                    android:textColor="?attr/colorPrimary"
+                    android:textSize="10sp"
+                    app:backgroundTint="@null"
+                    app:cornerRadius="20dp"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
@@ -217,24 +217,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#f7f7f7"
-                tools:listitem="@layout/recycler_post"
                 tools:itemCount="2"
-                />
+                tools:listitem="@layout/recycler_post" />
 
             <RelativeLayout
                 android:id="@+id/empty_recycler_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
-                android:background="#f7f7f7">
+                android:background="#f7f7f7"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="This community has no posts yet"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="32dp"
-                    />
+                    android:text="@string/this_community_has_no_posts_yet" />
 
             </RelativeLayout>
 

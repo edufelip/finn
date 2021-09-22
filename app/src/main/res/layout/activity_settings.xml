@@ -12,8 +12,7 @@
         android:layout_height="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/back_button"
@@ -22,16 +21,15 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:background="@drawable/ripple_back_button"
+            android:contentDescription="@string/back_button"
             android:padding="8dp"
-            android:contentDescription="back button"
             app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@drawable/down_shadow"
             android:layout_alignParentBottom="true"
-            />
+            android:background="@drawable/down_shadow" />
 
     </RelativeLayout>
 
@@ -39,44 +37,42 @@
         android:id="@+id/settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/settings"
         android:textSize="32sp"
         android:textStyle="bold"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="32dp"
-        app:layout_constraintTop_toBottomOf="@id/saved_bar"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@id/saved_bar" />
 
     <TextView
         android:id="@+id/preferences"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Preferences"
-        android:textSize="18sp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="16dp"
+        android:text="@string/preferences"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/settings" />
 
     <LinearLayout
         android:id="@+id/preferences_container"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:layout_marginEnd="36dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/preferences"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginEnd="36dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        >
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/preferences">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginBottom="8dp"
+            android:layout_height="45dp"
             android:layout_marginTop="8dp"
-            android:layout_height="45dp">
+            android:layout_marginBottom="8dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -84,7 +80,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
                 android:drawablePadding="8dp"
-                android:text="Dark Mode"
+                android:text="@string/dark_mode"
                 android:textSize="18sp"
                 app:drawableLeftCompat="@drawable/ic_sun" />
 
@@ -94,21 +90,21 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="16dp" />
-            
+
         </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="45dp" >
+            android:layout_height="45dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawablePadding="8dp"
-                android:text="Notifications "
-                android:textSize="18sp"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
+                android:drawablePadding="8dp"
+                android:text="@string/notifications"
+                android:textSize="18sp"
                 app:drawableLeftCompat="@drawable/ic_baseline_content_copy_24" />
 
             <com.google.android.material.switchmaterial.SwitchMaterial
@@ -126,24 +122,24 @@
         android:id="@+id/account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Account"
-        android:textSize="18sp"
         android:layout_marginStart="36dp"
         android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@id/preferences_container"
-        app:layout_constraintLeft_toLeftOf="parent" />
+        android:text="@string/account"
+        android:textSize="18sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/preferences_container" />
 
     <LinearLayout
         android:id="@+id/account_container"
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:layout_marginEnd="36dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/account"
+        android:layout_marginEnd="36dp"
+        android:orientation="vertical"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" >
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/account">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -154,19 +150,19 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
-                android:text="Delete Account" />
+                android:text="@string/delete_account" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/delete_button"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="wrap_content"
                 android:layout_height="42dp"
-                android:text="delete"
-                android:textSize="11sp"
-                android:textColor="@android:color/holo_red_light"
                 android:layout_alignParentEnd="true"
-                app:strokeColor="@android:color/holo_red_light"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                />
+                android:contentDescription="@string/delete_button"
+                android:text="@string/delete"
+                android:textColor="@android:color/holo_red_light"
+                android:textSize="11sp"
+                app:strokeColor="@android:color/holo_red_light" />
 
         </RelativeLayout>
 

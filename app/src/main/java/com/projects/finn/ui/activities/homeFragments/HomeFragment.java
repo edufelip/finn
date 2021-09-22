@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.projects.finn.R;
 import com.projects.finn.models.User;
 import com.projects.finn.databinding.FragmentHomeBinding;
 import com.projects.finn.ui.activities.AuthActivity;
@@ -121,7 +122,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         });
         mSharedLikeViewModel.observeLike().observe(getViewLifecycleOwner(), like -> {
             if(like.getId() == -1) {
-                Toast.makeText(getContext(), "Something wrong happened, try liking again later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -139,7 +140,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     public void forceLogout() {
         Authentication.logout(auth, requireActivity());
         Intent intent = new Intent(requireActivity(), AuthActivity.class);
-        intent.putExtra("Error", "An error has ocurred, please log again later");
+        intent.putExtra("Error", getResources().getString(R.string.error_occurred_log_later));
         startActivity(intent);
         requireActivity().finish();
     }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nested_scroll_view"
@@ -25,8 +25,8 @@
                 android:id="@+id/app_bar_layout"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:fitsSystemWindows="true"
                 android:background="@android:color/white"
+                android:fitsSystemWindows="true"
                 android:theme="@style/Theme.Finn"
                 app:elevation="0dp">
 
@@ -40,33 +40,33 @@
                         android:id="@+id/back_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
                         android:layout_marginStart="16dp"
                         android:background="@drawable/ripple_back_button"
                         android:padding="8dp"
-                        android:layout_gravity="center_vertical"
-                        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24"
+                        android:contentDescription="@string/back_button"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        />
+                        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24" />
 
                     <TextView
                         android:id="@+id/textViewOptions"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="&#8942;"
-                        android:visibility="gone"
                         android:layout_gravity="end"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="16dp"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:textAppearance="?android:textAppearanceLarge" />
+                        android:text="@string/three_dots"
+                        android:textAppearance="?android:textAppearanceLarge"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:background="@drawable/down_shadow"
-                        android:layout_gravity="bottom"/>
+                        android:layout_gravity="bottom"
+                        android:background="@drawable/down_shadow" />
 
                 </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -93,6 +93,7 @@
                         android:id="@+id/community_picture_icon"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:contentDescription="@string/community_image"
                         android:scaleType="centerCrop"
                         tools:src="@drawable/user_icon" />
 
@@ -136,6 +137,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:contentDescription="@string/post_image"
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -150,6 +152,7 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginEnd="16dp"
                     android:gravity="start"
+                    android:baselineAligned="false"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -174,7 +177,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginRight="5dp"
+                            android:layout_marginEnd="5dp"
                             tools:text="21.1k" />
 
                     </LinearLayout>
@@ -202,6 +205,7 @@
                             android:layout_marginStart="4dp"
                             android:gravity="center_vertical"
                             android:paddingStart="4dp"
+                            android:paddingEnd="4dp"
                             tools:text="218" />
 
                     </LinearLayout>
@@ -229,7 +233,8 @@
                             android:layout_marginStart="4dp"
                             android:gravity="center_vertical"
                             android:paddingStart="4dp"
-                            android:text="Share" />
+                            android:paddingEnd="4dp"
+                            android:text="@string/share" />
 
                     </LinearLayout>
 
@@ -240,23 +245,21 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Comments"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                android:textStyle="bold"
                 android:background="#f7f7f7"
-                />
+                android:paddingStart="16dp"
+                android:paddingTop="8dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp"
+                android:text="@string/comments"
+                android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_comments"
-                android:background="#f7f7f7"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:listitem="@layout/recycler_comment"
+                android:background="#f7f7f7"
                 tools:itemCount="3"
-                />
+                tools:listitem="@layout/recycler_comment" />
 
         </LinearLayout>
 
@@ -267,10 +270,9 @@
         android:layout_width="match_parent"
         android:layout_height="55dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/nested_scroll_view"
-        >
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nested_scroll_view">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/user_pic_cardview"
@@ -285,6 +287,7 @@
                 android:id="@+id/user_pic"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:contentDescription="@string/user_photo"
                 android:scaleType="centerCrop"
                 tools:src="@drawable/user_icon" />
 
@@ -308,11 +311,11 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="16dp"
+            android:contentDescription="@string/add_button"
             android:src="@drawable/ic_baseline_add_24"
             app:elevation="0dp"
             app:fabSize="mini"
             app:tint="@color/white" />
-
 
     </RelativeLayout>
 

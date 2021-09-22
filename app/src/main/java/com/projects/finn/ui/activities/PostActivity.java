@@ -66,7 +66,7 @@ public class PostActivity extends AppCompatActivity {
         post = (Post) getIntent().getParcelableExtra("post");
         if(post != null) {
             binding.postCommunity.setText(post.getCommunity_title());
-            String text = "Posted by: " + post.getUser_name();
+            String text = getResources().getString(R.string.posted_by) + " " + post.getUser_name();
             binding.postSource.setText(text);
             binding.postContent.setText(post.getContent());
             binding.likesCount.setText(String.valueOf(post.getLikes_count()));
@@ -103,7 +103,7 @@ public class PostActivity extends AppCompatActivity {
 
         mPostActivityViewModel.observeCreatedComment().observe(this, createdComment -> {
             if(createdComment.getId() == -1) {
-                Toast.makeText(this, "Something went wrong, try again later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
@@ -115,12 +115,12 @@ public class PostActivity extends AppCompatActivity {
 
         mPostActivityViewModel.observePost().observe(this, post -> {
             if(post.getId() == -1) {
-                Toast.makeText(this, "Something went wrong, try again later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
             if(post.getId() == -2) {
-                Toast.makeText(this, "Post successfully deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.successfully_deleted), Toast.LENGTH_SHORT).show();
                 this.post.setUser_id("-2");
                 finish();
                 return;
@@ -130,7 +130,7 @@ public class PostActivity extends AppCompatActivity {
         mSharedLikeViewModel.observeLike().observe(this, like -> {
             switch (like.getId()) {
                 case (-1) : {
-                    Toast.makeText(this, "Something wrong happened, try again later", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                     finish();
                     break;
                 }
@@ -187,7 +187,7 @@ public class PostActivity extends AppCompatActivity {
         });
 
         binding.shareButton.setOnClickListener(view -> {
-            Toast.makeText(this, "Not available yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.not_available_yet), Toast.LENGTH_SHORT).show();
         });
 
         binding.textViewOptions.setOnClickListener(view -> {
@@ -202,12 +202,12 @@ public class PostActivity extends AppCompatActivity {
                 public boolean onMenuItemSelected(@NonNull MenuBuilder menu, @NonNull MenuItem item) {
                     if (item.getItemId() == R.id.communityDelete) {
                         AlertDialog.Builder dialog = new AlertDialog.Builder(PostActivity.this);
-                        dialog.setTitle("Delete post?");
-                        dialog.setMessage("Are you sure? Once delete your post will be lost forever");
-                        dialog.setPositiveButton("Yes", (dialogInterface, i) -> {
+                        dialog.setTitle(getResources().getString(R.string.delete_post));
+                        dialog.setMessage(getResources().getString(R.string.are_you_sure_delete_post));
+                        dialog.setPositiveButton(getResources().getString(R.string.yes), (dialogInterface, i) -> {
                             mPostActivityViewModel.deletePost(auth.getCurrentUser().getUid(), post);
                         });
-                        dialog.setNegativeButton("No", null);
+                        dialog.setNegativeButton(getResources().getString(R.string.no), null);
                         dialog.show();
                         return true;
                     }
@@ -240,7 +240,7 @@ public class PostActivity extends AppCompatActivity {
     public void createComment() {
         String content = binding.commentEdittext.getText().toString();
         if(content.isEmpty()) {
-            Toast.makeText(this, "Please fill the post field", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.please_fill_post_field), Toast.LENGTH_SHORT).show();
             return;
         }
         Comment comment = new Comment();

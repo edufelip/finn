@@ -16,20 +16,20 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
-            android:layout_gravity="center"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            app:cardCornerRadius="50dp" >
+            app:cardCornerRadius="50dp">
 
             <ImageView
                 android:id="@+id/profilePictureIcon"
-                android:contentDescription="profile image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:contentDescription="@string/user_photo"
                 android:scaleType="centerCrop"
                 android:src="@drawable/user_icon" />
 
@@ -40,13 +40,13 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginBottom="8dp"
             android:layout_toEndOf="@id/cardView"
-            android:queryBackground="@android:color/transparent"
+            android:background="@drawable/custom_search_view"
             android:clickable="false"
             android:iconifiedByDefault="false"
-            android:background="@drawable/custom_search_view" />
+            android:queryBackground="@android:color/transparent" />
 
         <Button
             android:id="@+id/fake_search_view"
@@ -70,9 +70,9 @@
             android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:fitsSystemWindows="true"
             android:background="@android:color/white"
-            android:theme="@style/Theme.Finn" >
+            android:fitsSystemWindows="true"
+            android:theme="@style/Theme.Finn">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:layout_width="match_parent"
@@ -83,10 +83,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Home"
-                    android:layout_marginBottom="4dp"
                     android:layout_gravity="bottom|center_horizontal"
-                    />
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/home" />
 
             </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -96,15 +95,15 @@
             android:id="@+id/swipe_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" >
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/feed_recycler_view"
-                android:background="#f7f7f7"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:listitem="@layout/recycler_post"
-                tools:itemCount="2" />
+                android:background="#f7f7f7"
+                tools:itemCount="2"
+                tools:listitem="@layout/recycler_post" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -113,7 +112,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#f7f7f7"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" >
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -124,7 +123,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="32dp"
-                    android:text="Subscribe to a community to start seeing posts =D"
+                    android:text="@string/subscribe_to_a_community_to_start_seeing_posts_d"
                     android:textAlignment="center" />
 
             </RelativeLayout>

@@ -12,8 +12,7 @@
         android:layout_height="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        >
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/back_button"
@@ -22,24 +21,24 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:background="@drawable/ripple_back_button"
+            android:contentDescription="@string/back_button"
             android:padding="8dp"
             app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Saved"
             android:layout_centerVertical="true"
+            android:layout_marginStart="6dp"
             android:layout_toEndOf="@id/back_button"
-            android:textSize="18sp"
-            android:layout_marginStart="6dp" />
+            android:text="@string/saved"
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@drawable/down_shadow"
             android:layout_alignParentBottom="true"
-            />
+            android:background="@drawable/down_shadow" />
 
     </RelativeLayout>
 
@@ -47,11 +46,10 @@
         android:id="@+id/saved_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="#f7f7f7"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/saved_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="#f7f7f7"
-        />
+        app:layout_constraintTop_toBottomOf="@id/saved_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

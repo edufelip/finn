@@ -102,15 +102,15 @@ public class AuthActivity extends AppCompatActivity {
         String email = binding.loginEmail.getText().toString();
         String password = binding.loginPassword.getText().toString();
         if(email.isEmpty()) {
-            Toast.makeText(this, "Please enter your e-mail", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.please_enter_email), Toast.LENGTH_SHORT).show();
             return;
         }
         if(!Verify.isEmailValid(email)) {
-            Toast.makeText(this, "The given email is invalid", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.email_is_invalid), Toast.LENGTH_SHORT).show();
             return;
         }
         if(password.isEmpty()) {
-            Toast.makeText(this, "Please enter your password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.please_enter_password), Toast.LENGTH_SHORT).show();
             return;
         }
         auth.signInWithEmailAndPassword(email, password)
@@ -122,14 +122,14 @@ public class AuthActivity extends AppCompatActivity {
                     try {
                         throw Objects.requireNonNull(task.getException());
                     } catch (FirebaseAuthInvalidUserException e) {
-                        exception = "This user is not registered";
+                        exception = getResources().getString(R.string.user_not_registered);
                     } catch (FirebaseAuthInvalidCredentialsException e) {
-                        exception = "The password is incorrect";
+                        exception = getResources().getString(R.string.password_incorrect);
                     } catch (Exception e) {
-                        exception = "Error " +e.getMessage();
+                        exception = "Error " + e.getMessage();
                         e.printStackTrace();
                     }
-                    Toast.makeText(AuthActivity.this, "Error" + exception, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AuthActivity.this, getResources().getString(R.string.error) + exception, Toast.LENGTH_SHORT).show();
                 }
             });
     }

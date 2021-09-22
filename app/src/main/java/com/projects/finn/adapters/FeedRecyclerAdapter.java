@@ -79,7 +79,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         }
 
         public void bind(Post post) {
-            String source = "Posted by: " + post.getUser_name();
+            String source = context.getResources().getString(R.string.posted_by) + " " + post.getUser_name();
             binding.postContent.setText(post.getContent());
             binding.postSource.setText(source);
             binding.postCommunity.setText(post.getCommunity_title());
@@ -114,13 +114,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                 popupMenu.setOnMenuItemClickListener(item -> {
                     switch (item.getItemId()) {
                         case (R.id.saveOption):
-                            Toast.makeText(itemView.getContext(), "Not available yet", Toast.LENGTH_SHORT).show();
+                        case (R.id.reportOption):
+                            Toast.makeText(itemView.getContext(), context.getResources().getString(R.string.not_available_yet), Toast.LENGTH_SHORT).show();
                             break;
                         case (R.id.hideOption):
                             recyclerClickListener.onDeleteClick(getAbsoluteAdapterPosition());
-                            break;
-                        case (R.id.reportOption):
-                            Toast.makeText(itemView.getContext(), "Not available yet", Toast.LENGTH_SHORT).show();
                             break;
                         default:
                             return false;
@@ -159,14 +157,14 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             itemView.getContext().startActivity(intent);
         }
 
-        public void openUserPopup() {
-            TextView popupClose;
-            userPopup.setContentView(R.layout.user_popup);
-            popupClose = userPopup.findViewById(R.id.close_popup);
-            popupClose.setOnClickListener(v -> userPopup.dismiss());
-            userPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            userPopup.show();
-        }
+//        public void openUserPopup() {
+//            TextView popupClose;
+//            userPopup.setContentView(R.layout.user_popup);
+//            popupClose = userPopup.findViewById(R.id.close_popup);
+//            popupClose.setOnClickListener(v -> userPopup.dismiss());
+//            userPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//            userPopup.show();
+//        }
 
         public void openPostActivity() {
             Intent intent = new Intent(itemView.getContext(), PostActivity.class);
@@ -188,7 +186,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
         public void sharePost() {
             // Not yet implemented
-            Toast.makeText(itemView.getContext(), "Not available yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(itemView.getContext(), context.getResources().getString(R.string.not_available_yet), Toast.LENGTH_SHORT).show();
         }
     }
 

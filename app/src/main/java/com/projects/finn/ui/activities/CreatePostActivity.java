@@ -86,9 +86,9 @@ public class CreatePostActivity extends AppCompatActivity {
 
         mCreatePostViewModel.observePost().observe(this, post -> {
             if(post.getId() == -1) {
-                Toast.makeText(this, "Something wrong happened, try again later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Post successfully created", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.post_successfully_created), Toast.LENGTH_SHORT).show();
             }
             finish();
         });
@@ -137,7 +137,7 @@ public class CreatePostActivity extends AppCompatActivity {
                             setImage(imageUri);
                         } catch (Exception e) {
                             e.printStackTrace();
-                            Toast.makeText(CreatePostActivity.this, "Something wrong happened", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreatePostActivity.this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
@@ -153,7 +153,7 @@ public class CreatePostActivity extends AppCompatActivity {
         boolean isPickCommunityEmpty = binding.communityField.getText().toString().equals("Pick a community");
         boolean isPostContentEmpty = binding.postTextarea.getText().toString().isEmpty();
         if(isPickCommunityEmpty || isPostContentEmpty) {
-            Toast.makeText(this, "Please fill the fields", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.please_fill_fields), Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

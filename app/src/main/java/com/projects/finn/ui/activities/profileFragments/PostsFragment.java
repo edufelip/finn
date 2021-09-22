@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.projects.finn.R;
 import com.projects.finn.databinding.FragmentPostsBinding;
 import com.projects.finn.models.User;
 import com.projects.finn.ui.activities.PostActivity;
@@ -88,7 +89,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
 
         mSharedLikeViewModel.observeLike().observe(getViewLifecycleOwner(), like -> {
             if(like.getId() == -1) {
-                Toast.makeText(getContext(), "Something wrong happened, try liking again later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
             }
         });
     }

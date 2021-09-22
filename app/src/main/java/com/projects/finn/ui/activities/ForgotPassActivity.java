@@ -27,7 +27,6 @@ public class ForgotPassActivity extends AppCompatActivity {
 
         initializeComponents();
         setClickListeners();
-
         setContentView(binding.getRoot());
     }
 
@@ -44,7 +43,7 @@ public class ForgotPassActivity extends AppCompatActivity {
         String email = binding.forgotEmailField.getText().toString().trim();
         if(email.isEmpty()) return;
         if(!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            Toast.makeText(this, "Enter a valid email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getResources().getString(R.string.enter_valid_email), Toast.LENGTH_SHORT).show();
             return;
         }
         auth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
@@ -54,7 +53,7 @@ public class ForgotPassActivity extends AppCompatActivity {
 
     public void sendSuccessMessage() {
         Animation fadeIn = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
-        binding.statusMessage.setText("Se houver um usuário cadastrador você receberá um e-mail para resetar a senha");
+        binding.statusMessage.setText(getResources().getString(R.string.if_user_exists_an_email_will_be_received));
         binding.successCheck.startAnimation(fadeIn);
         binding.statusMessage.startAnimation(fadeIn);
         binding.successCheck.setVisibility(View.VISIBLE);

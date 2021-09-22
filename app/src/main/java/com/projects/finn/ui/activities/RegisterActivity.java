@@ -34,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.projects.finn.R;
 import com.projects.finn.databinding.ActivityRegisterBinding;
 
 import javax.inject.Inject;
@@ -94,27 +95,27 @@ public class RegisterActivity extends AppCompatActivity {
         String password = binding.registerPassword.getText().toString();
         String passwordConfirm = binding.registerPasswordConfirm.getText().toString();
         if(name.isEmpty()) {
-            Toast.makeText(RegisterActivity.this, "Please enter your name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, getResources().getString(R.string.please_enter_name), Toast.LENGTH_SHORT).show();
             return;
         }
         if(email.isEmpty()) {
-            Toast.makeText(RegisterActivity.this, "Please enter your email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, getResources().getString(R.string.please_enter_email), Toast.LENGTH_SHORT).show();
             return;
         }
         if(password.isEmpty()) {
-            Toast.makeText(RegisterActivity.this, "Please enter your password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, getResources().getString(R.string.please_enter_password), Toast.LENGTH_SHORT).show();
             return;
         }
         if(passwordConfirm.isEmpty()) {
-            Toast.makeText(RegisterActivity.this, "Please enter your password again", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, getResources().getString(R.string.please_enter_password_again), Toast.LENGTH_SHORT).show();
             return;
         }
         if(!password.equals(passwordConfirm)) {
-            Toast.makeText(RegisterActivity.this, "The passwords don't match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, getResources().getString(R.string.password_dont_match), Toast.LENGTH_SHORT).show();
             return;
         }
         if(!binding.termsCheckBox.isChecked()) {
-            Toast.makeText(RegisterActivity.this, "Please accept the terms and conditions", Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this, getResources().getString(R.string.please_accept_terms_and_conditions), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -126,13 +127,13 @@ public class RegisterActivity extends AppCompatActivity {
                 try {
                     throw task.getException();
                 } catch(FirebaseAuthWeakPasswordException e) {
-                    exception = "Digite uma senha mais forte!";
+                    exception = getResources().getString(R.string.please_insert_stronger_password);
                 } catch(FirebaseAuthInvalidCredentialsException e) {
-                    exception = "Digite um e-mail válido";
+                    exception = getResources().getString(R.string.please_insert_valid_email);
                 } catch(FirebaseAuthUserCollisionException e) {
-                    exception = "Esse e-mail já está cadastrado";
+                    exception = getResources().getString(R.string.email_already_being_used);
                 } catch(Exception e) {
-                    exception = "Erro ao cadastrar o usuário" + e.getMessage();
+                    exception = getResources().getString(R.string.error_signing_up_user) + e.getMessage();
                     e.printStackTrace();
                 }
                 Toast.makeText(RegisterActivity.this, exception, Toast.LENGTH_SHORT).show();

@@ -52,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
             if(delete.getId().equals("1")) {
                 if(auth.getCurrentUser() != null) {
                     auth.getCurrentUser().delete().addOnCompleteListener(task -> {
-                        Toast.makeText(this, "Succesfully deleted, we'll miss you!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, getResources().getString(R.string.successfully_deleted_miss_you), Toast.LENGTH_SHORT).show();
                         Authentication.logoutGoogle(this);
                         Authentication.logoutFacebook();
                         finish();
@@ -61,7 +61,7 @@ public class SettingsActivity extends AppCompatActivity {
                     });
                 }
             } else {
-                Toast.makeText(this, "Something wrong happened, try again later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -91,16 +91,16 @@ public class SettingsActivity extends AppCompatActivity {
                     mSettingsViewModel.deleteUser(id);
                 }
             });
-            builder.setNegativeButton("No", (dialogInterface, i) -> {
+            builder.setNegativeButton(getResources().getString(R.string.no), (dialogInterface, i) -> {
 
             });
-            builder.setTitle("Delete Account");
-            builder.setMessage("Are you sure you want to delete your account?");
+            builder.setTitle(getResources().getString(R.string.delete_account));
+            builder.setMessage(getResources().getString(R.string.sure_delete_account));
             builder.create().show();
         });
     }
 
     public void printNotAvailabe() {
-        Toast.makeText(this, "This option is not available yet", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getResources().getString(R.string.option_not_available), Toast.LENGTH_SHORT).show();
     }
 }

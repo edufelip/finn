@@ -20,6 +20,7 @@ import android.view.animation.AlphaAnimation;
 import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
+import com.projects.finn.R;
 import com.projects.finn.databinding.ActivityCreateCommunityBinding;
 import com.projects.finn.models.Community;
 import com.projects.finn.ui.viewmodels.CreateCommunityViewModel;
@@ -86,10 +87,10 @@ public class CreateCommunityActivity extends AppCompatActivity {
                 if(community.getId() == (-1)) {
                     switch (community.getTitle()) {
                         case "Conflict":
-                            Toast.makeText(this, "This name is unavailable", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getResources().getString(R.string.name_unavailable), Toast.LENGTH_SHORT).show();
                             break;
                         default:
-                            Toast.makeText(this, "Something wrong happened, try again later", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                             finish();
                             break;
                     }
@@ -224,7 +225,7 @@ public class CreateCommunityActivity extends AppCompatActivity {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                         binding.createCommunityIcon.setImageBitmap(bitmap);
                     } catch (Exception e) {
-                        Toast.makeText(CreateCommunityActivity.this, "Something wrong happened", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(CreateCommunityActivity.this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                     }
                 }
             });

@@ -85,12 +85,12 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
 
         mCommunityViewModel.observeCommunity().observe(this, community -> {
             if(community.getId() == -1) {
-                Toast.makeText(this, "An error occurred, try again later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
             if(community.getId() == -2) {
-                Toast.makeText(this, "Successfully Deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.successfully_deleted), Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
@@ -117,7 +117,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
         mCommunityViewModel.observeUpdateSubscription().observe(this, subscription -> {
             switch (subscription.getId()) {
                 case -1: {
-                    Toast.makeText(this, "Something wrong happened, try again later", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                     break;
                 }
                 case -2: {
@@ -140,7 +140,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
         mCommunityViewModel.observeSubscription().observe(this, subscription -> {
             switch (subscription.getId()) {
                 case -1: {
-                    Toast.makeText(this, "Something wrong happened, try again later", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                     break;
                 }
                 case -2: {
@@ -155,7 +155,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
 
         mSharedLikeViewModel.observeLike().observe(this, like -> {
             if(like.getId() == -1) {
-                Toast.makeText(this, "Something wrong happened, try liking again later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -223,12 +223,12 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
                 public boolean onMenuItemSelected(@NonNull MenuBuilder menu, @NonNull MenuItem item) {
                     if (item.getItemId() == R.id.communityDelete) {
                         AlertDialog.Builder dialog = new AlertDialog.Builder(CommunityActivity.this);
-                        dialog.setTitle("Delete commnity?");
-                        dialog.setMessage("Are you sure? Once delete your community will be lost forever");
-                        dialog.setPositiveButton("Yes", (dialogInterface, i) -> {
+                        dialog.setTitle(getResources().getString(R.string.delete_community));
+                        dialog.setMessage(getResources().getString(R.string.are_you_sure_delete_community));
+                        dialog.setPositiveButton(getResources().getString(R.string.yes), (dialogInterface, i) -> {
                             mCommunityViewModel.deleteCommunity(auth.getCurrentUser().getUid(), community);
                         });
-                        dialog.setNegativeButton("No", null);
+                        dialog.setNegativeButton(getResources().getString(R.string.no), null);
                         dialog.show();
                         return true;
                     }

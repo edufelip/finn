@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.bumptech.glide.RequestManager;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.projects.finn.R;
 import com.projects.finn.adapters.FragmentsAdapter;
 import com.projects.finn.databinding.ActivityProfileBinding;
 import com.projects.finn.ui.viewmodels.ProfileViewModel;
@@ -62,7 +63,7 @@ public class ProfileActivity extends AppCompatActivity {
             SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("LLLL yyyy", Locale.getDefault());
             String date = DATE_FORMAT.format(user.getDate());
             String capsDate = date.substring(0, 1).toUpperCase() + date.substring(1);
-            String message = "Joined since " + capsDate;
+            String message = getResources().getString(R.string.joined_since) + " " + capsDate;
             binding.userDate.setText(message);
         });
     }
