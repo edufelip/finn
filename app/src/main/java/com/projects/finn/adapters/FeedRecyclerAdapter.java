@@ -28,6 +28,8 @@ import com.projects.finn.models.Post;
 import com.projects.finn.utils.PostDiffUtil;
 
 import java.util.ArrayList;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -65,7 +67,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         RecyclerPostBinding binding;
         Dialog userPopup;
-        Boolean isLikeButtonClicked;
         RecyclerClickListener recyclerClickListener;
 
         public MyViewHolder(RecyclerPostBinding b, RecyclerClickListener recyclerClickListener) {
@@ -79,7 +80,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
         public void bind(Post post) {
             String source = "Posted by: " + post.getUser_name();
-            isLikeButtonClicked = post.isLiked();
             binding.postContent.setText(post.getContent());
             binding.postSource.setText(source);
             binding.postCommunity.setText(post.getCommunity_title());
@@ -88,7 +88,6 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             binding.likeButton.setChecked(false);
             if(post.isLiked()) {
                 binding.likeButton.setChecked(true);
-                this.isLikeButtonClicked = true;
             }
 
             binding.postImage.setImageDrawable(null);
@@ -115,13 +114,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                 popupMenu.setOnMenuItemClickListener(item -> {
                     switch (item.getItemId()) {
                         case (R.id.saveOption):
-                            // send request to save post
+                            Toast.makeText(itemView.getContext(), "Not available yet", Toast.LENGTH_SHORT).show();
                             break;
                         case (R.id.hideOption):
-                            // send request
                             recyclerClickListener.onDeleteClick(getAbsoluteAdapterPosition());
                             break;
                         case (R.id.reportOption):
+                            Toast.makeText(itemView.getContext(), "Not available yet", Toast.LENGTH_SHORT).show();
                             break;
                         default:
                             return false;
@@ -133,9 +132,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
             binding.communityPictureIcon.setOnClickListener(v -> openCommunityActivity());
             binding.postCommunity.setOnClickListener(v -> openCommunityActivity());
-            binding.postSource.setOnClickListener(v -> openUserPopup());
+            binding.postSource.setOnClickListener(v -> {
+//                openUserPopup();
+            });
             binding.likeButton.setOnClickListener(v -> {
-                if(!this.isLikeButtonClicked) {
+                if(binding.likeButton.isChecked()) {
                     likePost();
                 } else {
                     dislikePost();
@@ -174,14 +175,12 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         }
 
         public void likePost() {
-            isLikeButtonClicked = !isLikeButtonClicked;
             int likes = Integer.parseInt(binding.likesCount.getText().toString()) + 1;
             binding.likesCount.setText(String.valueOf(likes));
             recyclerClickListener.onLikePost(getAbsoluteAdapterPosition());
         }
 
         public void dislikePost() {
-            isLikeButtonClicked = !isLikeButtonClicked;
             int likes = Integer.parseInt(binding.likesCount.getText().toString()) - 1;
             binding.likesCount.setText(String.valueOf(likes));
             recyclerClickListener.onDislikePost(getAbsoluteAdapterPosition());
@@ -203,6 +202,34 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     public void updatePost(Post post) {
         posts.set(posts.indexOf(post), post);
         notifyItemChanged(posts.indexOf(post));
+    }
+
+    public void updatePostActivityResult(Post post) {
+        Post result = posts.stream()
+                .filter(element -> element.getId() == post.getId())
+                .collect(toSingleton());
+        int index = posts.indexOf(result);
+
+        if(post.getUser_id().equals("-2")) {
+            posts.remove(result);
+            notifyItemRemoved(index);
+            return;
+        }
+
+        posts.set(index, post);
+        notifyItemChanged(index);
+    }
+
+    public <T> Collector<T, ?, T> toSingleton() {
+        return Collectors.collectingAndThen(
+                Collectors.toList(),
+                list -> {
+                    if (list.size() != 1) {
+                        throw new IllegalStateException();
+                    }
+                    return list.get(0);
+                }
+        );
     }
 
     public interface RecyclerClickListener {

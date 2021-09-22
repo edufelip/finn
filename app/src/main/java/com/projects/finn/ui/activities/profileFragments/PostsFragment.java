@@ -1,8 +1,13 @@
 package com.projects.finn.ui.activities.profileFragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -72,6 +77,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
         mPostsFragmentViewModel.observePosts().observe(getViewLifecycleOwner(), posts -> {
             this.posts = new ArrayList<>(posts);
             feedRecyclerAdapter.setPosts(this.posts);
+            checkEmptyRecycler(posts.size());
         });
 
         mPostsFragmentViewModel.observeUpdatedPost().observe(getViewLifecycleOwner(), post -> {
@@ -91,12 +97,38 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
         this.handleClick = handle;
     }
 
+    ActivityResultLauncher<Intent> postActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Post post = data.getParcelableExtra("post");
+                            feedRecyclerAdapter.updatePostActivityResult(post);
+                        }
+                    }
+                }
+            }
+    );
+
+    public void checkEmptyRecycler(int size) {
+        if(size == 0) {
+            binding.postsRecyclerview.setVisibility(View.GONE);
+            binding.emptyRecyclerState.setVisibility(View.VISIBLE);
+        } else {
+            binding.postsRecyclerview.setVisibility(View.VISIBLE);
+            binding.emptyRecyclerState.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void onItemClick(int position) {
         Post post = posts.get(position);
         Intent intent = new Intent(getContext(), PostActivity.class);
         intent.putExtra("post", post);
-        startActivity(intent);
+        postActivityResultLauncher.launch(intent);
     }
 
     @Override
@@ -113,7 +145,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
         feedRecyclerAdapter.updatePost(post);
         feedRecyclerAdapter.notifyItemChanged(position);
         String id = auth.getCurrentUser().getUid();
-        mSharedLikeViewModel.likePost(id, this.posts.get(position).getId());
+        mSharedLikeViewModel.likePost(this.posts.get(position).getId(), id);
     }
 
     @Override

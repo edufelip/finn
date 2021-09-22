@@ -6,17 +6,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.activities.profileFragments.PostsFragment">
 
-    <LinearLayout
-        android:id="@+id/line"
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="2dp"
-        android:layout_alignParentBottom="true"
         android:background="@drawable/down_shadow"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/posts_recyclerview"
-        android:orientation="horizontal" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/posts_recyclerview"
@@ -24,11 +20,29 @@
         tools:listitem="@layout/recycler_post"
         tools:itemCount="3"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:nestedScrollingEnabled="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/line"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         />
+
+    <RelativeLayout
+        android:id="@+id/empty_recycler_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="#f7f7f7">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You have no posts yet =("
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="32dp"
+            />
+
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

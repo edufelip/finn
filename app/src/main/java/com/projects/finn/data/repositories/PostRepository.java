@@ -60,4 +60,9 @@ public class PostRepository implements IPostRepository {
     public Flowable<Void> dislikePost(int postId, User user) {
         return apiService.dislikePost(postId, user);
     }
+
+    @Override
+    public Flowable<Void> deletePost(int postId) {
+        return apiService.deletePost(postId);
+    }
 }
