@@ -4,6 +4,7 @@ import com.projects.finn.models.Comment;
 import com.projects.finn.models.Community;
 import com.projects.finn.models.Like;
 import com.projects.finn.models.Post;
+import com.projects.finn.models.Subscription;
 import com.projects.finn.models.User;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import io.reactivex.rxjava3.core.Flowable;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -26,6 +28,9 @@ public interface ApiService {
 
     @POST("/users")
     Flowable<User> createUser(@Body User user);
+
+    @DELETE("/users/{id}")
+    Flowable<String> deleteUser(@Path("id") String userId);
 
     //posts
     @GET("/posts/users/{id}/feed")
@@ -53,6 +58,9 @@ public interface ApiService {
     @POST("/posts")
     Flowable<Post> savePost(@Part("post")RequestBody requestBody, @Part MultipartBody.Part image);
 
+    @DELETE("/posts/{id}")
+    Flowable<Void> deletePost(@Path("id") int postId);
+
     //comments
     @GET("/comments/posts/{id}")
     Flowable<List<Comment>> getCommentsPost(@Path("id") int id);
@@ -76,4 +84,16 @@ public interface ApiService {
     @Multipart
     @POST("/communities")
     Flowable<Community> saveCommunity(@Part("community")RequestBody requestBody, @Part MultipartBody.Part image);
+
+    @POST("/communities/subscribe")
+    Flowable<Subscription> subscribeToCommunity(@Body Subscription subscription);
+
+    @POST("/communities/unsubscribe")
+    Flowable<Void> unsubscribeFromCommunity(@Body Subscription subscription);
+
+    @GET("/communities/{comm_id}/users/{user_id}")
+    Flowable<Subscription> getSubscription(@Path("user_id") String userId, @Path("comm_id") int communityId);
+
+    @DELETE("/communities/{id}")
+    Flowable<Void> deleteCommunity(@Path("id") int communityId);
 }

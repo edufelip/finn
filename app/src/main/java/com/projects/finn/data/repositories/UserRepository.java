@@ -26,4 +26,9 @@ public class UserRepository implements IUserRepository {
     public @NonNull Flowable<User> createUser (User user){
         return apiService.createUser(user);
     }
+
+    @Override
+    public @NonNull Flowable<String> deleteUser(String userid) {
+        return apiService.deleteUser(userid);
+    }
 }

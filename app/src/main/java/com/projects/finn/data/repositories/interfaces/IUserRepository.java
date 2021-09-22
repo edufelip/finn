@@ -8,4 +8,5 @@ import io.reactivex.rxjava3.core.Flowable;
 public interface IUserRepository {
     @NonNull Flowable<User> getUser(String id);
     @NonNull Flowable<User> createUser(User user);
+    @NonNull Flowable<String> deleteUser(String userid);
 }
