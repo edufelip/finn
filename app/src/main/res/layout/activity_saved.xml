@@ -6,36 +6,42 @@
     android:layout_height="match_parent"
     tools:context=".ui.activities.SavedActivity">
 
-    <LinearLayout
-        android:id="@+id/saved_linear_layout"
+    <RelativeLayout
+        android:id="@+id/saved_bar"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
         >
 
         <ImageButton
-            android:id="@+id/saved_back_button"
+            android:id="@+id/back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="12dp"
             android:background="@drawable/ripple_back_button"
             android:padding="8dp"
-            app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24"
-            />
+            app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Saved"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/back_button"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginLeft="6dp" />
+            android:layout_marginStart="6dp" />
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@drawable/down_shadow"
+            android:layout_alignParentBottom="true"
+            />
+
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/saved_recyclerview"
@@ -43,9 +49,9 @@
         android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/saved_linear_layout"
+        app:layout_constraintTop_toBottomOf="@id/saved_bar"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@android:color/darker_gray"
+        android:background="#f7f7f7"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
