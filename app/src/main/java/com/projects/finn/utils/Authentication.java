@@ -1,8 +1,6 @@
 package com.projects.finn.utils;
 
 import android.app.Activity;
-import android.content.Intent;
-
 import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -15,13 +13,21 @@ public class Authentication {
         //Firebase
         auth.signOut();
         //Google
+        logoutGoogle(activity);
+        //Facebook
+        logoutFacebook();
+    }
+
+    public static void logoutGoogle(Activity activity) {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(BuildConfig.FIREBASE_GOOGLE_ID)
                 .requestEmail()
                 .build();
         GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
         mGoogleSignInClient.signOut();
-        //Facebook
+    }
+
+    public static void logoutFacebook() {
         LoginManager.getInstance().logOut();
     }
 }
