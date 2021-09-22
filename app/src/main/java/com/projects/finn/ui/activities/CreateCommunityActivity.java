@@ -45,7 +45,6 @@ public class CreateCommunityActivity extends AppCompatActivity {
     private ActivityCreateCommunityBinding binding;
     private Boolean isNextAllowed;
     private CreateCommunityViewModel mCreateCommunityViewModel;
-    private final int GALLERY_REQUEST_CODE = 1;
     private Uri imageUri;
     @Inject
     FirebaseAuth auth;

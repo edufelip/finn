@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel;
 import com.projects.finn.data.repositories.CommunityRepository;
 import com.projects.finn.models.Community;
 import com.projects.finn.data.repositories.interfaces.ICommunityRepository;
+import com.projects.finn.models.Subscription;
 
 import java.io.File;
 
@@ -71,6 +72,7 @@ public class CreateCommunityViewModel extends ViewModel {
                     }
                 });
     }
+
 
     public LiveData<Community> observeCommunity () { return community; }
 
