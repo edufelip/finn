@@ -1,11 +1,17 @@
 package com.projects.finn.ui.activities.homeFragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SearchView;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.adapters.CommunitySearchAdapter;
 import com.projects.finn.databinding.FragmentSearchBinding;
 import com.projects.finn.models.Community;
+import com.projects.finn.models.Post;
 import com.projects.finn.ui.activities.CommunityActivity;
 import com.projects.finn.ui.viewmodels.SearchFragmentViewModel;
 
@@ -106,6 +113,22 @@ public class SearchFragment extends Fragment implements CommunitySearchAdapter.R
         binding.profilePictureIcon.setOnClickListener(view -> handleClick.buttonClicked(view));
     }
 
+    ActivityResultLauncher<Intent> communityActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Community community = data.getParcelableExtra("community");
+                            adapter.updateCommunityActivityResult(community);
+                        }
+                    }
+                }
+            }
+    );
+
     public void setInterface(HandleClick handle){
         this.handleClick = handle;
     }
@@ -118,7 +141,7 @@ public class SearchFragment extends Fragment implements CommunitySearchAdapter.R
         community.setTitle(communities.get(position).getTitle());
         community.setImage(communities.get(position).getImage());
         intent.putExtra("community", community);
-        getContext().startActivity(intent);
+        communityActivityResultLauncher.launch(intent);
     }
 
     @Override

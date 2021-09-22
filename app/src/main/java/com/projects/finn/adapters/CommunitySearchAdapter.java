@@ -12,9 +12,11 @@ import com.bumptech.glide.RequestManager;
 import com.projects.finn.BuildConfig;
 import com.projects.finn.databinding.RecyclerTrendingBinding;
 import com.projects.finn.models.Community;
-import com.projects.finn.models.Post;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 
 public class CommunitySearchAdapter extends RecyclerView.Adapter<CommunitySearchAdapter.MyViewHolder> {
@@ -90,6 +92,30 @@ public class CommunitySearchAdapter extends RecyclerView.Adapter<CommunitySearch
     public void updateCommunity(Community community) {
         communities.set(communities.indexOf(community), community);
         notifyItemChanged(communities.indexOf(community));
+    }
+
+    public void updateCommunityActivityResult(Community community) {
+        Community result = communities.stream()
+                .filter(element -> element.getId() == community.getId())
+                .collect(toSingleton());
+        int index = communities.indexOf(result);
+        if(communities.get(index).getSubscribersCount() != community.getSubscribersCount()) {
+            communities.set(index, community);
+            communities.sort(Comparator.comparing(Community::getSubscribersCount).reversed());
+            notifyDataSetChanged();
+        }
+    }
+
+    public <T> Collector<T, ?, T> toSingleton() {
+        return Collectors.collectingAndThen(
+                Collectors.toList(),
+                list -> {
+                    if (list.size() != 1) {
+                        throw new IllegalStateException();
+                    }
+                    return list.get(0);
+                }
+        );
     }
 
     @Override
