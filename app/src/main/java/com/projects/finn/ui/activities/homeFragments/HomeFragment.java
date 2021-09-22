@@ -2,6 +2,7 @@ package com.projects.finn.ui.activities.homeFragments;
 
 import static com.projects.finn.utils.Constants.QUERY_PAGE_SIZE;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,10 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -104,6 +109,8 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
             this.posts = new ArrayList<>(posts);
             feedRecyclerAdapter.setPosts(this.posts);
             binding.swipeLayout.setRefreshing(false);
+            binding.emptyRecyclerLayout.setRefreshing(false);
+            checkEmptyRecycler(posts.size());
         });
         mHomeFragmentViewModel.observeUpdatedPost().observe(getViewLifecycleOwner(), updatedPost -> {
             feedRecyclerAdapter.updatePost(updatedPost);
@@ -117,6 +124,16 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
                 Toast.makeText(getContext(), "Something wrong happened, try liking again later", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void checkEmptyRecycler(int size) {
+        if(size == 0) {
+            binding.swipeLayout.setVisibility(View.GONE);
+            binding.emptyRecyclerLayout.setVisibility(View.VISIBLE);
+        } else {
+            binding.swipeLayout.setVisibility(View.VISIBLE);
+            binding.emptyRecyclerLayout.setVisibility(View.GONE);
+        }
     }
 
     public void forceLogout() {
@@ -179,18 +196,38 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         binding.swipeLayout.setOnRefreshListener(() -> {
             mHomeFragmentViewModel.getPosts(user.getId(), 1, true);
         });
+
+        binding.emptyRecyclerLayout.setOnRefreshListener(() -> {
+            mHomeFragmentViewModel.getPosts(user.getId(), 1, true);
+        });
     }
 
     public void setInterface(HandleClick handle){
         this.handleClick = handle;
     }
 
+    ActivityResultLauncher<Intent> postActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Post post = data.getParcelableExtra("post");
+                            feedRecyclerAdapter.updatePostActivityResult(post);
+                        }
+                    }
+                }
+            }
+    );
+
     @Override
     public void onItemClick(int position) {
         Post post = posts.get(position);
         Intent intent = new Intent(getContext(), PostActivity.class);
         intent.putExtra("post", post);
-        startActivity(intent);
+        postActivityResultLauncher.launch(intent);
     }
 
     @Override
@@ -206,7 +243,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
         post.setLikes_count(post.getLikes_count() + 1);
         feedRecyclerAdapter.updatePost(post);
         feedRecyclerAdapter.notifyItemChanged(position);
-        mSharedLikeViewModel.likePost(this.user.getId(), this.posts.get(position).getId());
+        mSharedLikeViewModel.likePost(this.posts.get(position).getId(), this.user.getId());
     }
 
     @Override

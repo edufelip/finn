@@ -7,6 +7,7 @@ import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
     FirebaseAuth auth;
     @Inject
     RequestManager glide;
+    public static Activity mainPageActivity;
     private ActivityMainPageBinding binding;
     private ActionBarDrawerToggle toggle;
     private HomeFragment homeFragment;
@@ -47,6 +49,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainPageBinding.inflate(getLayoutInflater());
+        mainPageActivity = this;
 
         initializeComponents();
         setupBottomNavigationView();
