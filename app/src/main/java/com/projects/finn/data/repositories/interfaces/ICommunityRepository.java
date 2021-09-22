@@ -1,6 +1,7 @@
 package com.projects.finn.data.repositories.interfaces;
 
 import com.projects.finn.models.Community;
+import com.projects.finn.models.Subscription;
 
 import java.util.List;
 
@@ -18,4 +19,12 @@ public interface ICommunityRepository {
     Flowable<Integer> getCommunitySubscribersCount(int communityId);
 
     Flowable<List<Community>> getCommunitiesFromUser(String userId);
+
+    Flowable<Subscription> subscribeToCommunity(Subscription subscription);
+
+    Flowable<Void> unsubscribeFromCommunity(Subscription subscription);
+
+    Flowable<Subscription> getSubscription(String userId, int communityId);
+
+    Flowable<Void> deleteCommunity(int communityId);
 }

@@ -3,6 +3,7 @@ package com.projects.finn.data.repositories;
 import com.projects.finn.data.network.ApiService;
 import com.projects.finn.data.repositories.interfaces.ICommunityRepository;
 import com.projects.finn.models.Community;
+import com.projects.finn.models.Subscription;
 
 import java.util.List;
 
@@ -43,5 +44,25 @@ public class CommunityRepository implements ICommunityRepository {
     @Override
     public Flowable<Community> saveCommunity(RequestBody requestBody, MultipartBody.Part image) {
         return apiService.saveCommunity(requestBody, image);
+    }
+
+    @Override
+    public Flowable<Subscription> subscribeToCommunity(Subscription subscription) {
+        return apiService.subscribeToCommunity(subscription);
+    }
+
+    @Override
+    public Flowable<Void> unsubscribeFromCommunity(Subscription subscription) {
+        return apiService.unsubscribeFromCommunity(subscription);
+    }
+
+    @Override
+    public Flowable<Subscription> getSubscription(String userId, int communityId) {
+        return apiService.getSubscription(userId, communityId);
+    }
+
+    @Override
+    public Flowable<Void> deleteCommunity(int communityId) {
+        return apiService.deleteCommunity(communityId);
     }
 }

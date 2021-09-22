@@ -15,6 +15,7 @@ import com.projects.finn.data.repositories.interfaces.IUserRepository;
 import com.projects.finn.models.Comment;
 import com.projects.finn.models.Community;
 import com.projects.finn.models.Post;
+import com.projects.finn.models.Subscription;
 import com.projects.finn.models.User;
 
 import java.util.ArrayList;
@@ -45,9 +46,13 @@ public class CommunityViewModel extends ViewModel {
     private MutableLiveData<List<Post>> _posts = new MutableLiveData<>();
     private MutableLiveData<Post> _updatedPost = new MutableLiveData<>();
     private MutableLiveData<Community> communityExtra = new MutableLiveData<>();
+    private MutableLiveData<Subscription> _subscription = new MutableLiveData<>();
+    private MutableLiveData<Subscription> _updateSubscription = new MutableLiveData<>();
     private LiveData<Community> community = _community;
     private LiveData<List<Post>> posts = _posts;
     private LiveData<Post> updatedPost = _updatedPost;
+    private LiveData<Subscription> subscription = _subscription;
+    private LiveData<Subscription> updateSubscription = _updateSubscription;
 
     @Inject
     public CommunityViewModel(SavedStateHandle handle,
@@ -244,6 +249,141 @@ public class CommunityViewModel extends ViewModel {
                 });
     }
 
+    public void subscribeToCommunity(String userId, int communityId) {
+        Subscription subscription = new Subscription();
+        subscription.setCommunity_id(communityId);
+        subscription.setUser_id(userId);
+        communityRepository.subscribeToCommunity(subscription)
+                .toObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Subscription>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        disposables.add(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Subscription subscription) {
+                        _updateSubscription.postValue(subscription);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Subscription subscription = new Subscription();
+                        subscription.setId(-1);
+                        _updateSubscription.postValue(subscription);
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void unsubscribeFromCommunity(String userId, int communityId) {
+        Subscription subscription = new Subscription();
+        subscription.setCommunity_id(communityId);
+        subscription.setUser_id(userId);
+        communityRepository.unsubscribeFromCommunity(subscription)
+                .toObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Void>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        disposables.add(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Void unused) {
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Subscription subscription = new Subscription();
+                        subscription.setId(-1);
+                        _updateSubscription.postValue(subscription);
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Subscription subscription = new Subscription();
+                        subscription.setId(-2);
+                        _updateSubscription.postValue(subscription);
+                    }
+                });
+    }
+
+    public void getSubscription(String userId, int communityId) {
+        Subscription subscription = new Subscription();
+        subscription.setCommunity_id(communityId);
+        subscription.setUser_id(userId);
+        communityRepository.getSubscription(userId, communityId)
+                .toObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Subscription>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        disposables.add(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Subscription subscription) {
+                        _subscription.postValue(subscription);
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void deleteCommunity(String userId, Community community) {
+        if(userId.equals(community.getUser_id())){
+            communityRepository.deleteCommunity(community.getId())
+                .toObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Void>() {
+                    @Override
+                    public void onSubscribe(@NonNull Disposable d) {
+                        disposables.add(d);
+                    }
+
+                    @Override
+                    public void onNext(@NonNull Void unused) {
+
+                    }
+
+                    @Override
+                    public void onError(@NonNull Throwable e) {
+                        Community comm = new Community();
+                        comm.setId(-1);
+                        comm.setTitle(e.getMessage());
+                        _community.postValue(comm);
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Community comm = new Community();
+                        comm.setId(-2);
+                        _community.postValue(comm);
+                    }
+                });
+        }
+    }
+
     public void setCommunityExtra(Community community) {
         this.communityExtra.postValue(community);
     }
@@ -253,6 +393,10 @@ public class CommunityViewModel extends ViewModel {
     public LiveData<List<Post>> observePosts() { return posts; }
 
     public LiveData<Post> observeUpdatedPost() { return updatedPost; }
+
+    public LiveData<Subscription> observeSubscription() { return subscription; }
+
+    public LiveData<Subscription> observeUpdateSubscription() { return updateSubscription; }
 
     @Override
     protected void onCleared() {

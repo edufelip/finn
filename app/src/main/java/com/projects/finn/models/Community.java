@@ -24,6 +24,22 @@ public class Community implements Parcelable {
         description = in.readString();
         image = in.readString();
         user_id = in.readString();
+        subscribersCount = in.readInt();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeString(description);
+        dest.writeString(image);
+        dest.writeString(user_id);
+        dest.writeInt(subscribersCount);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
     public static final Creator<Community> CREATOR = new Creator<Community>() {
@@ -103,19 +119,5 @@ public class Community implements Parcelable {
                 ", \"user_id\":" + "\"" + user_id + "\"" +
                 ", \"date\":" + "\"" + date + "\"" +
                 '}';
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(id);
-        parcel.writeString(title);
-        parcel.writeString(description);
-        parcel.writeString(image);
-        parcel.writeString(user_id);
     }
 }
