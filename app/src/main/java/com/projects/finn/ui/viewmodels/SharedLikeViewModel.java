@@ -30,7 +30,7 @@ public class SharedLikeViewModel extends ViewModel {
         this.postRepository = postRepository;
     }
 
-    public void likePost(String userId, int postId) {
+    public void likePost(int postId, String userId) {
         Like like = new Like();
         like.setUser_id(userId);
         like.setPost_id(postId);

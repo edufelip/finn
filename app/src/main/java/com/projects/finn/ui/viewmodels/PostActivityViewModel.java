@@ -9,6 +9,7 @@ import com.projects.finn.data.repositories.interfaces.ICommentRepository;
 import com.projects.finn.data.repositories.interfaces.IPostRepository;
 import com.projects.finn.data.repositories.interfaces.IUserRepository;
 import com.projects.finn.models.Comment;
+import com.projects.finn.models.Post;
 import com.projects.finn.models.User;
 
 import java.util.List;
@@ -31,13 +32,16 @@ public class PostActivityViewModel extends ViewModel {
     CompositeDisposable disposables = new CompositeDisposable();
     private SavedStateHandle handle;
     private IUserRepository userRepository;
+    private IPostRepository postRepository;
     private ICommentRepository commentRepository;
     private MutableLiveData<Comment> _createdComment = new MutableLiveData<>();
     private MutableLiveData<List<Comment>> _comments = new MutableLiveData<>();
     private MutableLiveData<Comment> _updatedComment = new MutableLiveData<>();
+    private MutableLiveData<Post> _post = new MutableLiveData<>();
     private LiveData<List<Comment>> comments = _comments;
     private LiveData<Comment> updatedComment = _updatedComment;
     private LiveData<Comment> createdComment = _createdComment;
+    private LiveData<Post> post = _post;
 
     @Inject
     public PostActivityViewModel(SavedStateHandle handle,
@@ -47,6 +51,7 @@ public class PostActivityViewModel extends ViewModel {
         this.handle = handle;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+        this.postRepository = postRepository;
     }
 
     public Observable<Comment> getCommentsObservable(int postId) {
@@ -141,6 +146,40 @@ public class PostActivityViewModel extends ViewModel {
                 });
     }
 
+    public void deletePost(String userId, Post post) {
+        if(post.getUser_id().equals(userId)) {
+            postRepository.deletePost(post.getId())
+                    .toObservable()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Void>() {
+                        @Override
+                        public void onSubscribe(@NonNull Disposable d) {
+                            disposables.add(d);
+                        }
+
+                        @Override
+                        public void onNext(@NonNull Void unused) {
+
+                        }
+
+                        @Override
+                        public void onError(@NonNull Throwable e) {
+                            Post post = new Post();
+                            post.setId(-1);
+                            _post.postValue(post);
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            Post post = new Post();
+                            post.setId(-2);
+                            _post.postValue(post);
+                        }
+                    });
+        }
+    }
+
     public LiveData<Comment> observeCreatedComment() {
         return this.createdComment;
     }
@@ -151,6 +190,10 @@ public class PostActivityViewModel extends ViewModel {
 
     public LiveData<Comment> observeUpdatedComment() {
         return this.updatedComment;
+    }
+
+    public LiveData<Post> observePost() {
+        return this.post;
     }
 
     @Override

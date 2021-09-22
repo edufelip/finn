@@ -26,4 +26,6 @@ public interface IPostRepository {
     Flowable<Like> likePost(Like like);
 
     Flowable<Void> dislikePost(int postId, User user);
+
+    Flowable<Void> deletePost(int postId);
 }
