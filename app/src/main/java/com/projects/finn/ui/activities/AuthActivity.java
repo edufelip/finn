@@ -46,6 +46,7 @@ public class AuthActivity extends AppCompatActivity {
     FirebaseAuth auth;
     @Inject
     UserRepository userRepository;
+    public static Activity authActivity;
     private ActivityAuthBinding binding;
     private GoogleSignInClient mGoogleSignInClient;
     private CallbackManager callbackManager;
@@ -54,6 +55,7 @@ public class AuthActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAuthBinding.inflate(getLayoutInflater());
+        authActivity = this;
 
         initializeComponents();
         createGoogleRequest();
@@ -129,7 +131,7 @@ public class AuthActivity extends AppCompatActivity {
                         exception = "Error " + e.getMessage();
                         e.printStackTrace();
                     }
-                    Toast.makeText(AuthActivity.this, getResources().getString(R.string.error) + exception, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AuthActivity.this, getResources().getString(R.string.error) + ": " + exception, Toast.LENGTH_SHORT).show();
                 }
             });
     }

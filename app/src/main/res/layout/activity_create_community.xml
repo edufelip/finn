@@ -28,7 +28,7 @@
         app:layout_constraintBottom_toTopOf="@+id/create_community_name_input"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.39999998"
+        app:layout_constraintVertical_bias="0.43"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <com.google.android.material.textfield.TextInputEditText
@@ -92,7 +92,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@id/create_community_checkbox_container"
+        app:layout_constraintBottom_toTopOf="@id/create_community_next_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/create_community_icon_text">
@@ -134,33 +134,12 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/create_community_checkbox_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@id/create_community_next_button"
-        app:layout_constraintTop_toBottomOf="@id/create_community_icon_select">
-
-        <com.google.android.material.checkbox.MaterialCheckBox
-            android:id="@+id/create_community_checkbox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/i_agree_with_the_terms_and_conditions" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/create_community_next_button"
         style="@style/Widget.Finn.ButtonOutlined"
         android:layout_width="150dp"
         android:layout_height="60dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:alpha="1"
         android:text="@string/create"
         android:textAllCaps="false"
@@ -169,6 +148,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/create_community_checkbox_container" />
+        app:layout_constraintTop_toBottomOf="@+id/create_community_icon_select" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

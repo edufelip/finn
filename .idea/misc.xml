@@ -17,7 +17,7 @@
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_main_page.xml" value="0.1" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_post.xml" value="0.25" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_profile.xml" value="0.25" />
-        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_register.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_register.xml" value="0.25" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_saved.xml" value="0.33" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/activity_settings.xml" value="0.33" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/layout/bottom_sheet_layout.xml" value="0.20416666666666666" />
@@ -41,6 +41,7 @@
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/menu/navigation_view_menu.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/menu/post_menu.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2203125" />
+        <entry key="..\:/Users/edu_f/Desktop/AndroidProjects/finn/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1125" />
       </map>
     </option>
   </component>

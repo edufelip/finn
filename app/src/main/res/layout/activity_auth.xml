@@ -168,7 +168,7 @@
             android:layout_width="fill_parent"
             android:layout_height="65dp"
             android:backgroundTint="#4267b2"
-            android:drawableStart="@drawable/facebook"
+            android:drawableLeft="@drawable/facebook"
             android:paddingStart="20dip"
             android:paddingEnd="40dip"
             android:text="@string/sign_in_with_facebook"

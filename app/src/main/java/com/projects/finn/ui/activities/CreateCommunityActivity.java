@@ -114,10 +114,6 @@ public class CreateCommunityActivity extends AppCompatActivity {
             mCreateCommunityViewModel.createCommunity(requestBody, commImage);
         });
 
-        binding.createCommunityCheckbox.setOnClickListener(v -> {
-            checkCanGoNext();
-        });
-
         binding.createCommunityBackButton.setOnClickListener(v -> finish());
 
         binding.createCommunityIconSelect.setOnClickListener(v -> pickImageFromGalery());
@@ -169,8 +165,7 @@ public class CreateCommunityActivity extends AppCompatActivity {
     public void checkCanGoNext() {
         String name = binding.createCommunityNameInput.getText().toString();
         String about = binding.createCommunityAboutInput.getText().toString();
-        Boolean checked = binding.createCommunityCheckbox.isChecked();
-        if(name.isEmpty() || about.isEmpty() || !checked) {
+        if(name.isEmpty() || about.isEmpty()) {
             if(isNextAllowed) {
                 switchNextAllowed();
                 fadeOutAnim();

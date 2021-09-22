@@ -18,7 +18,7 @@
     <string name="sign_up_here">Registre-se aqui</string>
     <string name="back_button">botão voltar</string>
     <string name="community_image">imagem comunidade</string>
-    <string name="subscriber_s">Inscritos</string>
+    <string name="subscriber_s">Inscrito(s)</string>
     <string name="since">Desde</string>
     <string name="this_community_has_no_posts_yet">Essa comunidade ainda não tem posts</string>
     <string name="your_community_name">Nome da sua comunidade</string>
@@ -57,7 +57,7 @@
     <string name="delete_account">Excluir conta</string>
     <string name="delete">Excluir</string>
     <string name="delete_button">botão excluir</string>
-    <string name="create_a_new">Criar nov(a)</string>
+    <string name="create_a_new">Criar novo(a)</string>
     <string name="community">Comunidade</string>
     <string name="post_button">botão post</string>
     <string name="community_button">botão comunidade</string>

@@ -111,10 +111,6 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(RegisterActivity.this, getResources().getString(R.string.password_dont_match), Toast.LENGTH_SHORT).show();
             return;
         }
-        if(!binding.termsCheckBox.isChecked()) {
-            Toast.makeText(RegisterActivity.this, getResources().getString(R.string.please_accept_terms_and_conditions), Toast.LENGTH_SHORT).show();
-            return;
-        }
 
         auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, task -> {
             if(task.isSuccessful()) {
@@ -123,9 +119,9 @@ public class RegisterActivity extends AppCompatActivity {
                             .setDisplayName(name).build();
                     auth.getCurrentUser().updateProfile(profileChangeRequest).addOnCompleteListener(task1 -> {
                         Toast.makeText(this, getResources().getString(R.string.user_created_successfully), Toast.LENGTH_SHORT).show();
+                        mainPageRedirect();
                     });
                 }
-                mainPageRedirect();
             } else {
                 String exception;
                 try {
@@ -203,5 +199,6 @@ public class RegisterActivity extends AppCompatActivity {
     public void mainPageRedirect() {
         startActivity(new Intent(this, MainPageActivity.class));
         finish();
+        AuthActivity.authActivity.finish();
     }
 }
