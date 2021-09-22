@@ -19,5 +19,4 @@
     <style name="Theme.Finn.Launcher" parent="Theme.Finn">
         <item name="android:windowBackground">@drawable/launcher_background</item>
     </style>
-
 </resources>
