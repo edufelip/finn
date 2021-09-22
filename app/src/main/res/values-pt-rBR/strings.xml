@@ -9,7 +9,7 @@
     <string name="subscribe">Inscrever-se</string>
     <string name="unsubscribe">Desinscrever</string>
     <string name="welcome">Bem-vindo(a),</string>
-    <string name="sign_in_if_you_have_an_account">Entre, caso tenha ua conta</string>
+    <string name="sign_in_if_you_have_an_account">Entre, caso tenha uma conta</string>
     <string name="password">senha</string>
     <string name="click_here">Clique aqui</string>
     <string name="forgot_your_password">Esqueceu sua senha?</string>
@@ -55,8 +55,8 @@
     <string name="notifications">Notificações</string>
     <string name="account">Conta</string>
     <string name="delete_account">Excluir conta</string>
-    <string name="delete">deletar</string>
-    <string name="delete_button">botão deletar</string>
+    <string name="delete">Excluir</string>
+    <string name="delete_button">botão excluir</string>
     <string name="create_a_new">Criar nov(a)</string>
     <string name="community">Comunidade</string>
     <string name="post_button">botão post</string>
@@ -76,7 +76,7 @@
     <string name="error">Erro</string>
     <string name="error_try_again_later">Um erro aconteceu, tente novamente mais tarde</string>
     <string name="successfully_deleted">Excluido com sucesso</string>
-    <string name="delete_community">Deletar comunidade?</string>
+    <string name="delete_community">Excluir comunidade?</string>
     <string name="are_you_sure_delete_community">Tem certeza? uma vez excluida a comunidade não poderá ser recuperada</string>
     <string name="yes">Sim</string>
     <string name="no">Não</string>
