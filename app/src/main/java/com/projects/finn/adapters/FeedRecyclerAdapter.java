@@ -208,7 +208,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                 .collect(toSingleton());
         int index = posts.indexOf(result);
 
-        if(post.getUser_id().equals("-2")) {
+        if(post.getUser_id() != null && post.getUser_id().equals("-2")) {
             posts.remove(result);
             notifyItemRemoved(index);
             return;

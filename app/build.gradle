@@ -5,6 +5,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\edu_f\\Desktop\\Key\\mykey.jks')
+            storePassword 'mykeystore'
+            keyAlias 'finnkey0'
+            keyPassword 'mykeystore'
+        }
+    }
     compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
@@ -12,7 +20,7 @@ android {
         applicationId "com.projects.finn"
         minSdkVersion 25
         targetSdkVersion 31
-        versionCode 1
+        versionCode 4
         versionName "1.0"
         buildConfigField("String", "BACKEND_IP", BACKEND_IP)
         buildConfigField("String", "FIREBASE_GOOGLE_ID", FIREBASE_GOOGLE_ID)
@@ -20,8 +28,11 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            debuggable true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {

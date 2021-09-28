@@ -1,7 +1,10 @@
 package com.projects.finn.models;
 
+import androidx.annotation.Keep;
+
 import java.util.Date;
 
+@Keep
 public class User {
     private String id;
     private String name;

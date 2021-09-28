@@ -1,5 +1,8 @@
 package com.projects.finn.models;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class Subscription {
     private int id;
     private String user_id;

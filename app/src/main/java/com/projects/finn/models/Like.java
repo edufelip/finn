@@ -1,5 +1,8 @@
 package com.projects.finn.models;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class Like {
     private int id;
     private String user_id;

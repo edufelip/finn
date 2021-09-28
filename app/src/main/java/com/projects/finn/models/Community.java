@@ -3,8 +3,11 @@ package com.projects.finn.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.Keep;
+
 import java.util.Date;
 
+@Keep
 public class Community implements Parcelable {
     private int id;
     private String title;
