@@ -5,7 +5,8 @@
 A social media based on communities where people can share their interests!
 
 This project uses:
-* Retrofit
+* MVVM Architecture and LiveData
+* Retrofit for API calls
 * RxJava
 * Dagger Hilt
 * Glide
