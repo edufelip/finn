@@ -2,7 +2,14 @@
 [![Author](https://img.shields.io/static/v1?label=@author&message=Eduardo%20Santos&color=navy)](https://github.com/edufelip)
 [![LinkedIn](https://img.shields.io/static/v1?label=@linkedin&message=@edu_santos&color=blue)](https://www.linkedin.com/in/eduardo-felipe-dev/)
 
-A network of communities where people can share their interests!
+A social media based on communities where people can share their interests!
+
+This project uses:
+* Retrofit
+* RxJava
+* Dagger Hilt
+* Glide
+* Firebase Authentication
 
 ## Layouts
 <br>
