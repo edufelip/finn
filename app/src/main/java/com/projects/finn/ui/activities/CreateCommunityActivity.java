@@ -23,9 +23,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
 import com.projects.finn.databinding.ActivityCreateCommunityBinding;
 import com.projects.finn.models.Community;
-import com.projects.finn.ui.viewmodels.CreateCommunityViewModel;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
