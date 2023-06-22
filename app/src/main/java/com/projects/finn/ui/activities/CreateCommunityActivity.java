@@ -1,13 +1,5 @@
 package com.projects.finn.ui.activities;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -18,11 +10,24 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.animation.AlphaAnimation;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.bumptech.glide.Glide;
+import com.canhub.cropper.CropImageContract;
+import com.canhub.cropper.CropImageContractOptions;
+import com.canhub.cropper.CropImageOptions;
+import com.canhub.cropper.CropImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
 import com.projects.finn.databinding.ActivityCreateCommunityBinding;
 import com.projects.finn.models.Community;
+import com.projects.finn.ui.viewmodels.CreateCommunityViewModel;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -62,7 +67,7 @@ public class CreateCommunityActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(!isNextAllowed) {
+        if (!isNextAllowed) {
             fadeOutAnim();
         }
         checkCanGoNext();
@@ -81,7 +86,7 @@ public class CreateCommunityActivity extends AppCompatActivity {
     public void initializeViewModel() {
         mCreateCommunityViewModel = new ViewModelProvider(this).get(CreateCommunityViewModel.class);
         mCreateCommunityViewModel.observeCommunity().observe(this, community -> {
-                if(community.getId() == (-1)) {
+                if (community.getId() == (-1)) {
                     switch (community.getTitle()) {
                         case "Conflict":
                             Toast.makeText(this, getResources().getString(R.string.name_unavailable), Toast.LENGTH_SHORT).show();
@@ -105,7 +110,7 @@ public class CreateCommunityActivity extends AppCompatActivity {
             createComm.setDescription(binding.createCommunityAboutInput.getText().toString());
             createComm.setUser_id(auth.getCurrentUser().getUid());
 
-            Bitmap bitmap = ((BitmapDrawable)binding.createCommunityIcon.getDrawable()).getBitmap();
+            Bitmap bitmap = ((BitmapDrawable) binding.createCommunityIcon.getDrawable()).getBitmap();
             MultipartBody.Part commImage = buildImageBodyPart("community", bitmap);
             RequestBody requestBody = RequestBody.create(MultipartBody.FORM, createComm.toJson());
             mCreateCommunityViewModel.createCommunity(requestBody, commImage);
@@ -162,13 +167,13 @@ public class CreateCommunityActivity extends AppCompatActivity {
     public void checkCanGoNext() {
         String name = binding.createCommunityNameInput.getText().toString();
         String about = binding.createCommunityAboutInput.getText().toString();
-        if(name.isEmpty() || about.isEmpty()) {
-            if(isNextAllowed) {
+        if (name.isEmpty() || about.isEmpty()) {
+            if (isNextAllowed) {
                 switchNextAllowed();
                 fadeOutAnim();
             }
         } else {
-            if(!isNextAllowed) {
+            if (!isNextAllowed) {
                 switchNextAllowed();
                 fadeInAnim();
             }
@@ -207,46 +212,59 @@ public class CreateCommunityActivity extends AppCompatActivity {
     }
 
     ActivityResultLauncher<Intent> pickGalleryResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    imageUri = result.getData().getData();
-                    try {
-                        launchImageCrop(imageUri);
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                        binding.createCommunityIcon.setImageBitmap(bitmap);
-                    } catch (Exception e) {
-                        Toast.makeText(CreateCommunityActivity.this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
-                    }
+        new ActivityResultContracts.StartActivityForResult(),
+        new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                imageUri = result.getData().getData();
+                try {
+                    launchImageCrop(imageUri);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    binding.createCommunityIcon.setImageBitmap(bitmap);
+                } catch (Exception e) {
+                    Toast.makeText(CreateCommunityActivity.this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                 }
-            });
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if(resultCode == Activity.RESULT_OK) {
-                if(result.getUri() != null) setIcon(result.getUri());
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-
             }
-        }
-    }
+        });
+
+    ActivityResultLauncher<CropImageContractOptions> cropImage =
+        registerForActivityResult(new CropImageContract(), result -> {
+            if (result.isSuccessful()) {
+                // Use the returned uri.
+                Uri uriContent = result.getUriContent();
+                setIcon(uriContent);
+            } else {
+                // An error occurred.
+                Exception exception = result.getError();
+            }
+        });
 
     private void setIcon(Uri uri) {
         Glide.with(this)
-                .load(uri)
-                .into(binding.createCommunityIcon);
+            .load(uri)
+            .into(binding.createCommunityIcon);
     }
 
     private void launchImageCrop(Uri imageUri) {
-        CropImage.activity(imageUri)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                .setAspectRatio(1, 1)
-                .setCropShape(CropImageView.CropShape.OVAL)
-                .start(this);
+        cropImage.launch(
+            new CropImageContractOptions(
+                imageUri,
+                new CropImageOptions(
+                    true,
+                    true,
+                    CropImageView.CropShape.OVAL,
+                    CropImageView.CropCornerShape.OVAL,
+                    0,
+                    0,
+                    0,
+                    CropImageView.Guidelines.ON,
+                    CropImageView.ScaleType.CENTER_CROP,
+                    true,
+                    true,
+                    true
+                )
+            )
+        );
     }
 
 
