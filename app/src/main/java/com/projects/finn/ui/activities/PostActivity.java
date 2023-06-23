@@ -1,12 +1,5 @@
 package com.projects.finn.ui.activities;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.MenuBuilder;
-import androidx.appcompat.view.menu.MenuPopupHelper;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -16,9 +9,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.MenuBuilder;
+import androidx.appcompat.view.menu.MenuPopupHelper;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.adapters.CommentsAdapter;
 import com.projects.finn.databinding.ActivityPostBinding;
@@ -27,6 +26,7 @@ import com.projects.finn.models.Post;
 import com.projects.finn.models.User;
 import com.projects.finn.ui.viewmodels.PostActivityViewModel;
 import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
+import com.projects.finn.utils.RemoteConfigUtils;
 
 import java.util.ArrayList;
 
@@ -40,6 +40,8 @@ public class PostActivity extends AppCompatActivity {
     RequestManager glide;
     @Inject
     FirebaseAuth auth;
+    @Inject
+    RemoteConfigUtils remoteConfigUtils;
     private ActivityPostBinding binding;
     private PostActivityViewModel mPostActivityViewModel;
     private ArrayList<Comment> comments;
@@ -71,10 +73,10 @@ public class PostActivity extends AppCompatActivity {
             binding.likesCount.setText(String.valueOf(post.getLikes_count()));
             binding.commentsCount.setText(String.valueOf(post.getComments_count()));
             if(post.getCommunity_image() != null) {
-                glide.load(BuildConfig.BACKEND_IP + "/" + post.getCommunity_image()).into(binding.communityPictureIcon);
+                glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + post.getCommunity_image()).into(binding.communityPictureIcon);
             }
             if(post.getImage() != null) {
-                glide.load(BuildConfig.BACKEND_IP + "/" + post.getImage()).into(binding.postImage);
+                glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + post.getImage()).into(binding.postImage);
             }
             if(post.isLiked()) {
                 binding.likeButton.setChecked(true);

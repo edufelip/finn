@@ -14,7 +14,6 @@ android {
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
-        buildConfigField("String", "BACKEND_IP", BACKEND_IP)
         buildConfigField("String", "FIREBASE_GOOGLE_ID", FIREBASE_GOOGLE_ID)
     }
 
@@ -61,6 +60,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.3.0')
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-config'
     implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.facebook.android:facebook-android-sdk:11.1.0'
 

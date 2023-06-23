@@ -1,5 +1,15 @@
 package com.projects.finn.ui.activities;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -11,19 +21,8 @@ import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
-
 import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
 import com.projects.finn.databinding.ActivityCommunityBinding;
@@ -32,6 +31,7 @@ import com.projects.finn.models.Post;
 import com.projects.finn.models.User;
 import com.projects.finn.ui.viewmodels.CommunityViewModel;
 import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
+import com.projects.finn.utils.RemoteConfigUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -47,6 +47,8 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
     RequestManager glide;
     @Inject
     FirebaseAuth auth;
+    @Inject
+    RemoteConfigUtils remoteConfigUtils;
     private ActivityCommunityBinding binding;
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private CommunityViewModel mCommunityViewModel;
@@ -80,12 +82,12 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
         mCommunityViewModel.getSubscription(auth.getCurrentUser().getUid(), community.getId());
 
         mCommunityViewModel.observeCommunity().observe(this, community -> {
-            if(community.getId() == -1) {
+            if (community.getId() == -1) {
                 Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                 finish();
                 return;
             }
-            if(community.getId() == -2) {
+            if (community.getId() == -2) {
                 Toast.makeText(this, getResources().getString(R.string.successfully_deleted), Toast.LENGTH_SHORT).show();
                 finish();
                 return;
@@ -150,7 +152,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
         });
 
         mSharedLikeViewModel.observeLike().observe(this, like -> {
-            if(like.getId() == -1) {
+            if (like.getId() == -1) {
                 Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
             }
         });
@@ -158,14 +160,14 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
 
     public void getCommunityExtras() {
         community = (Community) getIntent().getParcelableExtra("community");
-        if(community != null) {
+        if (community != null) {
             binding.communityTitle.setText(community.getTitle());
-            glide.load(BuildConfig.BACKEND_IP + "/" + community.getImage()).into(binding.communityImage);
+            glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + community.getImage()).into(binding.communityImage);
         }
     }
 
     public void checkEmptyRecycler(int size) {
-        if(size == 0) {
+        if (size == 0) {
             binding.recyclerCommunityPosts.setVisibility(View.GONE);
             binding.emptyRecyclerLayout.setVisibility(View.VISIBLE);
         } else {
@@ -175,8 +177,8 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
     }
 
     public void checkAdmin() {
-        if(auth.getCurrentUser() != null) {
-            if(community.getUser_id().equals(auth.getCurrentUser().getUid())) {
+        if (auth.getCurrentUser() != null) {
+            if (community.getUser_id().equals(auth.getCurrentUser().getUid())) {
                 binding.textViewOptions.setVisibility(View.VISIBLE);
             }
         }
@@ -193,22 +195,22 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
     @SuppressLint("RestrictedApi")
     public void setClickListeners() {
         binding.backButton.setOnClickListener(view -> {
-           finish();
+            finish();
         });
 
         binding.followBtn.setOnClickListener(view -> {
-            if(auth.getCurrentUser() != null) {
+            if (auth.getCurrentUser() != null) {
                 String text = binding.followBtn.getText().toString();
-                if(text.equals(getResources().getString(R.string.subscribe))) {
+                if (text.equals(getResources().getString(R.string.subscribe))) {
                     mCommunityViewModel.subscribeToCommunity(auth.getCurrentUser().getUid(), community.getId());
-                } else if(text.equals(getResources().getString(R.string.unsubscribe))) {
+                } else if (text.equals(getResources().getString(R.string.unsubscribe))) {
                     mCommunityViewModel.unsubscribeFromCommunity(auth.getCurrentUser().getUid(), community.getId());
                 }
             }
         });
 
         binding.textViewOptions.setOnClickListener(v -> {
-            MenuBuilder menuBuilder =new MenuBuilder(this);
+            MenuBuilder menuBuilder = new MenuBuilder(this);
             MenuInflater inflater = new MenuInflater(this);
             inflater.inflate(R.menu.community_menu, menuBuilder);
             MenuPopupHelper optionsMenu = new MenuPopupHelper(this, menuBuilder, binding.textViewOptions);
@@ -241,19 +243,19 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
     }
 
     ActivityResultLauncher<Intent> postActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            Post post = data.getParcelableExtra("post");
-                            feedRecyclerAdapter.updatePostActivityResult(post);
-                        }
+        new ActivityResultContracts.StartActivityForResult(),
+        new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        Post post = data.getParcelableExtra("post");
+                        feedRecyclerAdapter.updatePostActivityResult(post);
                     }
                 }
             }
+        }
     );
 
     @Override

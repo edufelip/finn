@@ -9,15 +9,17 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
-import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.databinding.RecyclerTrendingBinding;
 import com.projects.finn.models.Community;
+import com.projects.finn.utils.RemoteConfigUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import javax.inject.Inject;
 
 
 public class CommunitySearchAdapter extends RecyclerView.Adapter<CommunitySearchAdapter.MyViewHolder> {
@@ -25,6 +27,8 @@ public class CommunitySearchAdapter extends RecyclerView.Adapter<CommunitySearch
     private ArrayList<Community> communities;
     private Context context;
     private RecyclerClickListener recyclerClickListener;
+    @Inject
+    RemoteConfigUtils remoteConfigUtils;
 
     public CommunitySearchAdapter(Context context, ArrayList<Community> communities, RecyclerClickListener recyclerClickListener, RequestManager glide) {
         this.context = context;
@@ -55,7 +59,7 @@ public class CommunitySearchAdapter extends RecyclerView.Adapter<CommunitySearch
             binding.tvAbout.setText(description);
             binding.tvFollowers.setText(subscribers);
             String image = community.getImage();
-            glide.load(BuildConfig.BACKEND_IP + "/" + image).into(binding.communityIcon);
+            glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + image).into(binding.communityIcon);
         }
 
         public void setupClickListeners() {

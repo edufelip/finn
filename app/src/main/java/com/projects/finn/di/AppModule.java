@@ -6,9 +6,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.request.RequestOptions;
 import com.google.firebase.auth.FirebaseAuth;
-import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.data.network.ApiService;
+import com.projects.finn.utils.RemoteConfigUtils;
 
 import javax.inject.Singleton;
 
@@ -26,14 +26,14 @@ import retrofit2.converter.gson.GsonConverterFactory;
 abstract class AppModule {
     @Provides
     @Singleton
-    static ApiService providesBackendApi(GsonConverterFactory factory) {
-        String baseUrl = BuildConfig.BACKEND_IP;
+    static ApiService providesBackendApi(GsonConverterFactory factory, RemoteConfigUtils remoteConfigUtils) {
+        String baseUrl = remoteConfigUtils.getRemoteServerAddress();
         return new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
-                .addConverterFactory(factory)
-                .build()
-                .create(ApiService.class);
+            .baseUrl(baseUrl)
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
+            .addConverterFactory(factory)
+            .build()
+            .create(ApiService.class);
     }
 
     @Provides
@@ -46,6 +46,12 @@ abstract class AppModule {
     @Singleton
     static FirebaseAuth providesFirebaseAuth() {
         return FirebaseAuth.getInstance();
+    }
+
+    @Provides
+    @Singleton
+    static RemoteConfigUtils providesFirebaseRemoteConfig() {
+        return new RemoteConfigUtils();
     }
 
     @Provides

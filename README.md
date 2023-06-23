@@ -38,14 +38,12 @@ git clone https://github.com/edufelip/finn.git
 ### Keystores:
 Create `gradle.properties` with the following info:
 ```gradle
-BACKEND_IP="..."
 FIREBASE_GOOGLE_ID="..."
 ```
 And set these keys properly in `build.gradle` (Module):
 ```
 android {
   defaultConfig {
-    buildConfigField("String", "BACKEND_IP", BACKEND_IP)
     buildConfigField("String", "FIREBASE_GOOGLE_ID", FIREBASE_GOOGLE_ID)
   }
 }

@@ -3,14 +3,10 @@ package com.projects.finn.adapters;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,14 +14,14 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
-import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.databinding.RecyclerPostBinding;
 import com.projects.finn.models.Community;
+import com.projects.finn.models.Post;
 import com.projects.finn.ui.activities.CommunityActivity;
 import com.projects.finn.ui.activities.PostActivity;
-import com.projects.finn.models.Post;
 import com.projects.finn.utils.PostDiffUtil;
+import com.projects.finn.utils.RemoteConfigUtils;
 
 import java.util.ArrayList;
 import java.util.stream.Collector;
@@ -39,6 +35,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
     private ArrayList<Post> posts;
     private Context context;
     private RecyclerClickListener recyclerClickListener;
+    @Inject
+    RemoteConfigUtils remoteConfigUtils;
 
     public FeedRecyclerAdapter(Context context, ArrayList<Post> posts, RecyclerClickListener recyclerClickListener, RequestManager glide) {
         this.context = context;
@@ -64,7 +62,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         return posts.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         RecyclerPostBinding binding;
         Dialog userPopup;
         RecyclerClickListener recyclerClickListener;
@@ -86,19 +84,19 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             binding.likesCount.setText(String.valueOf(post.getLikes_count()));
             binding.commentsCount.setText(String.valueOf(post.getComments_count()));
             binding.likeButton.setChecked(false);
-            if(post.isLiked()) {
+            if (post.isLiked()) {
                 binding.likeButton.setChecked(true);
             }
 
             binding.postImage.setImageDrawable(null);
             binding.communityPictureIcon.setImageDrawable(null);
             glide.clear(binding.communityPictureIcon);
-            glide.load(BuildConfig.BACKEND_IP + "/" + post.getCommunity_image()).into(binding.communityPictureIcon);
+            glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + post.getCommunity_image()).into(binding.communityPictureIcon);
             String image = post.getImage();
-            if(image != null) {
-                binding.postImage.layout(0,0,0,0);
+            if (image != null) {
+                binding.postImage.layout(0, 0, 0, 0);
                 glide.clear(binding.postImage);
-                glide.load(BuildConfig.BACKEND_IP + "/" + image).into(binding.postImage);
+                glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + image).into(binding.postImage);
             }
         }
 
@@ -134,7 +132,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 //                openUserPopup();
             });
             binding.likeButton.setOnClickListener(v -> {
-                if(binding.likeButton.isChecked()) {
+                if (binding.likeButton.isChecked()) {
                     likePost();
                 } else {
                     dislikePost();
@@ -204,11 +202,11 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     public void updatePostActivityResult(Post post) {
         Post result = posts.stream()
-                .filter(element -> element.getId() == post.getId())
-                .collect(toSingleton());
+            .filter(element -> element.getId() == post.getId())
+            .collect(toSingleton());
         int index = posts.indexOf(result);
 
-        if(post.getUser_id() != null && post.getUser_id().equals("-2")) {
+        if (post.getUser_id() != null && post.getUser_id().equals("-2")) {
             posts.remove(result);
             notifyItemRemoved(index);
             return;
@@ -220,20 +218,23 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
     public <T> Collector<T, ?, T> toSingleton() {
         return Collectors.collectingAndThen(
-                Collectors.toList(),
-                list -> {
-                    if (list.size() != 1) {
-                        throw new IllegalStateException();
-                    }
-                    return list.get(0);
+            Collectors.toList(),
+            list -> {
+                if (list.size() != 1) {
+                    throw new IllegalStateException();
                 }
+                return list.get(0);
+            }
         );
     }
 
     public interface RecyclerClickListener {
         void onItemClick(int position);
+
         void onDeleteClick(int position);
+
         void onLikePost(int position);
+
         void onDislikePost(int position);
     }
 
