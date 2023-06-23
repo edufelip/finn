@@ -8,12 +8,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.projects.finn.BuildConfig;
 import com.projects.finn.R;
 import com.projects.finn.databinding.ActivityAuthBinding;
 import com.projects.finn.data.repositories.UserRepository;
+import com.projects.finn.utils.RemoteConfigUtils;
 import com.projects.finn.utils.Verify;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -46,6 +48,8 @@ public class AuthActivity extends AppCompatActivity {
     FirebaseAuth auth;
     @Inject
     UserRepository userRepository;
+    @Inject
+    RemoteConfigUtils remoteConfigUtils;
     public static Activity authActivity;
     private ActivityAuthBinding binding;
     private GoogleSignInClient mGoogleSignInClient;
@@ -61,6 +65,7 @@ public class AuthActivity extends AppCompatActivity {
         createGoogleRequest();
         createFacebookRequest();
         setClickListeners();
+        checkRemoteConfig();
 
         TextView tv = (TextView) binding.googleSignInButton.getChildAt(0);
         tv.setText(getString(R.string.signgoogle));
@@ -194,5 +199,10 @@ public class AuthActivity extends AppCompatActivity {
     public void mainPageRedirect() {
         startActivity(new Intent(this, MainPageActivity.class));
         finish();
+    }
+
+    private void checkRemoteConfig() {
+        boolean isFacebookAuthEnabled = remoteConfigUtils.getIsFacebookAuthEnabled();
+        if (isFacebookAuthEnabled) binding.flFacebookAuthButton.setVisibility(View.VISIBLE);
     }
 }

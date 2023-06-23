@@ -27,5 +27,10 @@ public class RemoteConfigUtils {
         return remote.getString(KEY_REMOTE_SERVER);
     }
 
+    public boolean getIsFacebookAuthEnabled() {
+        return remote.getBoolean(IS_FACEBOOK_AUTH_ENABLED);
+    }
+
     private static final String KEY_REMOTE_SERVER = "remote_server";
+    private static final String IS_FACEBOOK_AUTH_ENABLED = "is_facebook_auth_enabled";
 }
