@@ -167,8 +167,8 @@ public class CommunityViewModel extends ViewModel {
                     @Override
                     public Post apply(Post post) throws Throwable {
                         if(communityExtra.getValue() != null) {
-                            post.setCommunity_title(communityExtra.getValue().getTitle());
-                            post.setCommunity_image(communityExtra.getValue().getImage());
+                            post.setCommunityTitle(communityExtra.getValue().getTitle());
+                            post.setCommunityImage(communityExtra.getValue().getImage());
                         }
                         return post;
                     }
@@ -198,12 +198,12 @@ public class CommunityViewModel extends ViewModel {
     }
 
     private Observable<Post> getPostUserObservable(final Post post) {
-        return userRepository.getUser(post.getUser_id())
+        return userRepository.getUser(post.getUserId())
                 .toObservable()
                 .map(new Function<User, Post>() {
                     @Override
                     public Post apply(User user) throws Throwable {
-                        post.setUser_name(user.getName());
+                        post.setUserName(user.getName());
                         return post;
                     }
                 })
@@ -216,7 +216,7 @@ public class CommunityViewModel extends ViewModel {
                 .map(new Function<List<Comment>, Post>() {
                     @Override
                     public Post apply(List<Comment> comments) throws Throwable {
-                        post.setComments_count(comments.size());
+                        post.setCommentsCount(comments.size());
                         post.setComments(comments);
                         return post;
                     }
@@ -230,7 +230,7 @@ public class CommunityViewModel extends ViewModel {
                 .map(new Function<Integer, Post>() {
                     @Override
                     public Post apply(Integer integer) throws Throwable {
-                        post.setLikes_count(integer);
+                        post.setLikesCount(integer);
                         return post;
                     }
                 })
@@ -251,8 +251,8 @@ public class CommunityViewModel extends ViewModel {
 
     public void subscribeToCommunity(String userId, int communityId) {
         Subscription subscription = new Subscription();
-        subscription.setCommunity_id(communityId);
-        subscription.setUser_id(userId);
+        subscription.setCommunityId(communityId);
+        subscription.setUserId(userId);
         communityRepository.subscribeToCommunity(subscription)
                 .toObservable()
                 .subscribeOn(Schedulers.io())
@@ -284,8 +284,8 @@ public class CommunityViewModel extends ViewModel {
 
     public void unsubscribeFromCommunity(String userId, int communityId) {
         Subscription subscription = new Subscription();
-        subscription.setCommunity_id(communityId);
-        subscription.setUser_id(userId);
+        subscription.setCommunityId(communityId);
+        subscription.setUserId(userId);
         communityRepository.unsubscribeFromCommunity(subscription)
                 .toObservable()
                 .subscribeOn(Schedulers.io())
@@ -319,8 +319,8 @@ public class CommunityViewModel extends ViewModel {
 
     public void getSubscription(String userId, int communityId) {
         Subscription subscription = new Subscription();
-        subscription.setCommunity_id(communityId);
-        subscription.setUser_id(userId);
+        subscription.setCommunityId(communityId);
+        subscription.setUserId(userId);
         communityRepository.getSubscription(userId, communityId)
                 .toObservable()
                 .subscribeOn(Schedulers.io())
@@ -349,7 +349,7 @@ public class CommunityViewModel extends ViewModel {
     }
 
     public void deleteCommunity(String userId, Community community) {
-        if(userId.equals(community.getUser_id())){
+        if(userId.equals(community.getUserId())){
             communityRepository.deleteCommunity(community.getId())
                 .toObservable()
                 .subscribeOn(Schedulers.io())

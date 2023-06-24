@@ -103,13 +103,13 @@ public class PostActivityViewModel extends ViewModel {
     }
 
     private Observable<Comment> getCommentUser(Comment comment) {
-        return userRepository.getUser(comment.getUser_id())
+        return userRepository.getUser(comment.getUserId())
                 .toObservable()
                 .map(new Function<User, Comment>() {
                     @Override
                     public Comment apply(User user) throws Throwable {
-                        comment.setUser_name(user.getName());
-                        comment.setUser_image(user.getPhoto());
+                        comment.setUserName(user.getName());
+                        comment.setUserImage(user.getPhoto());
                         return comment;
                     }
                 })
@@ -147,7 +147,7 @@ public class PostActivityViewModel extends ViewModel {
     }
 
     public void deletePost(String userId, Post post) {
-        if(post.getUser_id().equals(userId)) {
+        if(post.getUserId().equals(userId)) {
             postRepository.deletePost(post.getId())
                     .toObservable()
                     .subscribeOn(Schedulers.io())

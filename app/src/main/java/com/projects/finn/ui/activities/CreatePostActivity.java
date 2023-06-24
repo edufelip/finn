@@ -169,8 +169,8 @@ public class CreatePostActivity extends AppCompatActivity {
 
         Post post = new Post();
         post.setContent(binding.postTextarea.getText().toString());
-        post.setCommunity_id(commId);
-        post.setUser_id(userId);
+        post.setCommunityId(commId);
+        post.setUserId(userId);
 
 
         Bitmap bitmap = binding.postImage.getDrawable() != null ? ((BitmapDrawable)binding.postImage.getDrawable()).getBitmap() : null;

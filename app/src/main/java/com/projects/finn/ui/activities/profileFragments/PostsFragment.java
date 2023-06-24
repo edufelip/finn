@@ -3,6 +3,10 @@ package com.projects.finn.ui.activities.profileFragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -13,21 +17,16 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
-
-import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
 import com.projects.finn.databinding.FragmentPostsBinding;
+import com.projects.finn.domain.models.Post;
 import com.projects.finn.domain.models.User;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.ui.adapters.FeedRecyclerAdapter;
-import com.projects.finn.domain.models.Post;
 import com.projects.finn.ui.viewmodels.PostsFragmentViewModel;
 import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
+import com.projects.finn.utils.extensions.GlideUtils;
 
 import java.util.ArrayList;
 
@@ -36,9 +35,9 @@ import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class PostsFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener  {
+public class PostsFragment extends Fragment implements FeedRecyclerAdapter.RecyclerClickListener {
     @Inject
-    RequestManager glide;
+    GlideUtils glideUtils;
     @Inject
     FirebaseAuth auth;
     private SharedLikeViewModel mSharedLikeViewModel;
@@ -57,7 +56,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     }
 
     public void initializeRecyclerView() {
-        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
+        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this, glideUtils);
         binding.postsRecyclerview.setAdapter(feedRecyclerAdapter);
         binding.postsRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -84,30 +83,30 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
         mPostsFragmentViewModel.getUserPosts(id, 1);
 
         mSharedLikeViewModel.observeLike().observe(getViewLifecycleOwner(), like -> {
-            if(like.getId() == -1) {
+            if (like.getId() == -1) {
                 Toast.makeText(getContext(), getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     ActivityResultLauncher<Intent> postActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            Post post = data.getParcelableExtra("post");
-                            feedRecyclerAdapter.updatePostActivityResult(post);
-                        }
+        new ActivityResultContracts.StartActivityForResult(),
+        new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        Post post = data.getParcelableExtra("post");
+                        feedRecyclerAdapter.updatePostActivityResult(post);
                     }
                 }
             }
+        }
     );
 
     public void checkEmptyRecycler(int size) {
-        if(size == 0) {
+        if (size == 0) {
             binding.postsRecyclerview.setVisibility(View.GONE);
             binding.emptyRecyclerState.setVisibility(View.VISIBLE);
         } else {
@@ -134,7 +133,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     public void onLikePost(int position) {
         Post post = posts.get(position);
         post.setLiked(true);
-        post.setLikes_count(post.getLikes_count() + 1);
+        post.setLikesCount(post.getLikesCount() + 1);
         feedRecyclerAdapter.updatePost(post);
         feedRecyclerAdapter.notifyItemChanged(position);
         String id = auth.getCurrentUser().getUid();
@@ -145,7 +144,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     public void onDislikePost(int position) {
         Post post = posts.get(position);
         post.setLiked(true);
-        post.setLikes_count(post.getLikes_count() - 1);
+        post.setLikesCount(post.getLikesCount() - 1);
         feedRecyclerAdapter.updatePost(post);
         feedRecyclerAdapter.notifyItemChanged(position);
         User user = new User();

@@ -23,10 +23,7 @@ public class FragmentsAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        switch (position) {
-            default:
-                return fragments.get(0);
-        }
+        return fragments.get(0);
     }
 
     @Override

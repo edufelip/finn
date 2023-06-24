@@ -76,9 +76,9 @@ class HomeFragment : Fragment(), FeedRecyclerAdapter.RecyclerClickListener {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         initializeViewModel()
         loadUserPhoto()
-        savedInstanceState?.let {
-            checkLoggedUser()
-            mHomeFragmentViewModel.getPosts(auth.currentUser?.uid, nextPage, false)
+        if(savedInstanceState == null) {
+            checkLoggedUser();
+            mHomeFragmentViewModel.getPosts(auth.currentUser?.uid, nextPage, false);
         }
         initializeRecyclerView()
         setClickListeners()
@@ -168,7 +168,7 @@ class HomeFragment : Fragment(), FeedRecyclerAdapter.RecyclerClickListener {
 
     private fun initializeRecyclerView() {
         posts = ArrayList()
-        feedRecyclerAdapter = FeedRecyclerAdapter(context, posts, this)
+        feedRecyclerAdapter = FeedRecyclerAdapter(context, posts, this, glideUtils)
         binding.feedRecyclerView.apply {
             adapter = feedRecyclerAdapter
             layoutManager = LinearLayoutManager(context)
@@ -197,7 +197,7 @@ class HomeFragment : Fragment(), FeedRecyclerAdapter.RecyclerClickListener {
                         (isNotLoadingNotLastPage && isAtLastItem && isNotAtBeginning
                                 && isTotalMoreThanVisible && isScrolling && isListFullOrOdd)
                     if (shouldPaginate) {
-                        mHomeFragmentViewModel.getPosts(user!!.id, nextPage, false)
+                        mHomeFragmentViewModel.getPosts(user?.id, nextPage, false)
                         isScrolling = false
                         isLoading = true
                     } else {
@@ -215,18 +215,22 @@ class HomeFragment : Fragment(), FeedRecyclerAdapter.RecyclerClickListener {
 
     private fun setSwipeRefresh() {
         binding.swipeLayout.setOnRefreshListener {
-            mHomeFragmentViewModel.getPosts(
-                user?.id,
-                1,
-                true
-            )
+            user?.id.let {
+                mHomeFragmentViewModel.getPosts(
+                    it,
+                    1,
+                    true
+                )
+            }
         }
         binding.emptyRecyclerLayout.setOnRefreshListener {
-            mHomeFragmentViewModel.getPosts(
-                user!!.id,
-                1,
-                true
-            )
+            user?.id?.let {
+                mHomeFragmentViewModel.getPosts(
+                    it,
+                    1,
+                    true
+                )
+            }
         }
     }
 
@@ -261,7 +265,7 @@ class HomeFragment : Fragment(), FeedRecyclerAdapter.RecyclerClickListener {
     override fun onLikePost(position: Int) {
         val post = posts?.getOrNull(position)
         post?.isLiked = true
-        post?.likes_count = post?.likes_count?.plus(1) ?: 0
+        post?.likesCount = post?.likesCount?.plus(1) ?: 0
         feedRecyclerAdapter?.updatePost(post)
         feedRecyclerAdapter?.notifyItemChanged(position)
         posts?.getOrNull(position)?.id?.let {
@@ -272,7 +276,7 @@ class HomeFragment : Fragment(), FeedRecyclerAdapter.RecyclerClickListener {
     override fun onDislikePost(position: Int) {
         val post = posts!![position]
         post.isLiked = false
-        post.likes_count = post.likes_count - 1
+        post.likesCount = post.likesCount - 1
         feedRecyclerAdapter?.updatePost(post)
         feedRecyclerAdapter?.notifyItemChanged(position)
         posts?.getOrNull(position)?.id?.let {

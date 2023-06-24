@@ -7,6 +7,8 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.projects.finn.BuildConfig
 import com.projects.finn.R
 import com.projects.finn.data.network.ApiService
@@ -21,9 +23,12 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -33,15 +38,31 @@ internal object AppModule {
     @Singleton
     fun providesBackendApi(
         factory: GsonConverterFactory,
-        remoteConfigUtils: RemoteConfigUtils
+        remoteConfigUtils: RemoteConfigUtils,
+        okHttpClient: OkHttpClient
     ): ApiService {
         val baseUrl = remoteConfigUtils.remoteServerAddress
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .addConverterFactory(factory)
+            .client(okHttpClient)
             .build()
             .create(ApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesOkHttpClient(): OkHttpClient {
+        val logger = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        val okHttpClient = OkHttpClient.Builder().apply {
+            if (BuildConfig.DEBUG) addInterceptor(logger)
+        }
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .writeTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .build()
+        return okHttpClient
     }
 
     @Provides

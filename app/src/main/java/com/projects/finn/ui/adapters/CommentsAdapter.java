@@ -12,6 +12,7 @@ import com.bumptech.glide.RequestManager;
 import com.projects.finn.databinding.RecyclerCommentBinding;
 import com.projects.finn.domain.models.Comment;
 import com.projects.finn.utils.CommentDiffUtil;
+import com.projects.finn.utils.extensions.GlideUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,14 +21,14 @@ import java.util.Locale;
 import javax.inject.Inject;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyViewHolder> {
-    @Inject
-    RequestManager glide;
+    private final GlideUtils glideUtils;
     private final Context context;
     private ArrayList<Comment> comments;
 
-    public CommentsAdapter(Context context, ArrayList<Comment> comments) {
+    public CommentsAdapter(Context context, ArrayList<Comment> comments, GlideUtils glideUtils) {
         this.context = context;
         this.comments = comments;
+        this.glideUtils = glideUtils;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -39,10 +40,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         }
 
         public void bind(Comment comment) {
-            if (comment.getUser_image() != null) {
-                glide.load(comment.getUser_image()).into(binding.userIcon);
+            if (comment.getUserImage() != null) {
+                glideUtils.load(comment.getUserImage(), binding.userIcon);
             }
-            binding.tvUserName.setText(comment.getUser_name());
+            binding.tvUserName.setText(comment.getUserName());
             binding.tvContent.setText(comment.getContent());
 
             SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("LLLL yyyy", Locale.getDefault());

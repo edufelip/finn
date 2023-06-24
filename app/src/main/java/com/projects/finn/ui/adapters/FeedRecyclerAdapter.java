@@ -20,29 +20,29 @@ import com.projects.finn.domain.models.Post;
 import com.projects.finn.ui.activities.CommunityActivity;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.utils.PostDiffUtil;
-import com.projects.finn.utils.RemoteConfigUtils;
 import com.projects.finn.utils.extensions.GlideUtils;
 
 import java.util.ArrayList;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-
 
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.MyViewHolder> {
-    @Inject
-    RemoteConfigUtils remoteConfigUtils;
-    @Inject
-    GlideUtils glideUtils;
+    private final GlideUtils glideUtils;
     private ArrayList<Post> posts;
     private final Context context;
     private final RecyclerClickListener recyclerClickListener;
 
-    public FeedRecyclerAdapter(Context context, ArrayList<Post> posts, RecyclerClickListener recyclerClickListener) {
+    public FeedRecyclerAdapter(
+        Context context,
+        ArrayList<Post> posts,
+        RecyclerClickListener recyclerClickListener,
+        GlideUtils glideUtils
+    ) {
         this.context = context;
         this.posts = posts;
         this.recyclerClickListener = recyclerClickListener;
+        this.glideUtils = glideUtils;
     }
 
     @NonNull
@@ -71,18 +71,17 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             super(b.getRoot());
             this.binding = b;
             this.recyclerClickListener = recyclerClickListener;
-            setupClickListeners(itemView);
             itemView.setOnClickListener(this);
             userPopup = new Dialog(itemView.getContext());
         }
 
         public void bind(Post post) {
-            String source = context.getResources().getString(R.string.posted_by) + " " + post.getUser_name();
+            String source = context.getResources().getString(R.string.posted_by) + " " + post.getUserName();
             binding.postContent.setText(post.getContent());
             binding.postSource.setText(source);
-            binding.postCommunity.setText(post.getCommunity_title());
-            binding.likesCount.setText(String.valueOf(post.getLikes_count()));
-            binding.commentsCount.setText(String.valueOf(post.getComments_count()));
+            binding.postCommunity.setText(post.getCommunityTitle());
+            binding.likesCount.setText(String.valueOf(post.getLikesCount()));
+            binding.commentsCount.setText(String.valueOf(post.getCommentsCount()));
             binding.likeButton.setChecked(false);
             if (post.isLiked()) {
                 binding.likeButton.setChecked(true);
@@ -91,13 +90,15 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             binding.postImage.setImageDrawable(null);
             binding.communityPictureIcon.setImageDrawable(null);
             glideUtils.glideClear(binding.communityPictureIcon);
-            glideUtils.loadFromServer(post.getCommunity_image(), binding.communityPictureIcon);
+            glideUtils.loadFromServer(post.getCommunityImage(), binding.communityPictureIcon);
             String image = post.getImage();
             if (image != null) {
                 binding.postImage.layout(0, 0, 0, 0);
                 glideUtils.glideClear(binding.postImage);
                 glideUtils.loadFromServer(image, binding.postImage);
             }
+
+            setupClickListeners(itemView, post);
         }
 
         @Override
@@ -105,7 +106,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             recyclerClickListener.onItemClick(getAbsoluteAdapterPosition());
         }
 
-        public void setupClickListeners(View itemView) {
+        public void setupClickListeners(View itemView, Post post) {
             binding.textViewOptions.setOnClickListener(v -> {
                 PopupMenu popupMenu = new PopupMenu(itemView.getContext(), binding.textViewOptions);
                 popupMenu.inflate(R.menu.recycler_options_menu);
@@ -138,8 +139,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
                     dislikePost();
                 }
             });
-            binding.commentButton.setOnClickListener(v -> openPostActivity());
-            binding.commentsCount.setOnClickListener(v -> openPostActivity());
+            binding.commentButton.setOnClickListener(v -> openPostActivity(post));
+            binding.commentsCount.setOnClickListener(v -> openPostActivity(post));
             binding.shareButton.setOnClickListener(v -> sharePost());
             binding.shareText.setOnClickListener(v -> sharePost());
         }
@@ -148,15 +149,16 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             Intent intent = new Intent(itemView.getContext(), CommunityActivity.class);
             Post post = posts.get(getAbsoluteAdapterPosition());
             Community community = new Community();
-            community.setId(post.getCommunity_id());
-            community.setTitle(post.getCommunity_title());
-            community.setImage(post.getCommunity_image());
+            community.setId(post.getCommunityId());
+            community.setTitle(post.getCommunityTitle());
+            community.setImage(post.getCommunityImage());
             intent.putExtra("community", community);
             itemView.getContext().startActivity(intent);
         }
 
-        public void openPostActivity() {
+        public void openPostActivity(Post post) {
             Intent intent = new Intent(itemView.getContext(), PostActivity.class);
+            intent.putExtra("post", post);
             itemView.getContext().startActivity(intent);
         }
 
@@ -196,7 +198,7 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             .collect(toSingleton());
 
         int index = posts.indexOf(result);
-        if (post.getUser_id() != null && post.getUser_id().equals("-2")) {
+        if (post.getUserId() != null && post.getUserId().equals("-2")) {
             posts.remove(result);
             notifyItemRemoved(index);
             return;

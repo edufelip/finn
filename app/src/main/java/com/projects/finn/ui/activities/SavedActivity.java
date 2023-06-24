@@ -1,14 +1,14 @@
 package com.projects.finn.ui.activities;
 
+import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.os.Bundle;
-
-import com.bumptech.glide.RequestManager;
 import com.projects.finn.databinding.ActivitySavedBinding;
-import com.projects.finn.ui.adapters.FeedRecyclerAdapter;
 import com.projects.finn.domain.models.Post;
+import com.projects.finn.ui.adapters.FeedRecyclerAdapter;
+import com.projects.finn.utils.extensions.GlideUtils;
 
 import java.util.ArrayList;
 
@@ -19,7 +19,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class SavedActivity extends AppCompatActivity implements FeedRecyclerAdapter.RecyclerClickListener {
     @Inject
-    RequestManager glide;
+    GlideUtils glideUtils;
     private ActivitySavedBinding binding;
 
     @Override
@@ -34,7 +34,12 @@ public class SavedActivity extends AppCompatActivity implements FeedRecyclerAdap
 
     public void initializeRecyclerView() {
         ArrayList<Post> posts = new ArrayList<>();
-        FeedRecyclerAdapter feedRecyclerAdapter = new FeedRecyclerAdapter(this, posts, this);
+        FeedRecyclerAdapter feedRecyclerAdapter = new FeedRecyclerAdapter(
+            this,
+            posts,
+            this,
+            glideUtils
+        );
         binding.savedRecyclerview.setAdapter(feedRecyclerAdapter);
         binding.savedRecyclerview.setLayoutManager(new LinearLayoutManager(this));
     }

@@ -2,11 +2,13 @@ package com.projects.finn.domain.models;
 
 import androidx.annotation.Keep;
 
+import com.google.gson.annotations.SerializedName;
+
 @Keep
 public class Subscription {
     private int id;
-    private String user_id;
-    private int community_id;
+    @SerializedName("user_id") private String userId;
+    @SerializedName("community_id") private int communityId;
 
     public int getId() {
         return id;
@@ -16,19 +18,19 @@ public class Subscription {
         this.id = id;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public int getCommunity_id() {
-        return community_id;
+    public int getCommunityId() {
+        return communityId;
     }
 
-    public void setCommunity_id(int community_id) {
-        this.community_id = community_id;
+    public void setCommunityId(int communityId) {
+        this.communityId = communityId;
     }
 }

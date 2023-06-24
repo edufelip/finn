@@ -27,7 +27,7 @@ import com.projects.finn.domain.models.Community
 import com.projects.finn.ui.viewmodels.CreateCommunityViewModel
 import com.projects.finn.utils.extensions.shortToast
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.io.ByteArrayOutputStream
@@ -100,7 +100,7 @@ class CreateCommunityActivity : AppCompatActivity() {
             val createComm = Community().apply {
                 title = binding.createCommunityNameInput.text.toString()
                 description = binding.createCommunityAboutInput.text.toString()
-                user_id = auth.currentUser!!.uid
+                userId = auth.currentUser!!.uid
             }
             val bitmap =
                 (binding.createCommunityIcon.drawable as BitmapDrawable).bitmap
@@ -236,7 +236,7 @@ class CreateCommunityActivity : AppCompatActivity() {
 
     private fun buildImageBodyPart(fileName: String, bitmap: Bitmap): MultipartBody.Part {
         val leftImageFile = convertBitmapToFile(fileName, bitmap)
-        val reqFile = RequestBody.create(MediaType.parse("image/*"), leftImageFile)
+        val reqFile = RequestBody.create("image/*".toMediaTypeOrNull(), leftImageFile)
         return MultipartBody.Part.createFormData(fileName, leftImageFile.name, reqFile)
     }
 

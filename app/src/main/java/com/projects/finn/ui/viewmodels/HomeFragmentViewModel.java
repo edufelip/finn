@@ -207,14 +207,14 @@ public class HomeFragmentViewModel extends ViewModel {
     }
 
     private Observable<Post> getCommunityPostObservable(final Post post) {
-        return communityRepository.getCommunity(post.getCommunity_id())
+        return communityRepository.getCommunity(post.getCommunityId())
                 .toObservable()
                 .map(new Function<Community, Post>() {
                     @Override
                     public Post apply(Community community) throws Throwable {
-                        post.setCommunity_image(community.getImage());
-                        post.setCommunity_title(community.getTitle());
-                        post.setCommunity_id(community.getId());
+                        post.setCommunityImage(community.getImage());
+                        post.setCommunityTitle(community.getTitle());
+                        post.setCommunityId(community.getId());
                         return post;
                     }
                 })
@@ -227,7 +227,7 @@ public class HomeFragmentViewModel extends ViewModel {
                 .map(new Function<Integer, Post>() {
                     @Override
                     public Post apply(Integer integer) throws Throwable {
-                        post.setLikes_count(integer);
+                        post.setLikesCount(integer);
                         return post;
                     }
                 })
@@ -240,7 +240,7 @@ public class HomeFragmentViewModel extends ViewModel {
                 .map(new Function<List<Comment>, Post>() {
                     @Override
                     public Post apply(List<Comment> comments) throws Throwable {
-                        post.setComments_count(comments.size());
+                        post.setCommentsCount(comments.size());
                         post.setComments(comments);
                         return post;
                     }
@@ -249,12 +249,12 @@ public class HomeFragmentViewModel extends ViewModel {
     }
 
     private Observable<Post> getPostUserObservable(final Post post) {
-        return userRepository.getUser(post.getUser_id())
+        return userRepository.getUser(post.getUserId())
                 .toObservable()
                 .map(new Function<User, Post>() {
                     @Override
                     public Post apply(User user) throws Throwable {
-                        post.setUser_name(user.getName());
+                        post.setUserName(user.getName());
                         return post;
                     }
                 })

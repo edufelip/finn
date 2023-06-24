@@ -32,8 +32,8 @@ public class SharedLikeViewModel extends ViewModel {
 
     public void likePost(int postId, String userId) {
         Like like = new Like();
-        like.setUser_id(userId);
-        like.setPost_id(postId);
+        like.setUserId(userId);
+        like.setPostId(postId);
         postRepository.likePost(like)
                 .toObservable()
                 .subscribeOn(Schedulers.io())

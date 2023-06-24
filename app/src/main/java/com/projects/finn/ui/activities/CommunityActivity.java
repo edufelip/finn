@@ -174,7 +174,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
 
     public void checkAdmin() {
         if (auth.getCurrentUser() != null) {
-            if (community.getUser_id().equals(auth.getCurrentUser().getUid())) {
+            if (community.getUserId().equals(auth.getCurrentUser().getUid())) {
                 binding.textViewOptions.setVisibility(View.VISIBLE);
             }
         }
@@ -182,7 +182,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
 
     public void initializeRecyclerView() {
         this.posts = new ArrayList<>();
-        feedRecyclerAdapter = new FeedRecyclerAdapter(this, posts, this);
+        feedRecyclerAdapter = new FeedRecyclerAdapter(this, posts, this, glideUtils);
         binding.recyclerCommunityPosts.setAdapter(feedRecyclerAdapter);
         binding.recyclerCommunityPosts.setLayoutManager(new LinearLayoutManager(this));
         // implement pagination
@@ -220,7 +220,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
                         dialog.setTitle(getResources().getString(R.string.delete_community));
                         dialog.setMessage(getResources().getString(R.string.are_you_sure_delete_community));
                         dialog.setPositiveButton(getResources().getString(R.string.yes), (dialogInterface, i) -> {
-                            mCommunityViewModel.deleteCommunity(auth.getCurrentUser().getUid(), community);
+                            mCommunityViewModel.deleteCommunity(Objects.requireNonNull(auth.getCurrentUser()).getUid(), community);
                         });
                         dialog.setNegativeButton(getResources().getString(R.string.no), null);
                         dialog.show();
@@ -272,7 +272,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
     public void onLikePost(int position) {
         Post post = posts.get(position);
         post.setLiked(true);
-        post.setLikes_count(post.getLikes_count() + 1);
+        post.setLikesCount(post.getLikesCount() + 1);
         feedRecyclerAdapter.updatePost(post);
         feedRecyclerAdapter.notifyItemChanged(position);
         String id = auth.getCurrentUser().getUid();
@@ -283,7 +283,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
     public void onDislikePost(int position) {
         Post post = posts.get(position);
         post.setLiked(true);
-        post.setLikes_count(post.getLikes_count() - 1);
+        post.setLikesCount(post.getLikesCount() - 1);
         feedRecyclerAdapter.updatePost(post);
         feedRecyclerAdapter.notifyItemChanged(position);
         User user = new User();

@@ -81,7 +81,7 @@ public class PostsFragmentViewModel extends ViewModel {
                 .flatMap((Function<Post, ObservableSource<Post>>) post -> getIsPostLiked(post, userId))
                 .map(post -> {
                     if(_userName.getValue() != null) {
-                        post.setUser_name(_userName.getValue());
+                        post.setUserName(_userName.getValue());
                     }
                     return post;
                 })
@@ -110,11 +110,11 @@ public class PostsFragmentViewModel extends ViewModel {
     }
 
     private Observable<Post> getPostCommunityObservable(final Post post) {
-        return communityRepository.getCommunity(post.getCommunity_id())
+        return communityRepository.getCommunity(post.getCommunityId())
                 .toObservable()
                 .map(community -> {
-                    post.setCommunity_title(community.getTitle());
-                    post.setCommunity_image(community.getImage());
+                    post.setCommunityTitle(community.getTitle());
+                    post.setCommunityImage(community.getImage());
                     return post;
                 })
                 .subscribeOn(Schedulers.io());
@@ -124,7 +124,7 @@ public class PostsFragmentViewModel extends ViewModel {
         return commentRepository.getCommentsPost(post.getId())
                 .toObservable()
                 .map(comments -> {
-                    post.setComments_count(comments.size());
+                    post.setCommentsCount(comments.size());
                     post.setComments(comments);
                     return post;
                 })
@@ -135,7 +135,7 @@ public class PostsFragmentViewModel extends ViewModel {
         return postRepository.getPostLikes(post.getId())
                 .toObservable()
                 .map(integer -> {
-                    post.setLikes_count(integer);
+                    post.setLikesCount(integer);
                     return post;
                 })
                 .subscribeOn(Schedulers.io());
