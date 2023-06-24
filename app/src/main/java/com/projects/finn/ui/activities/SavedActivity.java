@@ -21,8 +21,6 @@ public class SavedActivity extends AppCompatActivity implements FeedRecyclerAdap
     @Inject
     RequestManager glide;
     private ActivitySavedBinding binding;
-    private FeedRecyclerAdapter feedRecyclerAdapter;
-    private ArrayList<Post> posts;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +33,8 @@ public class SavedActivity extends AppCompatActivity implements FeedRecyclerAdap
     }
 
     public void initializeRecyclerView() {
-        posts = new ArrayList<Post>();
-        feedRecyclerAdapter = new FeedRecyclerAdapter(this, posts, this, glide);
+        ArrayList<Post> posts = new ArrayList<>();
+        FeedRecyclerAdapter feedRecyclerAdapter = new FeedRecyclerAdapter(this, posts, this);
         binding.savedRecyclerview.setAdapter(feedRecyclerAdapter);
         binding.savedRecyclerview.setLayoutManager(new LinearLayoutManager(this));
     }

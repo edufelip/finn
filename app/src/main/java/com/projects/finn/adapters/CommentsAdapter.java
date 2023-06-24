@@ -2,7 +2,6 @@ package com.projects.finn.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -10,29 +9,25 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.RequestManager;
-import com.projects.finn.BuildConfig;
 import com.projects.finn.databinding.RecyclerCommentBinding;
 import com.projects.finn.models.Comment;
-import com.projects.finn.models.Post;
 import com.projects.finn.utils.CommentDiffUtil;
-import com.projects.finn.utils.PostDiffUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyViewHolder> {
-    private Context context;
+    @Inject
+    RequestManager glide;
+    private final Context context;
     private ArrayList<Comment> comments;
-    private RequestManager glide;
 
-    public CommentsAdapter(Context context, ArrayList<Comment> comments, RequestManager glide) {
+    public CommentsAdapter(Context context, ArrayList<Comment> comments) {
         this.context = context;
         this.comments = comments;
-        this.glide = glide;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
@@ -44,7 +39,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         }
 
         public void bind(Comment comment) {
-            if(comment.getUser_image() != null) {
+            if (comment.getUser_image() != null) {
                 glide.load(comment.getUser_image()).into(binding.userIcon);
             }
             binding.tvUserName.setText(comment.getUser_name());
@@ -85,5 +80,4 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.MyView
         comments.set(comments.indexOf(comment), comment);
         notifyItemChanged(comments.indexOf(comment));
     }
-
 }

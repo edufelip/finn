@@ -13,6 +13,7 @@ import com.projects.finn.R;
 import com.projects.finn.databinding.RecyclerTrendingBinding;
 import com.projects.finn.models.Community;
 import com.projects.finn.utils.RemoteConfigUtils;
+import com.projects.finn.utils.extensions.GlideUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -23,18 +24,18 @@ import javax.inject.Inject;
 
 
 public class CommunitySearchAdapter extends RecyclerView.Adapter<CommunitySearchAdapter.MyViewHolder> {
-    private RequestManager glide;
-    private ArrayList<Community> communities;
-    private Context context;
-    private RecyclerClickListener recyclerClickListener;
     @Inject
     RemoteConfigUtils remoteConfigUtils;
+    @Inject
+    GlideUtils glideUtils;
+    private ArrayList<Community> communities;
+    private final Context context;
+    private final RecyclerClickListener recyclerClickListener;
 
     public CommunitySearchAdapter(Context context, ArrayList<Community> communities, RecyclerClickListener recyclerClickListener, RequestManager glide) {
         this.context = context;
         this.communities = communities;
         this.recyclerClickListener = recyclerClickListener;
-        this.glide = glide;
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -59,7 +60,7 @@ public class CommunitySearchAdapter extends RecyclerView.Adapter<CommunitySearch
             binding.tvAbout.setText(description);
             binding.tvFollowers.setText(subscribers);
             String image = community.getImage();
-            glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + image).into(binding.communityIcon);
+            glideUtils.loadFromServer(image, binding.communityIcon);
         }
 
         public void setupClickListeners() {
@@ -101,10 +102,10 @@ public class CommunitySearchAdapter extends RecyclerView.Adapter<CommunitySearch
 
     public void updateCommunityActivityResult(Community community) {
         Community result = communities.stream()
-                .filter(element -> element.getId() == community.getId())
-                .collect(toSingleton());
+            .filter(element -> element.getId() == community.getId())
+            .collect(toSingleton());
         int index = communities.indexOf(result);
-        if(communities.get(index).getSubscribersCount() != community.getSubscribersCount()) {
+        if (communities.get(index).getSubscribersCount() != community.getSubscribersCount()) {
             communities.set(index, community);
             communities.sort(Comparator.comparing(Community::getSubscribersCount).reversed());
             notifyDataSetChanged();
@@ -113,13 +114,13 @@ public class CommunitySearchAdapter extends RecyclerView.Adapter<CommunitySearch
 
     public <T> Collector<T, ?, T> toSingleton() {
         return Collectors.collectingAndThen(
-                Collectors.toList(),
-                list -> {
-                    if (list.size() != 1) {
-                        throw new IllegalStateException();
-                    }
-                    return list.get(0);
+            Collectors.toList(),
+            list -> {
+                if (list.size() != 1) {
+                    throw new IllegalStateException();
                 }
+                return list.get(0);
+            }
         );
     }
 

@@ -4,6 +4,7 @@ import static com.projects.finn.utils.Constants.QUERY_PAGE_SIZE;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.projects.finn.R;
 import com.projects.finn.models.User;
 import com.projects.finn.databinding.FragmentHomeBinding;
@@ -53,7 +55,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     private HomeFragmentViewModel mHomeFragmentViewModel;
     private SharedLikeViewModel mSharedLikeViewModel;
     private boolean isLoading = false;
-    private boolean isLastPage = false;
+    private final boolean isLastPage = false;
     private boolean isScrolling = false;
     private int nextPage = 1;
 
@@ -146,7 +148,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
 
     public void initializeRecyclerView() {
         this.posts = new ArrayList<>();
-        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this, glide);
+        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
         binding.feedRecyclerView.setAdapter(feedRecyclerAdapter);
         binding.feedRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.feedRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -162,9 +164,9 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 LinearLayoutManager layoutManager = (LinearLayoutManager) binding.feedRecyclerView.getLayoutManager();
-                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-                int visibleItemCount = layoutManager.getChildCount();
-                int totalItemCount = layoutManager.getItemCount();
+                int firstVisibleItemPosition = layoutManager != null ? layoutManager.findFirstVisibleItemPosition() : 0;
+                int visibleItemCount = layoutManager != null ? layoutManager.getChildCount() : 0;
+                int totalItemCount = layoutManager != null ? layoutManager.getItemCount() : 0;
 
                 boolean isNotLoadingNotLastPage = !isLoading && !isLastPage;
                 boolean isAtLastItem = firstVisibleItemPosition + visibleItemCount >= totalItemCount;

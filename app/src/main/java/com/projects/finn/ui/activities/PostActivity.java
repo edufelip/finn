@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +17,6 @@ import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
 import com.projects.finn.adapters.CommentsAdapter;
@@ -27,6 +27,7 @@ import com.projects.finn.models.User;
 import com.projects.finn.ui.viewmodels.PostActivityViewModel;
 import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
 import com.projects.finn.utils.RemoteConfigUtils;
+import com.projects.finn.utils.extensions.GlideUtils;
 
 import java.util.ArrayList;
 
@@ -37,7 +38,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class PostActivity extends AppCompatActivity {
     @Inject
-    RequestManager glide;
+    GlideUtils glideUtils;
     @Inject
     FirebaseAuth auth;
     @Inject
@@ -64,7 +65,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
     public void getPostExtras() {
-        post = (Post) getIntent().getParcelableExtra("post");
+        post = getIntent().getParcelableExtra("post");
         if(post != null) {
             binding.postCommunity.setText(post.getCommunity_title());
             String text = getResources().getString(R.string.posted_by) + " " + post.getUser_name();
@@ -73,10 +74,10 @@ public class PostActivity extends AppCompatActivity {
             binding.likesCount.setText(String.valueOf(post.getLikes_count()));
             binding.commentsCount.setText(String.valueOf(post.getComments_count()));
             if(post.getCommunity_image() != null) {
-                glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + post.getCommunity_image()).into(binding.communityPictureIcon);
+                glideUtils.loadFromServer(post.getCommunity_image(), binding.communityPictureIcon);
             }
             if(post.getImage() != null) {
-                glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + post.getImage()).into(binding.postImage);
+                glideUtils.loadFromServer(post.getImage(), binding.postImage);
             }
             if(post.isLiked()) {
                 binding.likeButton.setChecked(true);
@@ -86,7 +87,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
     public void loadUserPhoto() {
-        glide.load(auth.getCurrentUser().getPhotoUrl()).into(binding.userPic);
+        glideUtils.load(auth.getCurrentUser().getPhotoUrl(), binding.postImage);
     }
 
     public void initializeViewModel() {
@@ -98,9 +99,7 @@ public class PostActivity extends AppCompatActivity {
             adapter.setComments(this.comments);
         });
 
-        mPostActivityViewModel.observeUpdatedComment().observe(this, comment -> {
-            adapter.updateComment(comment);
-        });
+        mPostActivityViewModel.observeUpdatedComment().observe(this, comment -> adapter.updateComment(comment));
 
         mPostActivityViewModel.observeCreatedComment().observe(this, createdComment -> {
             if(createdComment.getId() == -1) {
@@ -124,25 +123,22 @@ public class PostActivity extends AppCompatActivity {
                 Toast.makeText(this, getResources().getString(R.string.successfully_deleted), Toast.LENGTH_SHORT).show();
                 this.post.setUser_id("-2");
                 finish();
-                return;
             }
         });
 
         mSharedLikeViewModel.observeLike().observe(this, like -> {
             switch (like.getId()) {
-                case (-1) : {
+                case (-1) -> {
                     Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
                     finish();
-                    break;
                 }
-                case (-2) : {
+                case (-2) -> {
                     int count = post.getLikes_count() - 1;
                     post.setLikes_count(count);
                     post.setLiked(false);
                     binding.likesCount.setText(String.valueOf(count));
-                    break;
                 }
-                default : {
+                default -> {
                     int count = post.getLikes_count() + 1;
                     post.setLikes_count(count);
                     post.setLiked(true);
@@ -156,7 +152,7 @@ public class PostActivity extends AppCompatActivity {
 
     public void initializeRecyclerView() {
         this.comments = new ArrayList<>();
-        adapter = new CommentsAdapter(this, comments, glide);
+        adapter = new CommentsAdapter(this, comments);
         binding.recyclerComments.setAdapter(adapter);
         binding.recyclerComments.setLayoutManager(new LinearLayoutManager(this));
     }
@@ -171,13 +167,9 @@ public class PostActivity extends AppCompatActivity {
 
     @SuppressLint("RestrictedApi")
     public void setClickListeners() {
-        binding.backButton.setOnClickListener(view -> {
-            finish();
-        });
+        binding.backButton.setOnClickListener(view -> finish());
 
-        binding.createCommentButton.setOnClickListener(view -> {
-            createComment();
-        });
+        binding.createCommentButton.setOnClickListener(view -> createComment());
 
         binding.likeButton.setOnClickListener(view -> {
             if(binding.likeButton.isChecked()) {
@@ -187,9 +179,7 @@ public class PostActivity extends AppCompatActivity {
             }
         });
 
-        binding.shareButton.setOnClickListener(view -> {
-            Toast.makeText(this, getResources().getString(R.string.not_available_yet), Toast.LENGTH_SHORT).show();
-        });
+        binding.shareButton.setOnClickListener(view -> Toast.makeText(this, getResources().getString(R.string.not_available_yet), Toast.LENGTH_SHORT).show());
 
         binding.textViewOptions.setOnClickListener(view -> {
             MenuBuilder menuBuilder =new MenuBuilder(this);
@@ -205,9 +195,7 @@ public class PostActivity extends AppCompatActivity {
                         AlertDialog.Builder dialog = new AlertDialog.Builder(PostActivity.this);
                         dialog.setTitle(getResources().getString(R.string.delete_post));
                         dialog.setMessage(getResources().getString(R.string.are_you_sure_delete_post));
-                        dialog.setPositiveButton(getResources().getString(R.string.yes), (dialogInterface, i) -> {
-                            mPostActivityViewModel.deletePost(auth.getCurrentUser().getUid(), post);
-                        });
+                        dialog.setPositiveButton(getResources().getString(R.string.yes), (dialogInterface, i) -> mPostActivityViewModel.deletePost(auth.getCurrentUser().getUid(), post));
                         dialog.setNegativeButton(getResources().getString(R.string.no), null);
                         dialog.show();
                         return true;
@@ -239,7 +227,8 @@ public class PostActivity extends AppCompatActivity {
     }
 
     public void createComment() {
-        String content = binding.commentEdittext.getText().toString();
+        Editable etText = binding.commentEdittext.getText();
+        String content = etText == null ? "" : etText.toString();
         if(content.isEmpty()) {
             Toast.makeText(this, getResources().getString(R.string.please_fill_post_field), Toast.LENGTH_SHORT).show();
             return;

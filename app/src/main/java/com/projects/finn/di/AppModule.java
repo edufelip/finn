@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
 import com.projects.finn.data.network.ApiService;
 import com.projects.finn.utils.RemoteConfigUtils;
+import com.projects.finn.utils.extensions.GlideUtils;
 
 import javax.inject.Singleton;
 
@@ -61,5 +62,11 @@ abstract class AppModule {
             new RequestOptions()
                 .placeholder(R.drawable.user_icon)
         );
+    }
+
+    @Provides
+    @Singleton
+    static GlideUtils providesGlideUtils() {
+        return new GlideUtils();
     }
 }

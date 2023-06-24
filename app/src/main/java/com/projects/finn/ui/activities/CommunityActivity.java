@@ -21,7 +21,6 @@ import androidx.appcompat.view.menu.MenuPopupHelper;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
 import com.projects.finn.adapters.FeedRecyclerAdapter;
@@ -32,10 +31,12 @@ import com.projects.finn.models.User;
 import com.projects.finn.ui.viewmodels.CommunityViewModel;
 import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
 import com.projects.finn.utils.RemoteConfigUtils;
+import com.projects.finn.utils.extensions.GlideUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 import javax.inject.Inject;
 
@@ -44,7 +45,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class CommunityActivity extends AppCompatActivity implements FeedRecyclerAdapter.RecyclerClickListener {
     @Inject
-    RequestManager glide;
+    GlideUtils glideUtils;
     @Inject
     FirebaseAuth auth;
     @Inject
@@ -69,7 +70,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.customToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
     }
 
     public void initializeViewModel() {
@@ -114,38 +115,33 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
 
         mCommunityViewModel.observeUpdateSubscription().observe(this, subscription -> {
             switch (subscription.getId()) {
-                case -1: {
+                case -1 -> {
                     Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
-                    break;
                 }
-                case -2: {
+                case -2 -> {
                     binding.followBtn.setText(getResources().getString(R.string.subscribe));
                     int value = Integer.parseInt(binding.subscribersCount.getText().toString()) - 1;
                     community.setSubscribersCount(value);
                     binding.subscribersCount.setText(String.valueOf(value));
-                    break;
                 }
-                default: {
+                default -> {
                     binding.followBtn.setText(getResources().getString(R.string.unsubscribe));
                     int value = Integer.parseInt(binding.subscribersCount.getText().toString()) + 1;
                     community.setSubscribersCount(value);
                     binding.subscribersCount.setText(String.valueOf(value));
-                    break;
                 }
             }
         });
 
         mCommunityViewModel.observeSubscription().observe(this, subscription -> {
             switch (subscription.getId()) {
-                case -1: {
+                case -1 -> {
                     Toast.makeText(this, getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
-                    break;
                 }
-                case -2: {
+                case -2 -> {
                     binding.followBtn.setText(getResources().getString(R.string.subscribe));
-                    break;
                 }
-                default: {
+                default -> {
                     binding.followBtn.setText(getResources().getString(R.string.unsubscribe));
                 }
             }
@@ -162,7 +158,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
         community = (Community) getIntent().getParcelableExtra("community");
         if (community != null) {
             binding.communityTitle.setText(community.getTitle());
-            glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + community.getImage()).into(binding.communityImage);
+            glideUtils.loadFromServer(community.getImage(), binding.communityImage);
         }
     }
 
@@ -186,7 +182,7 @@ public class CommunityActivity extends AppCompatActivity implements FeedRecycler
 
     public void initializeRecyclerView() {
         this.posts = new ArrayList<>();
-        feedRecyclerAdapter = new FeedRecyclerAdapter(this, posts, this, glide);
+        feedRecyclerAdapter = new FeedRecyclerAdapter(this, posts, this);
         binding.recyclerCommunityPosts.setAdapter(feedRecyclerAdapter);
         binding.recyclerCommunityPosts.setLayoutManager(new LinearLayoutManager(this));
         // implement pagination

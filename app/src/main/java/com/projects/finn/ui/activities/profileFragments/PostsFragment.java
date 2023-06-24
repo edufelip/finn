@@ -42,12 +42,10 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     RequestManager glide;
     @Inject
     FirebaseAuth auth;
-    private PostsFragmentViewModel mPostsFragmentViewModel;
     private SharedLikeViewModel mSharedLikeViewModel;
     private FragmentPostsBinding binding;
     private FeedRecyclerAdapter feedRecyclerAdapter;
     private ArrayList<Post> posts = new ArrayList<>();
-    private HandleClick handleClick;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,7 +58,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
     }
 
     public void initializeRecyclerView() {
-        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this, glide);
+        feedRecyclerAdapter = new FeedRecyclerAdapter(getContext(), posts, this);
         binding.postsRecyclerview.setAdapter(feedRecyclerAdapter);
         binding.postsRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -69,7 +67,7 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
         String id = auth.getCurrentUser().getUid();
         String name = auth.getCurrentUser().getDisplayName();
 
-        mPostsFragmentViewModel = new ViewModelProvider(this).get(PostsFragmentViewModel.class);
+        PostsFragmentViewModel mPostsFragmentViewModel = new ViewModelProvider(this).get(PostsFragmentViewModel.class);
         mSharedLikeViewModel = new ViewModelProvider(this).get(SharedLikeViewModel.class);
 
         mPostsFragmentViewModel.setUserName(name);
@@ -91,10 +89,6 @@ public class PostsFragment extends Fragment implements FeedRecyclerAdapter.Recyc
                 Toast.makeText(getContext(), getResources().getString(R.string.error_try_again_later), Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    public void setInterface(HandleClick handle) {
-        this.handleClick = handle;
     }
 
     ActivityResultLauncher<Intent> postActivityResultLauncher = registerForActivityResult(

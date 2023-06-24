@@ -13,7 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.RequestManager;
 import com.projects.finn.R;
 import com.projects.finn.databinding.RecyclerPostBinding;
 import com.projects.finn.models.Community;
@@ -22,6 +21,7 @@ import com.projects.finn.ui.activities.CommunityActivity;
 import com.projects.finn.ui.activities.PostActivity;
 import com.projects.finn.utils.PostDiffUtil;
 import com.projects.finn.utils.RemoteConfigUtils;
+import com.projects.finn.utils.extensions.GlideUtils;
 
 import java.util.ArrayList;
 import java.util.stream.Collector;
@@ -31,18 +31,18 @@ import javax.inject.Inject;
 
 
 public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapter.MyViewHolder> {
-    private RequestManager glide;
-    private ArrayList<Post> posts;
-    private Context context;
-    private RecyclerClickListener recyclerClickListener;
     @Inject
     RemoteConfigUtils remoteConfigUtils;
+    @Inject
+    GlideUtils glideUtils;
+    private ArrayList<Post> posts;
+    private final Context context;
+    private final RecyclerClickListener recyclerClickListener;
 
-    public FeedRecyclerAdapter(Context context, ArrayList<Post> posts, RecyclerClickListener recyclerClickListener, RequestManager glide) {
+    public FeedRecyclerAdapter(Context context, ArrayList<Post> posts, RecyclerClickListener recyclerClickListener) {
         this.context = context;
         this.posts = posts;
         this.recyclerClickListener = recyclerClickListener;
-        this.glide = glide;
     }
 
     @NonNull
@@ -90,13 +90,13 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
 
             binding.postImage.setImageDrawable(null);
             binding.communityPictureIcon.setImageDrawable(null);
-            glide.clear(binding.communityPictureIcon);
-            glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + post.getCommunity_image()).into(binding.communityPictureIcon);
+            glideUtils.glideClear(binding.communityPictureIcon);
+            glideUtils.loadFromServer(post.getCommunity_image(), binding.communityPictureIcon);
             String image = post.getImage();
             if (image != null) {
                 binding.postImage.layout(0, 0, 0, 0);
-                glide.clear(binding.postImage);
-                glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + image).into(binding.postImage);
+                glideUtils.glideClear(binding.postImage);
+                glideUtils.loadFromServer(image, binding.postImage);
             }
         }
 
@@ -155,18 +155,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
             itemView.getContext().startActivity(intent);
         }
 
-//        public void openUserPopup() {
-//            TextView popupClose;
-//            userPopup.setContentView(R.layout.user_popup);
-//            popupClose = userPopup.findViewById(R.id.close_popup);
-//            popupClose.setOnClickListener(v -> userPopup.dismiss());
-//            userPopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-//            userPopup.show();
-//        }
-
         public void openPostActivity() {
             Intent intent = new Intent(itemView.getContext(), PostActivity.class);
-            // put extras
             itemView.getContext().startActivity(intent);
         }
 
@@ -204,8 +194,8 @@ public class FeedRecyclerAdapter extends RecyclerView.Adapter<FeedRecyclerAdapte
         Post result = posts.stream()
             .filter(element -> element.getId() == post.getId())
             .collect(toSingleton());
-        int index = posts.indexOf(result);
 
+        int index = posts.indexOf(result);
         if (post.getUser_id() != null && post.getUser_id().equals("-2")) {
             posts.remove(result);
             notifyItemRemoved(index);
