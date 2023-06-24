@@ -44,12 +44,12 @@ public class HomeFragmentViewModel extends ViewModel {
     private final ICommentRepository commentRepository;
     private final SavedStateHandle savedStateHandle;
     private MutableLiveData<User> _user = new MutableLiveData<>();
-    private MutableLiveData<List<Post>> _posts = new MutableLiveData<>();
-    private MutableLiveData<Post> _updatedPost = new MutableLiveData<>();
-    private MutableLiveData<Integer> _nextPage = new MutableLiveData<>();
     private LiveData<User> user = _user;
+    private MutableLiveData<List<Post>> _posts = new MutableLiveData<>();
     private LiveData<List<Post>> posts = _posts;
+    private MutableLiveData<Post> _updatedPost = new MutableLiveData<>();
     private LiveData<Post> updatedPost = _updatedPost;
+    private MutableLiveData<Integer> _nextPage = new MutableLiveData<>();
     private LiveData<Integer> nextPage = _nextPage;
 
     @Inject

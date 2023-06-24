@@ -24,7 +24,7 @@
                     android:id="@+id/linearLayout2"
                     android:layout_width="match_parent"
                     android:layout_height="125dp"
-                    android:background="@color/purple_700"
+                    android:background="?attr/colorPrimary"
                     android:orientation="vertical"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
