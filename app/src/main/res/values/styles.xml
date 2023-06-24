@@ -5,7 +5,7 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowAnimationStyle">@style/Animation.MyTheme.BottomSheet.Modal</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">?attr/colorPrimary</item>
+        <item name="android:navigationBarColor">@color/main_blue_deep</item>
         <item name="android:navigationBarDividerColor" tools:ignore="NewApi">@android:color/transparent</item>
         <item name="android:textColor">?attr/colorOnBackground</item>
         <item name="bottomSheetStyle">@style/Widget.Finn.BottomSheet.Modal</item>
