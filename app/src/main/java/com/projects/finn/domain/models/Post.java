@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.Keep;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 import java.util.List;
 
@@ -14,13 +16,13 @@ public class Post implements Parcelable {
     private String content;
     private Date date;
     private String image;
-    private String community_title;
-    private String community_image;
-    private String user_id;
-    private String user_name;
-    private int community_id;
-    private int likes_count;
-    private int comments_count;
+    @SerializedName("community_title") private String communityTitle;
+    @SerializedName("community_image") private String communityImage;
+    @SerializedName("user_id") private String userId;
+    @SerializedName("user_name") private String userName;
+    @SerializedName("community_id") private int communityId;
+    @SerializedName("likes_count") private int likesCount;
+    @SerializedName("comments_count") private int commentsCount;
     private boolean isLiked;
     private List<Comment> comments;
 
@@ -32,13 +34,13 @@ public class Post implements Parcelable {
         id = in.readInt();
         content = in.readString();
         image = in.readString();
-        community_title = in.readString();
-        community_image = in.readString();
-        user_id = in.readString();
-        user_name = in.readString();
-        community_id = in.readInt();
-        likes_count = in.readInt();
-        comments_count = in.readInt();
+        communityTitle = in.readString();
+        communityImage = in.readString();
+        userId = in.readString();
+        userName = in.readString();
+        communityId = in.readInt();
+        likesCount = in.readInt();
+        commentsCount = in.readInt();
         isLiked = in.readByte() != 0;
     }
 
@@ -78,60 +80,60 @@ public class Post implements Parcelable {
         this.date = date;
     }
 
-    public int getCommunity_id() {
-        return community_id;
+    public int getCommunityId() {
+        return communityId;
     }
 
-    public void setCommunity_id(int community_id) {
-        this.community_id = community_id;
+    public void setCommunityId(int communityId) {
+        this.communityId = communityId;
     }
 
-    public String getCommunity_title() {
-        return community_title;
+    public String getCommunityTitle() {
+        return communityTitle;
     }
 
-    public void setCommunity_title(String community_title) {
-        this.community_title = community_title;
+    public void setCommunityTitle(String communityTitle) {
+        this.communityTitle = communityTitle;
     }
 
-    public String getCommunity_image() {
-        return community_image;
+    public String getCommunityImage() {
+        return communityImage;
     }
 
-    public void setCommunity_image(String community_image) {
-        this.community_image = community_image;
+    public void setCommunityImage(String communityImage) {
+        this.communityImage = communityImage;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public int getLikes_count() {
-        return likes_count;
+    public int getLikesCount() {
+        return likesCount;
     }
 
-    public void setLikes_count(int likes_count) {
-        this.likes_count = likes_count;
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
     }
 
-    public int getComments_count() {
-        return comments_count;
+    public int getCommentsCount() {
+        return commentsCount;
     }
 
-    public void setComments_count(int comments_count) {
-        this.comments_count = comments_count;
+    public void setCommentsCount(int commentsCount) {
+        this.commentsCount = commentsCount;
     }
 
     public List<Comment> getComments() {
@@ -164,8 +166,8 @@ public class Post implements Parcelable {
                 ", \"content\":" + "\"" + content + "\"" +
                 ", \"date\":" + "\"" + date + "\"" +
                 ", \"image\":" + "\"" + image + "\"" +
-                ", \"user_id\":" + "\"" + user_id + "\"" +
-                ", \"community_id\":" + "\"" + community_id + "\"" +
+                ", \"user_id\":" + "\"" + userId + "\"" +
+                ", \"community_id\":" + "\"" + communityId + "\"" +
                 '}';
     }
 
@@ -179,13 +181,13 @@ public class Post implements Parcelable {
         parcel.writeInt(id);
         parcel.writeString(content);
         parcel.writeString(image);
-        parcel.writeString(community_title);
-        parcel.writeString(community_image);
-        parcel.writeString(user_id);
-        parcel.writeString(user_name);
-        parcel.writeInt(community_id);
-        parcel.writeInt(likes_count);
-        parcel.writeInt(comments_count);
+        parcel.writeString(communityTitle);
+        parcel.writeString(communityImage);
+        parcel.writeString(userId);
+        parcel.writeString(userName);
+        parcel.writeInt(communityId);
+        parcel.writeInt(likesCount);
+        parcel.writeInt(commentsCount);
         parcel.writeByte((byte) (isLiked ? 1 : 0));
     }
 }

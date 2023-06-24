@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import androidx.annotation.Keep;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 @Keep
@@ -13,7 +15,7 @@ public class Community implements Parcelable {
     private String title;
     private String description;
     private String image;
-    private String user_id;
+    @SerializedName("user_id") private String userId;
     private Date date;
     private int subscribersCount;
 
@@ -26,7 +28,7 @@ public class Community implements Parcelable {
         title = in.readString();
         description = in.readString();
         image = in.readString();
-        user_id = in.readString();
+        userId = in.readString();
         subscribersCount = in.readInt();
     }
 
@@ -36,7 +38,7 @@ public class Community implements Parcelable {
         dest.writeString(title);
         dest.writeString(description);
         dest.writeString(image);
-        dest.writeString(user_id);
+        dest.writeString(userId);
         dest.writeInt(subscribersCount);
     }
 
@@ -89,12 +91,12 @@ public class Community implements Parcelable {
         this.image = image;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public Date getDate() {
@@ -119,7 +121,7 @@ public class Community implements Parcelable {
                 ", \"title\":" + "\"" + title + "\"" +
                 ", \"description\":" + "\"" + description + "\"" +
                 ", \"image\":" + "\"" + image + "\"" +
-                ", \"user_id\":" + "\"" + user_id + "\"" +
+                ", \"user_id\":" + "\"" + userId + "\"" +
                 ", \"date\":" + "\"" + date + "\"" +
                 '}';
     }

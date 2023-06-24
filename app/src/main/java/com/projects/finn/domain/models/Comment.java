@@ -2,16 +2,18 @@ package com.projects.finn.domain.models;
 
 import androidx.annotation.Keep;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 @Keep
 public class Comment {
     private int id;
     private String content;
-    private String user_id;
-    private int post_id;
-    private String user_image;
-    private String user_name;
+    @SerializedName("user_id") private String userId;
+    @SerializedName("post_id") private int postId;
+    @SerializedName("user_image") private String userImage;
+    @SerializedName("user_name") private String userName;
     private Date date;
 
 
@@ -34,36 +36,36 @@ public class Comment {
         this.content = content;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public int getPost_id() {
-        return post_id;
+    public int getPostId() {
+        return postId;
     }
 
-    public void setPost_id(int post_id) {
-        this.post_id = post_id;
+    public void setPostId(int postId) {
+        this.postId = postId;
     }
 
-    public String getUser_image() {
-        return user_image;
+    public String getUserImage() {
+        return userImage;
     }
 
-    public void setUser_image(String user_image) {
-        this.user_image = user_image;
+    public void setUserImage(String userImage) {
+        this.userImage = userImage;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setUser_name(String user_name) {
-        this.user_name = user_name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Date getDate() {

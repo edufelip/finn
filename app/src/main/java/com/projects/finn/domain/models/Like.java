@@ -2,11 +2,13 @@ package com.projects.finn.domain.models;
 
 import androidx.annotation.Keep;
 
+import com.google.gson.annotations.SerializedName;
+
 @Keep
 public class Like {
     private int id;
-    private String user_id;
-    private int post_id;
+    @SerializedName("user_id") private String userId;
+    private int postId;
 
     public int getId() {
         return id;
@@ -16,19 +18,19 @@ public class Like {
         this.id = id;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
-    public int getPost_id() {
-        return post_id;
+    public int getPostId() {
+        return postId;
     }
 
-    public void setPost_id(int post_id) {
-        this.post_id = post_id;
+    public void setPostId(int postId) {
+        this.postId = postId;
     }
 }
