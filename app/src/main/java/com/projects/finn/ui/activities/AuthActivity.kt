@@ -7,12 +7,8 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.contract.ActivityResultContracts.StartIntentSenderForResult.Companion.EXTRA_INTENT_SENDER_REQUEST
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.CallbackManager.Factory.create
@@ -36,7 +32,6 @@ import com.projects.finn.utils.RemoteConfigUtils
 import com.projects.finn.utils.Verify
 import com.projects.finn.utils.extensions.shortToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -57,8 +52,6 @@ class AuthActivity : AppCompatActivity() {
     private var callbackManager: CallbackManager? = null
     private var _binding: ActivityAuthBinding? = null
     private lateinit var binding: ActivityAuthBinding
-
-    private val signInViewModel: SignInViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,18 +78,11 @@ class AuthActivity : AppCompatActivity() {
     fun setClickListeners() {
         binding.fbFakeButton.setOnClickListener { binding.facebookSignInButton.performClick() }
         binding.googleSignInButton.setOnClickListener {
-            lifecycleScope.launch {
-                val signInIntentSender = googleAuthClient.signIn()
-                resultLauncher.launch(
-                    Intent().apply {
-                        putExtra(
-                            EXTRA_INTENT_SENDER_REQUEST,
-                            IntentSenderRequest.Builder(
-                                signInIntentSender ?: return@launch
-                            ).build()
-                        )
-                    }
-                )
+            val googleSignInClient = this.let { GoogleSignIn.getClient(it, gso) }
+            googleSignInClient.signOut().addOnCompleteListener {
+                val intentSignInGoogle = googleSignInClient.signInIntent
+                intentSignInGoogle.putExtra("REQUEST_CODE", 0)
+                resultLauncher.launch(intentSignInGoogle)
             }
         }
         binding.loginButton.setOnClickListener { authenticateUser() }
@@ -122,21 +108,13 @@ class AuthActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
         if (result.resultCode == RESULT_OK) {
-            lifecycleScope.launch {
-                val signInResult = googleAuthClient.signInWithIntent(
-                    intent = result.data ?: return@launch
-                )
-                signInViewModel.onSignInResult(signInResult)
-            }
             val intent = result.data
-            val task =
-                GoogleSignIn.getSignedInAccountFromIntent(intent)
+            val task = GoogleSignIn.getSignedInAccountFromIntent(intent)
             try {
-                val account =
-                    task.getResult(ApiException::class.java)
+                val account = task.getResult(ApiException::class.java)
                 handleGoogleAccessToken(account.idToken)
             } catch (e: ApiException) {
-                Toast.makeText(this@AuthActivity, e.message, Toast.LENGTH_SHORT).show()
+                this.shortToast(e.message.toString())
             }
         }
     }
@@ -195,8 +173,8 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
-    fun createGoogleRequest() {
-        mGoogleSignInClient = gso?.let { GoogleSignIn.getClient(this, it) }
+    private fun createGoogleRequest() {
+        mGoogleSignInClient = gso.let { GoogleSignIn.getClient(this, it) }
     }
 
 //    fun createFacebookRequest() {
@@ -217,6 +195,7 @@ class AuthActivity : AppCompatActivity() {
 //            })
 //    }
 
+    @Deprecated("Deprecated in Java")
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         callbackManager?.onActivityResult(requestCode, resultCode, data)
@@ -250,13 +229,13 @@ class AuthActivity : AppCompatActivity() {
             }
     }
 
-    fun mainPageRedirect() {
+    private fun mainPageRedirect() {
         startActivity(Intent(this, HomePageActivity::class.java))
         finish()
     }
 
     private fun checkRemoteConfig() {
-        val isFacebookAuthEnabled = remoteConfigUtils?.isFacebookAuthEnabled
-        if (isFacebookAuthEnabled == true) binding.flFacebookAuthButton.visibility = View.VISIBLE
+        val isFacebookAuthEnabled = remoteConfigUtils.isFacebookAuthEnabled
+        if (isFacebookAuthEnabled) binding.flFacebookAuthButton.visibility = View.VISIBLE
     }
 }
