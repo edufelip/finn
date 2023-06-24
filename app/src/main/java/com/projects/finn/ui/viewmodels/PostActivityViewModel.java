@@ -5,12 +5,12 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 
-import com.projects.finn.data.repositories.interfaces.ICommentRepository;
-import com.projects.finn.data.repositories.interfaces.IPostRepository;
-import com.projects.finn.data.repositories.interfaces.IUserRepository;
-import com.projects.finn.models.Comment;
-import com.projects.finn.models.Post;
-import com.projects.finn.models.User;
+import com.projects.finn.domain.models.repositories.ICommentRepository;
+import com.projects.finn.domain.models.repositories.IPostRepository;
+import com.projects.finn.domain.models.repositories.IUserRepository;
+import com.projects.finn.domain.models.Comment;
+import com.projects.finn.domain.models.Post;
+import com.projects.finn.domain.models.User;
 
 import java.util.List;
 

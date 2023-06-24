@@ -1,11 +1,11 @@
 package com.projects.finn.data.network;
 
-import com.projects.finn.models.Comment;
-import com.projects.finn.models.Community;
-import com.projects.finn.models.Like;
-import com.projects.finn.models.Post;
-import com.projects.finn.models.Subscription;
-import com.projects.finn.models.User;
+import com.projects.finn.domain.models.Comment;
+import com.projects.finn.domain.models.Community;
+import com.projects.finn.domain.models.Like;
+import com.projects.finn.domain.models.Post;
+import com.projects.finn.domain.models.Subscription;
+import com.projects.finn.domain.models.User;
 
 import java.util.List;
 

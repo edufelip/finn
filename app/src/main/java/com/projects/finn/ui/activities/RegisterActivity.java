@@ -198,7 +198,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void mainPageRedirect() {
-        Intent intent = new Intent(this, MainPageActivity.class);
+        Intent intent = new Intent(this, HomePageActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }

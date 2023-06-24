@@ -1,10 +1,10 @@
 package com.projects.finn.data.repositories;
 
-import com.projects.finn.data.repositories.interfaces.IPostRepository;
-import com.projects.finn.models.Like;
-import com.projects.finn.models.Post;
+import com.projects.finn.domain.models.repositories.IPostRepository;
+import com.projects.finn.domain.models.Like;
+import com.projects.finn.domain.models.Post;
 import com.projects.finn.data.network.ApiService;
-import com.projects.finn.models.User;
+import com.projects.finn.domain.models.User;
 
 import java.util.List;
 

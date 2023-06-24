@@ -22,11 +22,10 @@ import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
 import com.projects.finn.databinding.FragmentPostsBinding;
-import com.projects.finn.models.User;
+import com.projects.finn.domain.models.User;
 import com.projects.finn.ui.activities.PostActivity;
-import com.projects.finn.ui.activities.homeFragments.HandleClick;
-import com.projects.finn.adapters.FeedRecyclerAdapter;
-import com.projects.finn.models.Post;
+import com.projects.finn.ui.adapters.FeedRecyclerAdapter;
+import com.projects.finn.domain.models.Post;
 import com.projects.finn.ui.viewmodels.PostsFragmentViewModel;
 import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
 

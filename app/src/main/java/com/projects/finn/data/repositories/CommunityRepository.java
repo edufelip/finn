@@ -1,9 +1,9 @@
 package com.projects.finn.data.repositories;
 
 import com.projects.finn.data.network.ApiService;
-import com.projects.finn.data.repositories.interfaces.ICommunityRepository;
-import com.projects.finn.models.Community;
-import com.projects.finn.models.Subscription;
+import com.projects.finn.domain.models.repositories.ICommunityRepository;
+import com.projects.finn.domain.models.Community;
+import com.projects.finn.domain.models.Subscription;
 
 import java.util.List;
 

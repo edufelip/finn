@@ -20,11 +20,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
-import com.projects.finn.adapters.CommunitySearchAdapter;
+import com.projects.finn.ui.adapters.CommunitySearchAdapter;
 import com.projects.finn.databinding.FragmentSearchBinding;
-import com.projects.finn.models.Community;
+import com.projects.finn.domain.models.Community;
 import com.projects.finn.ui.activities.CommunityActivity;
 import com.projects.finn.ui.viewmodels.SearchFragmentViewModel;
+import com.projects.finn.utils.RemoteConfigUtils;
+import com.projects.finn.utils.extensions.GlideUtils;
 
 import java.util.ArrayList;
 
@@ -38,6 +40,10 @@ public class SearchFragment extends Fragment implements CommunitySearchAdapter.R
     RequestManager glide;
     @Inject
     FirebaseAuth auth;
+    @Inject
+    RemoteConfigUtils remoteConfigUtils;
+    @Inject
+    GlideUtils glideUtils;
     FragmentSearchBinding binding;
     private HandleClick handleClick;
     private SearchFragmentViewModel mSearchFragmentViewModel;
@@ -74,7 +80,7 @@ public class SearchFragment extends Fragment implements CommunitySearchAdapter.R
 
     public void initializeRecyclerView() {
         this.communities = new ArrayList<>();
-        adapter = new CommunitySearchAdapter(getContext(), communities, this, glide);
+        adapter = new CommunitySearchAdapter(getContext(), communities, this, glideUtils);
         binding.recyclerTrending.setAdapter(adapter);
         binding.recyclerTrending.setLayoutManager(new LinearLayoutManager(getContext()));
     }
@@ -103,12 +109,7 @@ public class SearchFragment extends Fragment implements CommunitySearchAdapter.R
             }
         });
 
-        binding.swipeLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mSearchFragmentViewModel.getTrendingCommunities("");
-            }
-        });
+        binding.swipeLayout.setOnRefreshListener(() -> mSearchFragmentViewModel.getTrendingCommunities(""));
 
         binding.profilePictureIcon.setOnClickListener(view -> handleClick.buttonClicked(view));
     }

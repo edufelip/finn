@@ -3,10 +3,10 @@ package com.projects.finn.di;
 import com.projects.finn.data.network.ApiService;
 import com.projects.finn.data.repositories.CommentRepository;
 import com.projects.finn.data.repositories.CommunityRepository;
-import com.projects.finn.data.repositories.interfaces.ICommentRepository;
-import com.projects.finn.data.repositories.interfaces.ICommunityRepository;
-import com.projects.finn.data.repositories.interfaces.IPostRepository;
-import com.projects.finn.data.repositories.interfaces.IUserRepository;
+import com.projects.finn.domain.models.repositories.ICommentRepository;
+import com.projects.finn.domain.models.repositories.ICommunityRepository;
+import com.projects.finn.domain.models.repositories.IPostRepository;
+import com.projects.finn.domain.models.repositories.IUserRepository;
 import com.projects.finn.data.repositories.PostRepository;
 import com.projects.finn.data.repositories.UserRepository;
 

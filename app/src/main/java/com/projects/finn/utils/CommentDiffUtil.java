@@ -1,6 +1,6 @@
 package com.projects.finn.utils;
 
-import com.projects.finn.models.Comment;
+import com.projects.finn.domain.models.Comment;
 
 import java.util.List;
 

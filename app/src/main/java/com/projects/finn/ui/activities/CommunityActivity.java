@@ -23,11 +23,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
-import com.projects.finn.adapters.FeedRecyclerAdapter;
+import com.projects.finn.ui.adapters.FeedRecyclerAdapter;
 import com.projects.finn.databinding.ActivityCommunityBinding;
-import com.projects.finn.models.Community;
-import com.projects.finn.models.Post;
-import com.projects.finn.models.User;
+import com.projects.finn.domain.models.Community;
+import com.projects.finn.domain.models.Post;
+import com.projects.finn.domain.models.User;
 import com.projects.finn.ui.viewmodels.CommunityViewModel;
 import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
 import com.projects.finn.utils.RemoteConfigUtils;

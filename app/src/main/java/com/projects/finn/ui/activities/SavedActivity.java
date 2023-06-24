@@ -7,8 +7,8 @@ import android.os.Bundle;
 
 import com.bumptech.glide.RequestManager;
 import com.projects.finn.databinding.ActivitySavedBinding;
-import com.projects.finn.adapters.FeedRecyclerAdapter;
-import com.projects.finn.models.Post;
+import com.projects.finn.ui.adapters.FeedRecyclerAdapter;
+import com.projects.finn.domain.models.Post;
 
 import java.util.ArrayList;
 

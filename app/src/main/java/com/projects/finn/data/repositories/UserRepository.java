@@ -1,7 +1,7 @@
 package com.projects.finn.data.repositories;
 
-import com.projects.finn.data.repositories.interfaces.IUserRepository;
-import com.projects.finn.models.User;
+import com.projects.finn.domain.models.repositories.IUserRepository;
+import com.projects.finn.domain.models.User;
 import com.projects.finn.data.network.ApiService;
 
 import javax.inject.Inject;

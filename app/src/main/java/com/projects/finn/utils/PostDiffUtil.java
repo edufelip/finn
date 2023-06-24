@@ -1,6 +1,6 @@
 package com.projects.finn.utils;
 
-import com.projects.finn.models.Post;
+import com.projects.finn.domain.models.Post;
 
 import java.util.List;
 

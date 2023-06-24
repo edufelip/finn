@@ -25,7 +25,7 @@
         <activity android:name="com.projects.finn.ui.activities.ForgotPassActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.projects.finn.ui.activities.CommunityActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.projects.finn.ui.activities.PostActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.projects.finn.ui.activities.MainPageActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.projects.finn.ui.activities.HomePageActivity" android:screenOrientation="portrait"/>
         <activity
             android:name="com.projects.finn.ui.activities.RegisterActivity"
             android:parentActivityName="com.projects.finn.ui.activities.AuthActivity"

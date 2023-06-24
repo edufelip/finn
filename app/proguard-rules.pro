@@ -20,3 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class androidx.appcompat.widget.** { *; }
+-keep class **.models.** { *; }
+-keep class * extends androidx.lifecycle.ViewModel
+-keepclassmembers class * {
+    @dagger.hilt.android.AndroidEntryPoint <init>(...);
+}

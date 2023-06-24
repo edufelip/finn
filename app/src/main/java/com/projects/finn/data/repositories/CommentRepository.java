@@ -1,8 +1,8 @@
 package com.projects.finn.data.repositories;
 
 import com.projects.finn.data.network.ApiService;
-import com.projects.finn.data.repositories.interfaces.ICommentRepository;
-import com.projects.finn.models.Comment;
+import com.projects.finn.domain.models.repositories.ICommentRepository;
+import com.projects.finn.domain.models.Comment;
 
 import java.util.List;
 

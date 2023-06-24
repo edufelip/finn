@@ -19,11 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
-import com.projects.finn.adapters.CommentsAdapter;
+import com.projects.finn.ui.adapters.CommentsAdapter;
 import com.projects.finn.databinding.ActivityPostBinding;
-import com.projects.finn.models.Comment;
-import com.projects.finn.models.Post;
-import com.projects.finn.models.User;
+import com.projects.finn.domain.models.Comment;
+import com.projects.finn.domain.models.Post;
+import com.projects.finn.domain.models.User;
 import com.projects.finn.ui.viewmodels.PostActivityViewModel;
 import com.projects.finn.ui.viewmodels.SharedLikeViewModel;
 import com.projects.finn.utils.RemoteConfigUtils;

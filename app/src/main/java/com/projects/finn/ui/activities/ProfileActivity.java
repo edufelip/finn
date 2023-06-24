@@ -10,7 +10,7 @@ import com.bumptech.glide.RequestManager;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
-import com.projects.finn.adapters.FragmentsAdapter;
+import com.projects.finn.ui.adapters.FragmentsAdapter;
 import com.projects.finn.databinding.ActivityProfileBinding;
 import com.projects.finn.ui.viewmodels.ProfileViewModel;
 

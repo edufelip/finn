@@ -22,8 +22,8 @@ import com.bumptech.glide.RequestManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.projects.finn.R;
 import com.projects.finn.databinding.ActivityCreatePostBinding;
-import com.projects.finn.models.Community;
-import com.projects.finn.models.Post;
+import com.projects.finn.domain.models.Community;
+import com.projects.finn.domain.models.Post;
 import com.projects.finn.ui.viewmodels.CreatePostViewModel;
 
 import java.io.ByteArrayOutputStream;
@@ -51,7 +51,6 @@ public class CreatePostActivity extends AppCompatActivity {
     private ActivityCreatePostBinding binding;
     private CreatePostViewModel mCreatePostViewModel;
     private String[] communityNames;
-    private Uri imageUri;
     private List<Community> communities = new ArrayList<>();
 
     @Override
@@ -130,7 +129,7 @@ public class CreatePostActivity extends AppCompatActivity {
             new ActivityResultCallback<ActivityResult>() {
                 @Override
                 public void onActivityResult(ActivityResult result) {
-                    imageUri = result.getData().getData();
+                    Uri imageUri = result.getData().getData();
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         result.getData();
                         try {
