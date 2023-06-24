@@ -46,7 +46,6 @@ public class RegisterActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     private CallbackManager callbackManager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,15 +149,17 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void createFacebookRequest() {
-        binding.facebookSignInButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        binding.facebookSignInButton.registerCallback(callbackManager, new FacebookCallback<>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
+
             @Override
             public void onCancel() {
                 // App code
             }
+
             @Override
             public void onError(FacebookException exception) {
                 // App code
@@ -197,8 +198,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     public void mainPageRedirect() {
-        startActivity(new Intent(this, MainPageActivity.class));
-        finish();
-        AuthActivity.authActivity.finish();
+        Intent intent = new Intent(this, MainPageActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 }

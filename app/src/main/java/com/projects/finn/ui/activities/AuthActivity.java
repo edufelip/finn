@@ -50,7 +50,6 @@ public class AuthActivity extends AppCompatActivity {
     UserRepository userRepository;
     @Inject
     RemoteConfigUtils remoteConfigUtils;
-    public static Activity authActivity;
     private ActivityAuthBinding binding;
     private GoogleSignInClient mGoogleSignInClient;
     private CallbackManager callbackManager;
@@ -59,7 +58,6 @@ public class AuthActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityAuthBinding.inflate(getLayoutInflater());
-        authActivity = this;
 
         initializeComponents();
         createGoogleRequest();
@@ -150,15 +148,17 @@ public class AuthActivity extends AppCompatActivity {
     }
 
     public void createFacebookRequest() {
-        binding.facebookSignInButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        binding.facebookSignInButton.registerCallback(callbackManager, new FacebookCallback<>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
             }
+
             @Override
             public void onCancel() {
                 // App code
             }
+
             @Override
             public void onError(FacebookException exception) {
                 // App code
