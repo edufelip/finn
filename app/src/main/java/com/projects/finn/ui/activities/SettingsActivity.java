@@ -44,11 +44,11 @@ public class SettingsActivity extends AppCompatActivity {
                 if(auth.getCurrentUser() != null) {
                     auth.getCurrentUser().delete().addOnCompleteListener(task -> {
                         Toast.makeText(this, getResources().getString(R.string.successfully_deleted_miss_you), Toast.LENGTH_SHORT).show();
-                        Authentication.logoutGoogle(this);
-                        Authentication.logoutFacebook();
-                        finish();
-                        MainPageActivity.mainPageActivity.finish();
-                        startActivity(new Intent(this, AuthActivity.class));
+                        Authentication.Companion.logoutGoogle(this);
+                        Authentication.Companion.logoutFacebook();
+                        Intent intent = new Intent(this, AuthActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
                     });
                 }
             } else {

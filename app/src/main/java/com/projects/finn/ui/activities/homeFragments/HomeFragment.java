@@ -137,7 +137,7 @@ public class HomeFragment extends Fragment implements FeedRecyclerAdapter.Recycl
     }
 
     public void forceLogout() {
-        Authentication.logout(auth, requireActivity());
+        Authentication.Companion.logout(auth, requireActivity());
         Intent intent = new Intent(requireActivity(), AuthActivity.class);
         intent.putExtra("Error", getResources().getString(R.string.error_occurred_log_later));
         startActivity(intent);

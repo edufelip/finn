@@ -35,7 +35,6 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
     FirebaseAuth auth;
     @Inject
     RequestManager glide;
-    public static Activity mainPageActivity;
     private ActivityMainPageBinding binding;
     private ActionBarDrawerToggle toggle;
     private HomeFragment homeFragment;
@@ -48,8 +47,6 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainPageBinding.inflate(getLayoutInflater());
-        mainPageActivity = this;
-
         initializeComponents();
         setupBottomNavigationView();
         setupNavigationDrawer();
@@ -139,7 +136,7 @@ public class MainPageActivity extends AppCompatActivity implements HandleClick {
 
     public void setupClickListeners() {
         binding.logoutButton.setOnClickListener(v -> {
-            Authentication.logout(auth, this);
+            Authentication.Companion.logout(auth, this);
             startActivity(new Intent(MainPageActivity.this, AuthActivity.class));
             finish();
         });
