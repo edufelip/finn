@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.projects.finn">
+    package="com.edufelip.finn">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,21 +17,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Finn"
         android:usesCleartextTraffic="true">
-        <activity android:name="com.projects.finn.ui.activities.CreatePostActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.projects.finn.ui.activities.CreateCommunityActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.projects.finn.ui.activities.SettingsActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.projects.finn.ui.activities.SavedActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.projects.finn.ui.activities.ProfileActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.projects.finn.ui.activities.ForgotPassActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.projects.finn.ui.activities.CommunityActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.projects.finn.ui.activities.PostActivity" android:screenOrientation="portrait"/>
-        <activity android:name="com.projects.finn.ui.activities.HomePageActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.edufelip.finn.ui.activities.CreatePostActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.edufelip.finn.ui.activities.CreateCommunityActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.edufelip.finn.ui.activities.SettingsActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.edufelip.finn.ui.activities.SavedActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.edufelip.finn.ui.activities.ProfileActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.edufelip.finn.ui.activities.ForgotPassActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.edufelip.finn.ui.activities.CommunityActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.edufelip.finn.ui.activities.PostActivity" android:screenOrientation="portrait"/>
+        <activity android:name="com.edufelip.finn.ui.activities.HomePageActivity" android:screenOrientation="portrait"/>
         <activity
-            android:name="com.projects.finn.ui.activities.RegisterActivity"
-            android:parentActivityName="com.projects.finn.ui.activities.AuthActivity"
+            android:name="com.edufelip.finn.ui.activities.RegisterActivity"
+            android:parentActivityName="com.edufelip.finn.ui.activities.AuthActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name="com.projects.finn.ui.activities.MainActivity"
+            android:name="com.edufelip.finn.ui.activities.MainActivity"
             android:theme="@style/Theme.Finn.Launcher"
             android:exported="true"
             android:screenOrientation="portrait"
@@ -44,7 +44,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.projects.finn.ui.activities.AuthActivity" />
+        <activity android:name="com.edufelip.finn.ui.activities.AuthActivity" />
 
         <meta-data android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id"/>
