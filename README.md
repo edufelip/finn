@@ -1,65 +1,70 @@
-# Finn 
-[![Author](https://img.shields.io/static/v1?label=@author&message=Eduardo%20Santos&color=navy)](https://github.com/edufelip)
-[![LinkedIn](https://img.shields.io/static/v1?label=@linkedin&message=@edu_santos&color=blue)](https://www.linkedin.com/in/eduardo-felipe-dev/)
+<h1 align="center">Finn</h1>
 
-A social media based on communities where people can share their interests!
+<p align="center">
+  <a href="https://android-arsenal.com/api?level=24"><img alt="API" src="https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat"/></a>
+  <a href="https://github.com/skydoves/Pokedex/actions"><img alt="Build Status" src="https://github.com/edufelip/amazing-note/assets/34727187/fb130185-05e9-4c68-9f9c-a0d41fcae499"/></a>
+  <a href="https://medium.com/@eduardofelipi"><img alt="Medium" src="https://github.com/edufelip/amazing-note/assets/34727187/494b0020-1436-4bd4-bfef-7123815cf3cb"/></a> <br>
+  <a href="https://www.youtube.com/channel/UCYcwwX7nDU_U0FP-TsXMwVg"><img alt="Profile" src="https://github.com/edufelip/amazing-note/assets/34727187/5700e2c9-dac0-4215-8a73-5ed4573cf83c"/></a> 
+  <a href="https://github.com/edufelip"><img alt="Profile" src="https://github.com/edufelip/amazing-note/assets/34727187/bcdd0cf0-bafa-4e90-b910-f438304dc169"/></a> 
+</p>
 
-This project uses:
+<p align="center">  
+🗡️ Finn is a social media that let you create communities and post about the things you love!
+</p>
+
+<p align="center">
+<img src="https://github.com/edufelip/finn/assets/34727187/f55b5475-8718-4891-a468-8896ec113a2e"/>
+</p>
+
+## Download
+Go to [Google Play](https://play.google.com/store/apps/details?id=com.edufelip.finn) to download the latest App version.
+
+## This project uses
 * MVVM Architecture and LiveData
-* Retrofit for API calls
+* Retrofit
 * RxJava
-* Dagger Hilt
+* Hilt
 * Glide
-* Firebase Authentication
-
-## Layouts
-<br>
-  <p align="left">
-            <img alt="splash screen"
-            src="https://i.imgur.com/RCSzAUT.jpg" width="20%" 
-            title="splash screen">
-            <img alt="auth screen"
-            src="https://i.imgur.com/4r6XpdU.jpg" width="20%" 
-            title="auth screen">
-            <img alt="main screen"
-            src="https://i.imgur.com/nx57o9y.jpg" width="20%" title="main screen">
-            <img alt="communities screen"
-            src="https://i.imgur.com/vxqmm3l.jpg" width="20%" title="communities screen">
-            <img alt="community screen"
-            src="https://i.imgur.com/nx57o9y.jpg" width="20%" title="community screen">
+* FirebaseAuth
+* ViewPager
 
 ## Installation
 Clone this repository and import into **Android Studio**
 ```bash
 git clone https://github.com/edufelip/finn.git
 ```
+or
 
-## Configuration
-### Keystores:
-Create `gradle.properties` with the following info:
-```gradle
-FIREBASE_GOOGLE_ID="..."
+```bash
+git clone git@github.com:edufelip/finn.git
 ```
-And set these keys properly in `build.gradle` (Module):
-```
-android {
-  defaultConfig {
-    buildConfigField("String", "FIREBASE_GOOGLE_ID", FIREBASE_GOOGLE_ID)
-  }
-}
-```
-And then run "Rebuild Project"
 
-## Generating signed APK
+## Layouts
+<br>
+  <p align="left">
+            <img alt="splash screen"
+            src="https://github.com/edufelip/finn/assets/34727187/1af2621d-21d5-4e06-a02b-6859336a19d1" width="24%" 
+            title="splash screen">
+            <img alt="main screen"
+            src="https://github.com/edufelip/finn/assets/34727187/828c2285-7e8c-4356-849f-584fa4ba3324" width="24%" 
+            title="main screen">
+            <img alt="main screen dark"
+            src="https://github.com/edufelip/finn/assets/34727187/0ca5cb51-c091-4018-b419-134885950c30" width="24%" 
+            title="main screen dark">
+            <img alt="main screen dark"
+            src="https://github.com/edufelip/finn/assets/34727187/22b9aaea-4ef2-477f-914b-0cd74231bd1c" width="24%" 
+            title="main screen dark">
+
+## Generating APK
 From Android Studio:
 1. ***Build*** menu
-2. ***Generate Signed bundle/APK...***
-3. Follow the instructions and fill in the keystore information
+2. Generate ***Bundle(s) / APK(s)***
+3. Build ***APK(s)***
+4. Wait for Android studio to build the APK
 
 ## Maintainers
 This project is mantained by:
 * [Eduardo Felipe](http://github.com/edufelip)
-
 
 ## Contributing
 
