@@ -82,6 +82,8 @@ public class RegisterActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(RegisterActivity.this, R.string.error_try_again_later, Toast.LENGTH_SHORT).show();
         }
     });
 

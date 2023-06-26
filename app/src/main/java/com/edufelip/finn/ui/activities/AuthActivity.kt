@@ -26,7 +26,6 @@ import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.edufelip.finn.R
 import com.edufelip.finn.databinding.ActivityAuthBinding
-import com.edufelip.finn.ui.viewmodels.SignInViewModel
 import com.edufelip.finn.utils.GoogleAuthUiClient
 import com.edufelip.finn.utils.RemoteConfigUtils
 import com.edufelip.finn.utils.Verify
@@ -116,6 +115,8 @@ class AuthActivity : AppCompatActivity() {
             } catch (e: ApiException) {
                 this.shortToast(e.message.toString())
             }
+        } else {
+            this.shortToast(this.getString(R.string.error_try_again_later))
         }
     }
 
