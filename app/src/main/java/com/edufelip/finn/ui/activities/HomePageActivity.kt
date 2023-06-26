@@ -1,6 +1,7 @@
 package com.edufelip.finn.ui.activities
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -21,6 +22,7 @@ import com.edufelip.finn.ui.activities.homeFragments.HomeFragment
 import com.edufelip.finn.ui.activities.homeFragments.NotificationsFragment
 import com.edufelip.finn.ui.activities.homeFragments.SearchFragment
 import com.edufelip.finn.ui.delegators.auth.AuthExecutor
+import com.edufelip.finn.utils.Constants.PRIVACY_POLICY_URL
 import com.edufelip.finn.utils.extensions.GlideUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -104,6 +106,12 @@ class HomePageActivity : AppCompatActivity(), HandleClick {
                     this@HomePageActivity,
                     SettingsActivity::class.java
                 )
+
+                R.id.drawer_privacy_policy -> Intent(
+                    Intent.ACTION_VIEW
+                ).apply {
+                    data = Uri.parse(PRIVACY_POLICY_URL)
+                }
 
                 else -> return@setNavigationItemSelectedListener false
             }

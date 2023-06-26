@@ -105,4 +105,11 @@
     <string name="option_not_available">Essa opção não está disponível ainda</string>
     <string name="error_occurred_log_later">Um erro ocorreu, por favor tente se autenticar novamente mais tarde</string>
     <string name="user_created_successfully">Usuário criado com sucesso</string>
+
+    <!--Drawer Menu-->
+    <string name="drawer_menu_profile">Meu perfil</string>
+    <string name="drawer_menu_saved">Salvos</string>
+    <string name="drawer_menu_posts">Minhas postagens</string>
+    <string name="drawer_menu_settings">Configurações</string>
+    <string name="drawer_menu_privacy_policy">Política de Privacidade</string>
 </resources>

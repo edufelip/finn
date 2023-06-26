@@ -116,4 +116,11 @@
     <string name="option_not_available">This option is not available yet</string>
     <string name="error_occurred_log_later">An error has occurred, please log again later</string>
     <string name="user_created_successfully">User created successfully</string>
+
+    <!--Drawer Menu-->
+    <string name="drawer_menu_profile">Profile</string>
+    <string name="drawer_menu_saved">Saved</string>
+    <string name="drawer_menu_posts">My posts</string>
+    <string name="drawer_menu_settings">Settings</string>
+    <string name="drawer_menu_privacy_policy">Privacy Policy</string>
 </resources>
