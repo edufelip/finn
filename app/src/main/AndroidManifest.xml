@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Finn"
         android:usesCleartextTraffic="true">
+        <activity android:name="com.edufelip.finn.ui.activities.CropImageActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.edufelip.finn.ui.activities.CreatePostActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.edufelip.finn.ui.activities.CreateCommunityActivity" android:screenOrientation="portrait"/>
         <activity android:name="com.edufelip.finn.ui.activities.SettingsActivity" android:screenOrientation="portrait"/>

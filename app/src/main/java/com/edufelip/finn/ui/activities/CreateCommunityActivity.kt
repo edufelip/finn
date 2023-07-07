@@ -2,6 +2,7 @@ package com.edufelip.finn.ui.activities
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -10,22 +11,17 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.animation.AlphaAnimation
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityOptionsCompat
 import com.bumptech.glide.Glide
-import com.canhub.cropper.CropImageContract
-import com.canhub.cropper.CropImageContractOptions
-import com.canhub.cropper.CropImageOptions
-import com.canhub.cropper.CropImageView
-import com.canhub.cropper.CropImageView.Guidelines
-import com.google.firebase.auth.FirebaseAuth
 import com.edufelip.finn.R
 import com.edufelip.finn.databinding.ActivityCreateCommunityBinding
 import com.edufelip.finn.domain.models.Community
 import com.edufelip.finn.ui.viewmodels.CreateCommunityViewModel
 import com.edufelip.finn.utils.extensions.shortToast
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -195,43 +191,34 @@ class CreateCommunityActivity : AppCompatActivity() {
         if (result.data != null) {
             imageUri = result.data!!.data
             try {
-                launchImageCrop(imageUri)
-                val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, imageUri)
-                binding.createCommunityIcon.setImageBitmap(bitmap)
+                imageUri!!
+                cropImageResultLauncher.launch(CropImageActivity.getIntentLauncher(this, imageUri))
             } catch (e: Exception) {
                 this.shortToast(resources.getString(R.string.error_try_again_later))
             }
         }
     }
 
-    private var cropImage =
-        registerForActivityResult(
-            CropImageContract()
-        ) { result: CropImageView.CropResult ->
-            if (result.isSuccessful) {
-                result.uriContent?.let {
-                    setIcon(it)
-                }
-            } else {
-                result.error?.printStackTrace()
+    private var cropImageResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            val intent = result.data
+            try {
+                val byteArray = intent?.getByteArrayExtra(CropImageActivity.EXTRA_CROP_IMAGE_RESULT)
+                val bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray?.size ?: 0)
+                setIcon(bmp)
+                binding.createCommunityIcon.setImageBitmap(bmp)
+            } catch (e: Exception) {
+                this.shortToast("An error occurred")
             }
         }
-
-    private fun setIcon(uri: Uri) {
-        Glide.with(this)
-            .load(uri)
-            .into(binding.createCommunityIcon)
     }
 
-    private fun launchImageCrop(imageUri: Uri?) {
-        cropImage.launch(
-            CropImageContractOptions(
-                imageUri, CropImageOptions(
-                    guidelines = Guidelines.ON,
-                )
-            ),
-            ActivityOptionsCompat.makeBasic()
-        )
+    private fun setIcon(bitmap: Bitmap) {
+        Glide.with(this)
+            .load(bitmap)
+            .into(binding.createCommunityIcon)
     }
 
     private fun buildImageBodyPart(fileName: String, bitmap: Bitmap): MultipartBody.Part {

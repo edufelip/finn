@@ -5,4 +5,6 @@
     <color name="main_blue_deep">#1275AC</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="dark_grey">#323232</color>
+    <color name="darker_grey">#202020</color>
 </resources>
