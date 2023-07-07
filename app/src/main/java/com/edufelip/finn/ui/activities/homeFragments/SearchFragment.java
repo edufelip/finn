@@ -16,17 +16,17 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.RequestManager;
-import com.google.firebase.auth.FirebaseAuth;
-import com.edufelip.finn.ui.adapters.CommunitySearchAdapter;
 import com.edufelip.finn.databinding.FragmentSearchBinding;
 import com.edufelip.finn.domain.models.Community;
 import com.edufelip.finn.ui.activities.CommunityActivity;
+import com.edufelip.finn.ui.adapters.CommunitySearchAdapter;
 import com.edufelip.finn.ui.viewmodels.SearchFragmentViewModel;
 import com.edufelip.finn.utils.RemoteConfigUtils;
 import com.edufelip.finn.utils.extensions.GlideUtils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 
@@ -71,9 +71,7 @@ public class SearchFragment extends Fragment implements CommunitySearchAdapter.R
             binding.swipeLayout.setRefreshing(false);
         });
 
-        mSearchFragmentViewModel.observeUpdatedCommunity().observe(getViewLifecycleOwner(), community -> {
-            adapter.updateCommunity(community);
-        });
+        mSearchFragmentViewModel.observeUpdatedCommunity().observe(getViewLifecycleOwner(), community -> adapter.updateCommunity(community));
 
         mSearchFragmentViewModel.getTrendingCommunities("");
     }
@@ -86,7 +84,9 @@ public class SearchFragment extends Fragment implements CommunitySearchAdapter.R
     }
 
     public void loadUserPhoto() {
-        glide.load(auth.getCurrentUser().getPhotoUrl()).into(binding.profilePictureIcon);
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null)
+            glide.load(user.getPhotoUrl()).into(binding.profilePictureIcon);
     }
 
     public void clickSearchView() {
@@ -97,8 +97,7 @@ public class SearchFragment extends Fragment implements CommunitySearchAdapter.R
     public void setupListeners() {
         binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                String query = s;
+            public boolean onQueryTextSubmit(String query) {
                 mSearchFragmentViewModel.getTrendingCommunities(query);
                 return true;
             }
@@ -109,28 +108,30 @@ public class SearchFragment extends Fragment implements CommunitySearchAdapter.R
             }
         });
 
-        binding.swipeLayout.setOnRefreshListener(() -> mSearchFragmentViewModel.getTrendingCommunities(""));
+        binding.swipeLayout.setOnRefreshListener(() ->
+            mSearchFragmentViewModel.getTrendingCommunities("")
+        );
 
         binding.profilePictureIcon.setOnClickListener(view -> handleClick.buttonClicked(view));
     }
 
     ActivityResultLauncher<Intent> communityActivityResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent data = result.getData();
-                        if (data != null) {
-                            Community community = data.getParcelableExtra("community");
-                            adapter.updateCommunityActivityResult(community);
-                        }
+        new ActivityResultContracts.StartActivityForResult(),
+        new ActivityResultCallback<>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent data = result.getData();
+                    if (data != null) {
+                        Community community = data.getParcelableExtra("community");
+                        adapter.updateCommunityActivityResult(community);
                     }
                 }
             }
+        }
     );
 
-    public void setInterface(HandleClick handle){
+    public void setInterface(HandleClick handle) {
         this.handleClick = handle;
     }
 
