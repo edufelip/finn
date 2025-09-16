@@ -17,8 +17,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-data class AuthState(val loading: Boolean = false, val userId: String? = null, val error: String? = null)
-
 @Composable
 fun AuthScreen(
     userIdFlow: Flow<String?>,

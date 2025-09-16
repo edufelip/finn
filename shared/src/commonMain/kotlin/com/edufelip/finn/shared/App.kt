@@ -8,14 +8,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.edufelip.finn.shared.domain.model.Post
-import com.edufelip.finn.shared.domain.usecase.AddCommentUseCase
-import com.edufelip.finn.shared.domain.usecase.CreateCommunityUseCase
-import com.edufelip.finn.shared.domain.usecase.GetCommentsForPostUseCase
-import com.edufelip.finn.shared.domain.usecase.GetCommunityDetailsUseCase
-import com.edufelip.finn.shared.domain.usecase.GetCommunityPostsUseCase
-import com.edufelip.finn.shared.domain.usecase.GetUserUseCase
-import com.edufelip.finn.shared.domain.usecase.ObserveNotificationsUseCase
-import com.edufelip.finn.shared.domain.usecase.SearchCommunitiesUseCase
+import com.edufelip.finn.shared.presentation.vm.AuthVM
+import com.edufelip.finn.shared.presentation.vm.CommentsVM
+import com.edufelip.finn.shared.presentation.vm.CommunityDetailsVM
+import com.edufelip.finn.shared.presentation.vm.CreateCommunityVM
+import com.edufelip.finn.shared.presentation.vm.CreatePostVM
+import com.edufelip.finn.shared.presentation.vm.HomeVM
+import com.edufelip.finn.shared.presentation.vm.NotificationsVM
+import com.edufelip.finn.shared.presentation.vm.ProfileVM
+import com.edufelip.finn.shared.presentation.vm.SavedVM
+import com.edufelip.finn.shared.presentation.vm.SearchVM
 import com.edufelip.finn.shared.i18n.ProvideStrings
 import com.edufelip.finn.shared.i18n.readPersistedLanguageCode
 import com.edufelip.finn.shared.navigation.Route
@@ -36,24 +38,18 @@ import com.edufelip.finn.shared.ui.theme.AppTheme
 @Composable
 fun SharedApp(
     router: Router,
-    getFeed: com.edufelip.finn.shared.domain.usecase.GetFeedUseCase,
-    postRepository: com.edufelip.finn.shared.domain.repository.PostRepository,
-    searchCommunities: SearchCommunitiesUseCase,
-    getCommunityDetails: GetCommunityDetailsUseCase,
-    getCommunityPosts: GetCommunityPostsUseCase,
-    observeNotifications: ObserveNotificationsUseCase?,
-    createCommunity: CreateCommunityUseCase,
-    userIdFlow: kotlinx.coroutines.flow.Flow<String?>,
-    getUser: GetUserUseCase,
-    getUserPosts: (String, Int) -> kotlinx.coroutines.flow.Flow<com.edufelip.finn.shared.domain.model.Post>,
+    homeVm: HomeVM,
+    searchVm: SearchVM,
+    communityVm: CommunityDetailsVM,
+    notificationsVm: NotificationsVM,
+    createCommunityVm: CreateCommunityVM,
+    profileVm: ProfileVM,
+    savedVm: SavedVM,
+    authVm: AuthVM,
     onRequestSignIn: () -> Unit,
     onRequestSignOut: () -> Unit,
-    createPostRepo: com.edufelip.finn.shared.domain.repository.PostRepository,
-    createPostUserIdProvider: () -> String,
-    pickImage: suspend () -> ByteArray?,
-    getComments: GetCommentsForPostUseCase,
-    addComment: AddCommentUseCase,
-    userIdProvider: () -> String,
+    createPostVm: CreatePostVM,
+    commentsVmFactory: (Int) -> CommentsVM,
     onSharePost: (Post) -> Unit,
 ) {
     val current by router.current.collectAsState()
@@ -68,25 +64,25 @@ fun SharedApp(
             ) { padding ->
                 when (current) {
                     Route.Login -> AuthScreen(
-                        userIdFlow = userIdFlow,
+                        userIdFlow = authVm.userIdFlow,
                         onRequestSignIn = onRequestSignIn,
                         onRequestSignOut = onRequestSignOut,
                         onSignedIn = { router.navigate(Route.Home) },
                     )
                     Route.Home -> HomeScreen(
-                        getFeed = getFeed,
-                        postRepository = postRepository,
-                        userIdProvider = userIdProvider,
+                        getFeed = homeVm.getFeed,
+                        postRepository = homeVm.postRepository,
+                        userIdProvider = homeVm.userIdProvider,
                         onShare = onSharePost,
                     )
                     Route.Search -> SearchScreen(
-                        searchCommunities = searchCommunities,
+                        searchCommunities = searchVm.searchCommunities,
                         onBack = { router.back() },
                         onCommunityClick = { id -> router.navigate(Route.CommunityDetails(id)) },
                     )
-                    Route.Notifications -> NotificationsScreen(observe = observeNotifications)
-                    Route.Profile -> ProfileScreen(userIdFlow = userIdFlow, getUser = getUser, getUserPosts = getUserPosts, goToSaved = { router.navigate(Route.Saved) }, goToSettings = { router.navigate(Route.Settings) })
-                    Route.Saved -> SavedScreen(userIdFlow = userIdFlow, repo = postRepository, onBack = { router.back() })
+                    Route.Notifications -> NotificationsScreen(observe = notificationsVm.observeNotifications)
+                    Route.Profile -> ProfileScreen(userIdFlow = profileVm.userIdFlow, getUser = profileVm.getUser, getUserPosts = profileVm.getUserPosts, goToSaved = { router.navigate(Route.Saved) }, goToSettings = { router.navigate(Route.Settings) })
+                    Route.Saved -> SavedScreen(userIdFlow = savedVm.userIdFlow, repo = savedVm.repo, onBack = { router.back() })
                     Route.Settings -> com.edufelip.finn.shared.presentation.settings.SettingsScreen(onApply = { code ->
                         com.edufelip.finn.shared.i18n.persistLanguageCode(code)
                         langOverrideState.value = code
@@ -97,29 +93,29 @@ fun SharedApp(
                         PostDetailsScreen(
                             postId = pid,
                             onBack = { router.back() },
-                            getComments = getComments,
-                            addComment = addComment,
-                            userIdProvider = userIdProvider,
+                            getComments = commentsVmFactory(pid).getComments,
+                            addComment = commentsVmFactory(pid).addComment,
+                            userIdProvider = commentsVmFactory(pid).userIdProvider,
                         )
                     }
                     is Route.CommunityDetails -> CommunityDetailsScreen(
-                        getCommunityDetails = getCommunityDetails,
-                        getCommunityPosts = getCommunityPosts,
+                        getCommunityDetails = communityVm.getCommunityDetails,
+                        getCommunityPosts = communityVm.getCommunityPosts,
                         id = (current as Route.CommunityDetails).id,
                         onBack = { router.back() },
-                        getComments = getComments,
-                        addComment = addComment,
-                        userIdProvider = userIdProvider,
+                        getComments = commentsVmFactory(0).getComments,
+                        addComment = commentsVmFactory(0).addComment,
+                        userIdProvider = commentsVmFactory(0).userIdProvider,
                     )
                     Route.CreateCommunity -> CreateCommunityScreen(
-                        createCommunity = createCommunity,
+                        createCommunity = createCommunityVm.createCommunity,
                         onCreated = { id -> router.navigate(Route.CommunityDetails(id)) },
                         onCancel = { router.back() },
                     )
                     Route.CreatePost -> CreatePostScreen(
-                        repo = createPostRepo,
-                        userIdProvider = createPostUserIdProvider,
-                        pickImage = pickImage,
+                        repo = createPostVm.repo,
+                        userIdProvider = createPostVm.userIdProvider,
+                        pickImage = createPostVm.pickImage,
                         onCreated = { router.navigate(Route.Home) },
                         onCancel = { router.back() },
                     )

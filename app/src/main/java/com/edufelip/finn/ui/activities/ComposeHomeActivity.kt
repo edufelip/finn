@@ -10,6 +10,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.lifecycleScope
 import com.edufelip.finn.shared.navigation.Route
+import com.edufelip.finn.shared.presentation.vm.HomeVM
 import com.edufelip.finn.sharedimpl.CommunityRepositoryAndroid
 import com.edufelip.finn.sharedimpl.PostRepositoryAndroid
 import com.edufelip.finn.ui.compose.AndroidRouter
@@ -103,10 +104,9 @@ class ComposeHomeActivity : ComponentActivity() {
                 }
             }
             // Restore stack if activity provided an explicit snapshot (e.g., forwarded).
-            restoredPaths?.let { (router as? com.edufelip.finn.ui.compose.AndroidRouter)?.restorePaths(it) }
+            restoredPaths?.let { router.restorePaths(it) }
             BackHandler(enabled = router.canGoBack) { router.back() }
             val onSharePost: (com.edufelip.finn.shared.domain.model.Post) -> Unit = { post ->
-                // Share post content + URL via Android Sharesheet
                 val url = com.edufelip.finn.shared.navigation.DeepLinks.postUrl(post.id)
                 val text = buildString {
                     append(post.content)
@@ -121,26 +121,54 @@ class ComposeHomeActivity : ComponentActivity() {
                 val chooser = Intent.createChooser(sendIntent, getString(com.edufelip.finn.R.string.share))
                 startActivity(chooser)
             }
+            val homeBridge = object : HomeVM {
+                override val getFeed = getFeed
+                override val postRepository = homeVm.postRepository
+                override val userIdProvider = homeVm.userIdProvider
+            }
+            val searchBridge = object : com.edufelip.finn.shared.presentation.vm.SearchVM { override val searchCommunities = searchCommunities }
+            val communityBridge = object : com.edufelip.finn.shared.presentation.vm.CommunityDetailsVM {
+                override val getCommunityDetails = getCommunityDetails
+                override val getCommunityPosts = getCommunityPosts
+            }
+            val notificationsBridge = object : com.edufelip.finn.shared.presentation.vm.NotificationsVM { override val observeNotifications = observeNotifications }
+            val createCommunityBridge = object : com.edufelip.finn.shared.presentation.vm.CreateCommunityVM { override val createCommunity = createCommunity }
+            val profileBridge = object : com.edufelip.finn.shared.presentation.vm.ProfileVM {
+                override val userIdFlow = userIdFlow
+                override val getUser = getUser
+                override val getUserPosts = profileVm.getUserPosts
+            }
+            val savedBridge = object : com.edufelip.finn.shared.presentation.vm.SavedVM {
+                override val userIdFlow = userIdFlow
+                override val repo = homeVm.postRepository
+            }
+            val authBridge = object : com.edufelip.finn.shared.presentation.vm.AuthVM { override val userIdFlow = userIdFlow }
+            val createPostBridge = object : com.edufelip.finn.shared.presentation.vm.CreatePostVM {
+                override val repo = createPostVm.postRepository
+                override val userIdProvider = createPostVm.userIdProvider
+                override val pickImage = pickImage
+            }
+            val commentsFactory: (Int) -> com.edufelip.finn.shared.presentation.vm.CommentsVM = { _ ->
+                object : com.edufelip.finn.shared.presentation.vm.CommentsVM {
+                    override val getComments = getComments
+                    override val addComment = addComment
+                    override val userIdProvider = commentsVm.userIdProvider
+                }
+            }
             com.edufelip.finn.shared.SharedApp(
                 router = router,
-                getFeed = getFeed,
-                postRepository = homeVm.postRepository,
-                searchCommunities = searchCommunities,
-                getCommunityDetails = getCommunityDetails,
-                getCommunityPosts = getCommunityPosts,
-                observeNotifications = observeNotifications,
-                createCommunity = createCommunity,
-                userIdFlow = userIdFlow,
-                getUser = getUser,
-                getUserPosts = profileVm.getUserPosts,
+                homeVm = homeBridge,
+                searchVm = searchBridge,
+                communityVm = communityBridge,
+                notificationsVm = notificationsBridge,
+                createCommunityVm = createCommunityBridge,
+                profileVm = profileBridge,
+                savedVm = savedBridge,
+                authVm = authBridge,
                 onRequestSignIn = onRequestSignIn,
                 onRequestSignOut = onRequestSignOut,
-                createPostRepo = createPostVm.postRepository,
-                createPostUserIdProvider = createPostVm.userIdProvider,
-                pickImage = pickImage,
-                getComments = getComments,
-                addComment = addComment,
-                userIdProvider = commentsVm.userIdProvider,
+                createPostVm = createPostBridge,
+                commentsVmFactory = commentsFactory,
                 onSharePost = onSharePost,
             )
         }
