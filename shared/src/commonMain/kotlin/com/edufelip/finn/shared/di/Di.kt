@@ -1,0 +1,29 @@
+package com.edufelip.finn.shared.di
+
+import com.edufelip.finn.shared.domain.model.Post
+import com.edufelip.finn.shared.presentation.vm.CommentsVM
+import org.koin.core.Koin
+import org.koin.core.context.GlobalContext
+
+// Factory for per-post CommentsVM instances
+interface CommentsVMFactory {
+    fun create(postId: Int): CommentsVM
+}
+
+// Platform auth actions consumed by shared UI
+interface AuthActions {
+    fun requestSignIn()
+    fun requestSignOut()
+    fun emailPasswordLogin(email: String, password: String)
+}
+
+// Platform share actions consumed by shared UI
+interface ShareActions {
+    fun share(post: Post)
+}
+
+// Simple access to Koin from common code
+object DI {
+    // Access the global Koin instance
+    val koin: Koin get() = GlobalContext.get()
+}

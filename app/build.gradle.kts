@@ -106,6 +106,9 @@ dependencies {
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.google.identity.googleid)
 
+    // Koin core for shared DI
+    implementation(libs.koin.core)
+
     // Images
     implementation(libs.coil.compose)
     // Material Components (XML themes/styles)

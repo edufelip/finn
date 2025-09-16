@@ -37,6 +37,10 @@
 
     <string name="login_placeholder">Iniciar sesión</string>
     <string name="continue_label">Continuar</string>
+    <string name="password">Contraseña</string>
+    <string name="forgot_your_password">¿Olvidaste tu contraseña?</string>
+    <string name="login">Iniciar sesión</string>
+    <string name="e_mail">Correo electrónico</string>
 
     <string name="comments_header">Comentarios</string>
     <string name="no_comments">Aún no hay comentarios</string>
@@ -62,4 +66,3 @@
     <string name="apply">Aplicar</string>
     <string name="end_of_list">Has llegado al final</string>
 </resources>
-

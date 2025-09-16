@@ -37,6 +37,10 @@
 
     <string name="login_placeholder">Entrar</string>
     <string name="continue_label">Continuar</string>
+    <string name="password">Senha</string>
+    <string name="forgot_your_password">Esqueceu sua senha</string>
+    <string name="login">Entrar</string>
+    <string name="e_mail">E-mail</string>
 
     <string name="comments_header">Comentários</string>
     <string name="no_comments">Ainda não há comentários</string>

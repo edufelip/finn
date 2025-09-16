@@ -29,9 +29,38 @@ import com.edufelip.finn.ui.viewmodels.SearchViewModel
 import com.edufelip.finn.utils.GoogleAuthUiClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.messaging.FirebaseMessaging
+import android.widget.Toast
+import android.util.Patterns
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.content.Context
+import com.edufelip.finn.R
+import com.edufelip.finn.notifications.TokenUploaderAndroid
+import com.edufelip.finn.shared.SharedApp
+import com.edufelip.finn.shared.di.AuthActions
+import com.edufelip.finn.shared.di.CommentsVMFactory
+import com.edufelip.finn.shared.di.ShareActions
+import com.edufelip.finn.shared.domain.model.Post
+import com.edufelip.finn.shared.navigation.DeepLinks
+import com.edufelip.finn.shared.presentation.vm.AuthVM
+import com.edufelip.finn.shared.presentation.vm.CommentsVM
+import com.edufelip.finn.shared.presentation.vm.CommunityDetailsVM
+import com.edufelip.finn.shared.presentation.vm.CreateCommunityVM
+import com.edufelip.finn.shared.presentation.vm.CreatePostVM
+import com.edufelip.finn.shared.presentation.vm.NotificationsVM
+import com.edufelip.finn.shared.presentation.vm.ProfileVM
+import com.edufelip.finn.shared.presentation.vm.SavedVM
+import com.edufelip.finn.shared.presentation.vm.SearchVM
+import com.edufelip.finn.sharedimpl.CommentRepositoryAndroid
+import com.edufelip.finn.sharedimpl.UserRepositoryAndroid
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.koin.core.context.loadKoinModules
+import org.koin.dsl.module
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -41,15 +70,15 @@ class ComposeHomeActivity : ComponentActivity() {
 
     @Inject lateinit var communityRepository: CommunityRepositoryAndroid
 
-    @Inject lateinit var userRepository: com.edufelip.finn.sharedimpl.UserRepositoryAndroid
+    @Inject lateinit var userRepository: UserRepositoryAndroid
 
     @Inject lateinit var auth: FirebaseAuth
 
     @Inject lateinit var googleAuthUiClient: GoogleAuthUiClient
 
-    @Inject lateinit var tokenUploader: com.edufelip.finn.notifications.TokenUploaderAndroid
+    @Inject lateinit var tokenUploader: TokenUploaderAndroid
 
-    @Inject lateinit var commentRepository: com.edufelip.finn.sharedimpl.CommentRepositoryAndroid
+    @Inject lateinit var commentRepository: CommentRepositoryAndroid
 
     private val homeVm: HomeViewModel by viewModels()
     private val searchVm: SearchViewModel by viewModels()
@@ -67,7 +96,7 @@ class ComposeHomeActivity : ComponentActivity() {
         val restoredPaths: ArrayList<String>? = savedInstanceState?.getStringArrayList("router_paths")
         val deeplinkPath: String? = intent?.getStringExtra("deeplink_path")
         setContent {
-            val baseStart = if (auth.currentUser == null) Route.Login else Route.Home
+            val baseStart = Route.Login
             val start = deeplinkPath?.let { parseRoute(it) } ?: baseStart
             val router = rememberSaveable(
                 saver = listSaver(
@@ -106,8 +135,8 @@ class ComposeHomeActivity : ComponentActivity() {
             // Restore stack if activity provided an explicit snapshot (e.g., forwarded).
             restoredPaths?.let { router.restorePaths(it) }
             BackHandler(enabled = router.canGoBack) { router.back() }
-            val onSharePost: (com.edufelip.finn.shared.domain.model.Post) -> Unit = { post ->
-                val url = com.edufelip.finn.shared.navigation.DeepLinks.postUrl(post.id)
+            val onSharePost: (Post) -> Unit = { post ->
+                val url = DeepLinks.postUrl(post.id)
                 val text = buildString {
                     append(post.content)
                     append('\n')
@@ -118,7 +147,7 @@ class ComposeHomeActivity : ComponentActivity() {
                     putExtra(Intent.EXTRA_TEXT, text)
                     type = "text/plain"
                 }
-                val chooser = Intent.createChooser(sendIntent, getString(com.edufelip.finn.R.string.share))
+                val chooser = Intent.createChooser(sendIntent, getString(R.string.share))
                 startActivity(chooser)
             }
             val homeBridge = object : HomeVM {
@@ -126,52 +155,101 @@ class ComposeHomeActivity : ComponentActivity() {
                 override val postRepository = homeVm.postRepository
                 override val userIdProvider = homeVm.userIdProvider
             }
-            val searchBridge = object : com.edufelip.finn.shared.presentation.vm.SearchVM { override val searchCommunities = searchCommunities }
-            val communityBridge = object : com.edufelip.finn.shared.presentation.vm.CommunityDetailsVM {
+            val searchBridge = object : SearchVM { override val searchCommunities = searchCommunities }
+            val communityBridge = object : CommunityDetailsVM {
                 override val getCommunityDetails = getCommunityDetails
                 override val getCommunityPosts = getCommunityPosts
             }
-            val notificationsBridge = object : com.edufelip.finn.shared.presentation.vm.NotificationsVM { override val observeNotifications = observeNotifications }
-            val createCommunityBridge = object : com.edufelip.finn.shared.presentation.vm.CreateCommunityVM { override val createCommunity = createCommunity }
-            val profileBridge = object : com.edufelip.finn.shared.presentation.vm.ProfileVM {
+            val notificationsBridge = object : NotificationsVM { override val observeNotifications = observeNotifications }
+            val createCommunityBridge = object : CreateCommunityVM { override val createCommunity = createCommunity }
+            val profileBridge = object : ProfileVM {
                 override val userIdFlow = userIdFlow
                 override val getUser = getUser
                 override val getUserPosts = profileVm.getUserPosts
             }
-            val savedBridge = object : com.edufelip.finn.shared.presentation.vm.SavedVM {
+            val savedBridge = object : SavedVM {
                 override val userIdFlow = userIdFlow
                 override val repo = homeVm.postRepository
             }
-            val authBridge = object : com.edufelip.finn.shared.presentation.vm.AuthVM { override val userIdFlow = userIdFlow }
-            val createPostBridge = object : com.edufelip.finn.shared.presentation.vm.CreatePostVM {
+            val authBridge = object : AuthVM { override val userIdFlow = userIdFlow }
+            val createPostBridge = object : CreatePostVM {
                 override val repo = createPostVm.postRepository
                 override val userIdProvider = createPostVm.userIdProvider
                 override val pickImage = pickImage
             }
-            val commentsFactory: (Int) -> com.edufelip.finn.shared.presentation.vm.CommentsVM = { _ ->
-                object : com.edufelip.finn.shared.presentation.vm.CommentsVM {
+            val commentsFactory: (Int) -> CommentsVM = { _ ->
+                object : CommentsVM {
                     override val getComments = getComments
                     override val addComment = addComment
                     override val userIdProvider = commentsVm.userIdProvider
                 }
             }
-            com.edufelip.finn.shared.SharedApp(
-                router = router,
-                homeVm = homeBridge,
-                searchVm = searchBridge,
-                communityVm = communityBridge,
-                notificationsVm = notificationsBridge,
-                createCommunityVm = createCommunityBridge,
-                profileVm = profileBridge,
-                savedVm = savedBridge,
-                authVm = authBridge,
-                onRequestSignIn = onRequestSignIn,
-                onRequestSignOut = onRequestSignOut,
-                createPostVm = createPostBridge,
-                commentsVmFactory = commentsFactory,
-                onSharePost = onSharePost,
+            // Load Koin bindings for shared UI (bridges + platform actions)
+            loadKoinModules(
+                module {
+                    single<HomeVM> { homeBridge }
+                    single<SearchVM> { searchBridge }
+                    single<CommunityDetailsVM> { communityBridge }
+                    single<NotificationsVM> { notificationsBridge }
+                    single<CreateCommunityVM> { createCommunityBridge }
+                    single<ProfileVM> { profileBridge }
+                    single<SavedVM> { savedBridge }
+                    single<AuthVM> { authBridge }
+                    single<CreatePostVM> { createPostBridge }
+                    single<CommentsVMFactory> {
+                        object : CommentsVMFactory {
+                            override fun create(postId: Int): CommentsVM =
+                                object : CommentsVM {
+                                    override val getComments = getComments
+                                    override val addComment = addComment
+                                    override val userIdProvider = commentsVm.userIdProvider
+                                }
+                        }
+                    }
+                    single<AuthActions> {
+                        object : AuthActions {
+                            override fun requestSignIn() = onRequestSignIn()
+                            override fun requestSignOut() = onRequestSignOut()
+                            override fun emailPasswordLogin(email: String, password: String) {
+                                when {
+                                    email.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter email", Toast.LENGTH_SHORT).show()
+                                    !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> Toast.makeText(this@ComposeHomeActivity, "Email is invalid", Toast.LENGTH_SHORT).show()
+                                    password.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter password", Toast.LENGTH_SHORT).show()
+                                    !isOnline() -> Toast.makeText(this@ComposeHomeActivity, "No internet connection", Toast.LENGTH_SHORT).show()
+                                    else -> auth.signInWithEmailAndPassword(email, password)
+                                        .addOnCompleteListener { task ->
+                                            if (!task.isSuccessful) {
+                                                val msg = when (val ex = task.exception) {
+                                                    is FirebaseAuthInvalidUserException -> "User not registered"
+                                                    is FirebaseAuthInvalidCredentialsException -> "Password incorrect"
+                                                    is FirebaseNetworkException -> "Network error. Check your connection and try again"
+                                                    else -> ex?.message ?: "Unknown error"
+                                                }
+                                                Toast.makeText(this@ComposeHomeActivity, "Error: ${msg}", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                }
+                            }
+                        }
+                    }
+                    single<ShareActions> {
+                        object : ShareActions {
+                            override fun share(post: Post) = onSharePost(post)
+                        }
+                    }
+                },
             )
+
+            SharedApp(router = router)
         }
+    }
+
+    private fun isOnline(): Boolean {
+        val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(network) ?: return false
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+            caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

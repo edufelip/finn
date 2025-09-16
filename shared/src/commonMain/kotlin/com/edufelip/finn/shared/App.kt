@@ -1,5 +1,6 @@
 package com.edufelip.finn.shared
 
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,42 +39,49 @@ import com.edufelip.finn.shared.ui.theme.AppTheme
 @Composable
 fun SharedApp(
     router: Router,
-    homeVm: HomeVM,
-    searchVm: SearchVM,
-    communityVm: CommunityDetailsVM,
-    notificationsVm: NotificationsVM,
-    createCommunityVm: CreateCommunityVM,
-    profileVm: ProfileVM,
-    savedVm: SavedVM,
-    authVm: AuthVM,
-    onRequestSignIn: () -> Unit,
-    onRequestSignOut: () -> Unit,
-    createPostVm: CreatePostVM,
-    commentsVmFactory: (Int) -> CommentsVM,
-    onSharePost: (Post) -> Unit,
 ) {
+    val koin = com.edufelip.finn.shared.di.DI.koin
+    val homeVm: HomeVM = koin.get(clazz = HomeVM::class)
+    val searchVm: SearchVM = koin.get(clazz = SearchVM::class)
+    val communityVm: CommunityDetailsVM = koin.get(clazz = CommunityDetailsVM::class)
+    val notificationsVm: NotificationsVM = koin.get(clazz = NotificationsVM::class)
+    val createCommunityVm: CreateCommunityVM = koin.get(clazz = CreateCommunityVM::class)
+    val profileVm: ProfileVM = koin.get(clazz = ProfileVM::class)
+    val savedVm: SavedVM = koin.get(clazz = SavedVM::class)
+    val authVm: AuthVM = koin.get(clazz = AuthVM::class)
+    val createPostVm: CreatePostVM = koin.get(clazz = CreatePostVM::class)
+    val commentsFactory: com.edufelip.finn.shared.di.CommentsVMFactory = koin.get(clazz = com.edufelip.finn.shared.di.CommentsVMFactory::class)
+    val authActions: com.edufelip.finn.shared.di.AuthActions = koin.get(clazz = com.edufelip.finn.shared.di.AuthActions::class)
+    val shareActions: com.edufelip.finn.shared.di.ShareActions = koin.get(clazz = com.edufelip.finn.shared.di.ShareActions::class)
     val current by router.current.collectAsState()
     AppTheme {
         val langOverrideState = remember { mutableStateOf(readPersistedLanguageCode()) }
         ProvideStrings(localeOverride = langOverrideState.value) {
             Scaffold(
-                bottomBar = { SharedBottomBar(current = current, onNavigate = { r -> router.navigate(r) }) },
+                bottomBar = {
+                    if (current != Route.Login) {
+                        SharedBottomBar(current = current, onNavigate = { r -> router.navigate(r) })
+                    }
+                },
                 floatingActionButton = {
-                    androidx.compose.material3.FloatingActionButton(onClick = { router.navigate(Route.CreatePost) }) { Text("+") }
+                    if (current != Route.Login) {
+                        FloatingActionButton(onClick = { router.navigate(Route.CreatePost) }) { Text("+") }
+                    }
                 },
             ) { padding ->
                 when (current) {
                     Route.Login -> AuthScreen(
                         userIdFlow = authVm.userIdFlow,
-                        onRequestSignIn = onRequestSignIn,
-                        onRequestSignOut = onRequestSignOut,
+                        onRequestSignIn = { authActions.requestSignIn() },
+                        onRequestSignOut = { authActions.requestSignOut() },
                         onSignedIn = { router.navigate(Route.Home) },
+                        onEmailPasswordLogin = { e, p -> authActions.emailPasswordLogin(e, p) },
                     )
                     Route.Home -> HomeScreen(
                         getFeed = homeVm.getFeed,
                         postRepository = homeVm.postRepository,
                         userIdProvider = homeVm.userIdProvider,
-                        onShare = onSharePost,
+                        onShare = { post -> shareActions.share(post) },
                     )
                     Route.Search -> SearchScreen(
                         searchCommunities = searchVm.searchCommunities,
@@ -93,9 +101,9 @@ fun SharedApp(
                         PostDetailsScreen(
                             postId = pid,
                             onBack = { router.back() },
-                            getComments = commentsVmFactory(pid).getComments,
-                            addComment = commentsVmFactory(pid).addComment,
-                            userIdProvider = commentsVmFactory(pid).userIdProvider,
+                            getComments = commentsFactory.create(pid).getComments,
+                            addComment = commentsFactory.create(pid).addComment,
+                            userIdProvider = commentsFactory.create(pid).userIdProvider,
                         )
                     }
                     is Route.CommunityDetails -> CommunityDetailsScreen(
@@ -103,9 +111,9 @@ fun SharedApp(
                         getCommunityPosts = communityVm.getCommunityPosts,
                         id = (current as Route.CommunityDetails).id,
                         onBack = { router.back() },
-                        getComments = commentsVmFactory(0).getComments,
-                        addComment = commentsVmFactory(0).addComment,
-                        userIdProvider = commentsVmFactory(0).userIdProvider,
+                        getComments = commentsFactory.create(0).getComments,
+                        addComment = commentsFactory.create(0).addComment,
+                        userIdProvider = commentsFactory.create(0).userIdProvider,
                     )
                     Route.CreateCommunity -> CreateCommunityScreen(
                         createCommunity = createCommunityVm.createCommunity,

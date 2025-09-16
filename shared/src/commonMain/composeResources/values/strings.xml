@@ -37,6 +37,10 @@
 
     <string name="login_placeholder">Login</string>
     <string name="continue_label">Continue</string>
+    <string name="password">Password</string>
+    <string name="forgot_your_password">Forgot your password</string>
+    <string name="login">Login</string>
+    <string name="e_mail">E-mail</string>
 
     <string name="comments_header">Comments</string>
     <string name="no_comments">No comments yet</string>

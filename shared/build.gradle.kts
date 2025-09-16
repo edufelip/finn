@@ -27,6 +27,7 @@ kotlin {
                 implementation(compose.material3)
                 implementation(compose.components.resources)
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.koin.core)
                 // Skia Image APIs for iOS byte decoding are provided by Compose runtime on iOS
             }
         }
@@ -34,6 +35,7 @@ kotlin {
             dependencies {
                 implementation(libs.kotlinx.coroutines.android)
                 implementation(libs.coil.compose)
+                implementation(libs.androidx.compose.tooling.preview)
             }
         }
         val iosX64Main by getting { dependencies { implementation(libs.kamel.image) } }
@@ -67,4 +69,9 @@ android {
 detekt {
     buildUponDefaultConfig = true
     allRules = false
+}
+
+// Compose Previews from shared Android source need ui-tooling at debug time
+dependencies {
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }

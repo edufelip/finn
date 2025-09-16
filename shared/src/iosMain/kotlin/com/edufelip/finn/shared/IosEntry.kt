@@ -3,7 +3,7 @@ package com.edufelip.finn.shared
 import androidx.compose.ui.window.ComposeUIViewController
 import com.edufelip.finn.shared.data.fake.PostRepositoryFake
 import com.edufelip.finn.shared.domain.model.Community
-cimport com.edufelip.finn.shared.domain.model.Post
+import com.edufelip.finn.shared.domain.model.Post
 import com.edufelip.finn.shared.domain.repository.CommentRepository
 import com.edufelip.finn.shared.domain.repository.CommunityRepository
 import com.edufelip.finn.shared.domain.repository.PostRepository
@@ -17,13 +17,19 @@ import com.edufelip.finn.shared.domain.usecase.GetFeedUseCase
 import com.edufelip.finn.shared.domain.usecase.GetUserUseCase
 import com.edufelip.finn.shared.domain.usecase.SearchCommunitiesUseCase
 import com.edufelip.finn.shared.navigation.DeepLinks
+import com.edufelip.finn.shared.navigation.Route
 import com.edufelip.finn.shared.navigation.SimpleRouter
 import com.edufelip.finn.shared.presentation.vm.*
+import com.edufelip.finn.shared.di.AuthActions
+import com.edufelip.finn.shared.di.CommentsVMFactory
+import com.edufelip.finn.shared.di.ShareActions
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 fun MainViewController() = ComposeUIViewController {
-    val router = SimpleRouter()
+    val router = SimpleRouter(Route.Login)
 
     // Fake repositories for iOS demo wiring
     val postRepo: PostRepository = PostRepositoryFake()
@@ -89,29 +95,46 @@ fun MainViewController() = ComposeUIViewController {
         override val userIdProvider: () -> String = { "me" }
         override val pickImage: suspend () -> ByteArray? = { null }
     }
-    val commentsFactory: (Int) -> CommentsVM = { _ ->
-        object : CommentsVM {
-            override val getComments = getComments
-            override val addComment = addComment
-            override val userIdProvider: () -> String = { "me" }
-        }
+    // Start Koin and provide shared UI dependencies
+    startKoin {
+        modules(
+            module {
+                single<HomeVM> { homeBridge }
+                single<SearchVM> { searchBridge }
+                single<CommunityDetailsVM> { communityBridge }
+                single<NotificationsVM> { notificationsBridge }
+                single<CreateCommunityVM> { createCommunityBridge }
+                single<ProfileVM> { profileBridge }
+                single<SavedVM> { savedBridge }
+                single<AuthVM> { authBridge }
+                single<CreatePostVM> { createPostBridge }
+                single<CommentsVMFactory> {
+                    object : CommentsVMFactory {
+                        override fun create(postId: Int): CommentsVM =
+                            object : CommentsVM {
+                                override val getComments = getComments
+                                override val addComment = addComment
+                                override val userIdProvider: () -> String = { "me" }
+                            }
+                    }
+                }
+                single<AuthActions> {
+                    object : AuthActions {
+                        override fun requestSignIn() {}
+                        override fun requestSignOut() {}
+                        override fun emailPasswordLogin(email: String, password: String) {}
+                    }
+                }
+                single<ShareActions> {
+                    object : ShareActions {
+                        override fun share(post: Post) {
+                            presentShareSheet(post.content + "\n" + DeepLinks.postUrl(post.id))
+                        }
+                    }
+                }
+            },
+        )
     }
 
-    SharedApp(
-        router = router,
-        homeVm = homeBridge,
-        searchVm = searchBridge,
-        communityVm = communityBridge,
-        notificationsVm = notificationsBridge,
-        createCommunityVm = createCommunityBridge,
-        profileVm = profileBridge,
-        savedVm = savedBridge,
-        authVm = authBridge,
-        onRequestSignIn = {},
-        onRequestSignOut = {},
-        createPostVm = createPostBridge,
-        commentsVmFactory = commentsFactory,
-        onSharePost = { post -> presentShareSheet(post.content + "\n" + DeepLinks.postUrl(post.id)) },
-    )
+    SharedApp(router = router)
 }
-
