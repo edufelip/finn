@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://android-arsenal.com/api?level=24"><img alt="API" src="https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat"/></a>
-  <a href="https://github.com/edufelip"><img alt="Build Status" src="https://img.shields.io/static/v1?label=Android CI&message=passing&color=green&logo=android"/></a>
+  <a href="https://github.com/edufelip"><img alt="Build Status" src="https://img.shields.io/static/v1?label=Android+CI&message=passing&color=green&logo=android"/></a>
   <a href="https://medium.com/@eduardofelipi"><img alt="Medium" src="https://img.shields.io/static/v1?label=Medium&message=@edu_santos&color=gray&logo=medium"/></a> <br>
   <a href="https://www.youtube.com/channel/UCYcwwX7nDU_U0FP-TsXMwVg"><img alt="Profile" src="https://img.shields.io/static/v1?label=Youtube&message=edu_santos&color=red&logo=youtube"/></a> 
   <a href="https://github.com/edufelip"><img alt="Profile" src="https://img.shields.io/static/v1?label=Github&message=edufelip&color=white&logo=github"/></a> 
@@ -20,17 +20,19 @@
 ## Download
 Go to [Google Play](https://play.google.com/store/apps/details?id=com.edufelip.finn) to download the latest App version.
 
-## This project uses
-* MVVM Architecture and LiveData
-* Retrofit
-* RxJava
-* Hilt
-* Glide
-* FirebaseAuth
-* ViewPager
+## Tech Stack (modernized)
+- Kotlin + Coroutines/Flow
+- Jetpack Compose Multiplatform (shared UI for Android/iOS)
+- Clean Architecture (domain/data/presentation)
+- Hilt for DI
+- Retrofit + OkHttp
+- Room (ready for local persistence)
+- Firebase (Auth, Remote Config, Messaging/FCM)
+- Navigation Compose, Coil (Android), Kamel (iOS)
+- Lint, ktlint, detekt, GitHub Actions CI
 
-## Installation
-Clone this repository and import into **Android Studio**
+## Setup
+Clone this repository and open in **Android Studio** (Giraffe+)
 ```bash
 git clone https://github.com/edufelip/finn.git
 ```
@@ -40,21 +42,24 @@ or
 git clone git@github.com:edufelip/finn.git
 ```
 
-## Layouts
-<br>
-  <p align="left">
-            <img alt="splash screen"
-            src="https://github.com/edufelip/finn/assets/34727187/1af2621d-21d5-4e06-a02b-6859336a19d1" width="24%" 
-            title="splash screen">
-            <img alt="main screen"
-            src="https://github.com/edufelip/finn/assets/34727187/828c2285-7e8c-4356-849f-584fa4ba3324" width="24%" 
-            title="main screen">
-            <img alt="main screen dark"
-            src="https://github.com/edufelip/finn/assets/34727187/0ca5cb51-c091-4018-b419-134885950c30" width="24%" 
-            title="main screen dark">
-            <img alt="main screen dark"
-            src="https://github.com/edufelip/finn/assets/34727187/22b9aaea-4ef2-477f-914b-0cd74231bd1c" width="24%" 
-            title="main screen dark">
+Requirements
+- JDK 17, Android SDK 34
+- `app/google-services.json` from your Firebase project
+- `local.properties` should contain `FIREBASE_GOOGLE_ID=YOUR_GOOGLE_CLIENT_ID`
+
+Build/Run
+- Sync and run from Android Studio or:
+  - `./gradlew :app:assembleDebug`
+  - Lint/Checks: `./gradlew ktlintCheck detekt :app:lintDebug`
+  - Resource usage report: `./gradlew :app:resourceUsageReport` (see `app/build/reports/lint-results-debug.html`)
+
+Notifications
+- Android uses FCM. Foreground notifications are shown, and a Flow-based repository feeds the UI.
+- iOS scaffold included: call `IosPush.requestAuthorization()` at startup and `IosPush.handleRemoteNotification(title, body)` from your AppDelegate to feed shared UI.
+
+## Modules
+- `app/` Android application (Hilt wiring, platform services, Navigation Compose)
+- `shared/` Compose Multiplatform UI + domain/data contracts and presentation
 
 ## Generating APK
 From Android Studio:

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="alerts">Alerts</string>
+    <string name="profile">Profile</string>
+
+    <string name="login_welcome">Welcome</string>
+    <string name="sign_in_with_google">Sign in with Google</string>
+    <string name="sign_out">Sign out</string>
+
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="back">Back</string>
+    <string name="load_more">Load more</string>
+
+    <string name="like">Like</string>
+    <string name="unlike">Unlike</string>
+    <string name="error">Error</string>
+    <string name="query">Query</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="content">Content</string>
+    <string name="pick_image">Pick image</string>
+    <string name="saved">Saved</string>
+    <string name="joined">Joined:</string>
+    <string name="user">User</string>
+    <string name="by">by</string>
+    <string name="likes">likes</string>
+    <string name="comments">comments</string>
+    <string name="unknown">unknown</string>
+    <string name="image">image</string>
+
+    <string name="not_authenticated">Not authenticated</string>
+    <string name="content_empty">Content is empty</string>
+    <string name="unknown_error">Unknown error</string>
+
+    <string name="login_placeholder">Login</string>
+    <string name="continue_label">Continue</string>
+
+    <string name="comments_header">Comments</string>
+    <string name="no_comments">No comments yet</string>
+    <string name="reply">Reply</string>
+    <string name="write_comment">Write a comment...</string>
+    <string name="send">Send</string>
+
+    <string name="ago">ago</string>
+    <string name="just_now">just now</string>
+    <string name="minute_abbrev">m</string>
+    <string name="hour_abbrev">h</string>
+    <string name="day_abbrev">d</string>
+    <string name="week_abbrev">w</string>
+    <string name="month_abbrev">mo</string>
+    <string name="year_abbrev">y</string>
+
+    <string name="settings">Settings</string>
+    <string name="language">Language</string>
+    <string name="system_default">System default</string>
+    <string name="english">English</string>
+    <string name="portuguese">Portuguese</string>
+    <string name="spanish">Spanish</string>
+    <string name="apply">Apply</string>
+    <string name="end_of_list">You've reached the end</string>
+</resources>

@@ -4,20 +4,16 @@ import android.content.Context
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.firebase.auth.FirebaseAuth
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.edufelip.finn.BuildConfig
 import com.edufelip.finn.R
-import com.edufelip.finn.data.network.ApiService
+import com.edufelip.finn.data.network.ApiServiceV2
 import com.edufelip.finn.ui.delegators.auth.AuthExecutor
 import com.edufelip.finn.ui.delegators.auth.GeneralAuthExecutor
 import com.edufelip.finn.ui.delegators.auth.GoogleAuthExecutor
 import com.edufelip.finn.utils.GoogleAuthUiClient
 import com.edufelip.finn.utils.RemoteConfigUtils
 import com.edufelip.finn.utils.extensions.GlideUtils
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,29 +22,30 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object AppModule {
+    // Legacy ApiService (RxJava) removed; using ApiServiceV2 with coroutines.
+
     @Provides
     @Singleton
-    fun providesBackendApi(
+    fun providesBackendApiV2(
         factory: GsonConverterFactory,
         remoteConfigUtils: RemoteConfigUtils,
-        okHttpClient: OkHttpClient
-    ): ApiService {
-        val baseUrl = remoteConfigUtils.remoteServerAddress
+        okHttpClient: OkHttpClient,
+    ): ApiServiceV2 {
+        val baseUrl = remoteConfigUtils.getRemoteServerAddress()
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .addConverterFactory(factory)
             .client(okHttpClient)
             .build()
-            .create(ApiService::class.java)
+            .create(ApiServiceV2::class.java)
     }
 
     @Provides
@@ -58,20 +55,11 @@ internal object AppModule {
         val okHttpClient = OkHttpClient.Builder().apply {
             if (BuildConfig.DEBUG) addInterceptor(logger)
         }
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .writeTimeout(10, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
-        .build()
-        return okHttpClient
-    }
-
-    @Provides
-    @Singleton
-    fun providesGSO(): GoogleSignInOptions {
-        return GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(BuildConfig.FIREBASE_GOOGLE_ID)
-            .requestEmail()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
             .build()
+        return okHttpClient
     }
 
     @Provides
@@ -97,7 +85,7 @@ internal object AppModule {
     fun providesGlideInstance(@ApplicationContext context: Context?): RequestManager {
         return Glide.with(context!!).setDefaultRequestOptions(
             RequestOptions()
-                .placeholder(R.drawable.user_icon)
+                .placeholder(R.drawable.user_icon),
         )
     }
 
@@ -105,19 +93,15 @@ internal object AppModule {
     @Singleton
     fun providesGlideUtils(
         glide: RequestManager,
-        remoteConfigUtils: RemoteConfigUtils
+        remoteConfigUtils: RemoteConfigUtils,
     ): GlideUtils {
         return GlideUtils(glide, remoteConfigUtils)
     }
 
     @Provides
     @Singleton
-    fun providesGoogleAuthUiClient(@ApplicationContext context: Context?): GoogleAuthUiClient {
-        return GoogleAuthUiClient(
-            context!!,
-            Identity.getSignInClient(context)
-        )
-    }
+    fun providesGoogleAuthUiClient(@ApplicationContext context: Context?): GoogleAuthUiClient =
+        GoogleAuthUiClient(context!!)
 
     @Provides
     @Singleton
@@ -135,8 +119,14 @@ internal object AppModule {
     @Singleton
     fun providesAuthExecutor(
         googleAuthExecutor: GoogleAuthExecutor,
-        generalAuthExecutor: GeneralAuthExecutor
+        generalAuthExecutor: GeneralAuthExecutor,
     ): AuthExecutor {
         return AuthExecutor(googleAuthExecutor, generalAuthExecutor)
     }
+
+    @Provides
+    @Singleton
+    @Named("commentPageSize")
+    fun provideCommentPageSize(remoteConfigUtils: RemoteConfigUtils): Int =
+        remoteConfigUtils.getCommentsPageSize().takeIf { it > 0 } ?: 10
 }

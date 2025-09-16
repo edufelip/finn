@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 class AuthExecutor @Inject constructor(
     googleAuthExecutor: GoogleAuthExecutor,
-    generalAuthExecutor: GeneralAuthExecutor
+    generalAuthExecutor: GeneralAuthExecutor,
 ) {
 
     private val authProviders = listOf(googleAuthExecutor, generalAuthExecutor)
@@ -23,7 +23,7 @@ class AuthExecutor @Inject constructor(
 
     private inline fun executeFiltering(
         clientsSet: HashSet<AuthTypes>,
-        function: (IAuthExecutor) -> Unit
+        function: (IAuthExecutor) -> Unit,
     ) {
         authProviders.forEach {
             if (clientsSet.contains(it.type)) {

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home">Início</string>
+    <string name="search">Buscar</string>
+    <string name="alerts">Alertas</string>
+    <string name="profile">Perfil</string>
+
+    <string name="login_welcome">Bem-vindo</string>
+    <string name="sign_in_with_google">Entrar com o Google</string>
+    <string name="sign_out">Sair</string>
+
+    <string name="create">Criar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="back">Voltar</string>
+    <string name="load_more">Carregar mais</string>
+
+    <string name="like">Curtir</string>
+    <string name="unlike">Descurtir</string>
+    <string name="error">Erro</string>
+    <string name="query">Busca</string>
+    <string name="title">Título</string>
+    <string name="description">Descrição</string>
+    <string name="content">Conteúdo</string>
+    <string name="pick_image">Selecionar imagem</string>
+    <string name="saved">Salvos</string>
+    <string name="joined">Entrou:</string>
+    <string name="user">Usuário</string>
+    <string name="by">por</string>
+    <string name="likes">curtidas</string>
+    <string name="comments">comentários</string>
+    <string name="unknown">desconhecido</string>
+    <string name="image">imagem</string>
+
+    <string name="not_authenticated">Não autenticado</string>
+    <string name="content_empty">Conteúdo vazio</string>
+    <string name="unknown_error">Erro desconhecido</string>
+
+    <string name="login_placeholder">Entrar</string>
+    <string name="continue_label">Continuar</string>
+
+    <string name="comments_header">Comentários</string>
+    <string name="no_comments">Ainda não há comentários</string>
+    <string name="reply">Responder</string>
+    <string name="write_comment">Escreva um comentário...</string>
+    <string name="send">Enviar</string>
+
+    <string name="ago">atrás</string>
+    <string name="just_now">agora mesmo</string>
+    <string name="minute_abbrev">min</string>
+    <string name="hour_abbrev">h</string>
+    <string name="day_abbrev">d</string>
+    <string name="week_abbrev">sem</string>
+    <string name="month_abbrev">mês</string>
+    <string name="year_abbrev">a</string>
+
+    <string name="settings">Configurações</string>
+    <string name="language">Idioma</string>
+    <string name="system_default">Padrão do sistema</string>
+    <string name="english">Inglês</string>
+    <string name="portuguese">Português</string>
+    <string name="spanish">Espanhol</string>
+    <string name="apply">Aplicar</string>
+    <string name="end_of_list">Você chegou ao fim</string>
+</resources>

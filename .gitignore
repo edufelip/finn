@@ -9,3 +9,31 @@
 .cxx
 local.properties
 gradle.properties
+ 
+# Android/Gradle build outputs
+**/build/
+app/build/
+shared/build/
+
+# Android artifacts
+*.apk
+*.ap_
+*.aab
+*.dex
+
+# Java/Kotlin compiled classes
+*.class
+
+# Logs
+*.log
+
+# Misc local caches
+.kotlin/
+
+# Project docs not to version
+AGENTS.md
+
+buildlog.txt
+build_output.log
+
+AGENTS.md

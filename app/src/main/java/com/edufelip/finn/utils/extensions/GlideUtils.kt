@@ -8,12 +8,12 @@ import javax.inject.Inject
 
 class GlideUtils @Inject constructor(
     val glide: RequestManager,
-    val remoteConfigUtils: RemoteConfigUtils
+    val remoteConfigUtils: RemoteConfigUtils,
 ) {
 
     fun loadFromServer(url: String?, communityIcon: ImageView) {
         if (url == null) return
-        glide.load(remoteConfigUtils.remoteServerAddress + "/" + url)
+        glide.load(remoteConfigUtils.getRemoteServerAddress() + "/" + url)
             .into(communityIcon)
     }
 

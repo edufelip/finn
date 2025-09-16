@@ -8,4 +8,8 @@
         <key>is_facebook_auth_enabled</key>
         <value>false</value>
     </entry>
+    <entry>
+        <key>comments_page_size</key>
+        <value>10</value>
+    </entry>
 </defaultsMap>
