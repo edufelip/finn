@@ -1,5 +1,10 @@
 package com.edufelip.finn.shared.ui.components
 
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
@@ -8,31 +13,36 @@ import com.edufelip.finn.shared.i18n.LocalStrings
 import com.edufelip.finn.shared.navigation.Route
 
 @Composable
-fun SharedBottomBar(current: Route, onNavigate: (Route) -> Unit) {
+fun SharedBottomBar(
+    current: Route,
+    onNavigate: (Route) -> Unit,
+    onCreateClick: () -> Unit,
+) {
+    val strings = LocalStrings.current
     NavigationBar {
         NavigationBarItem(
             selected = current is Route.Home,
             onClick = { onNavigate(Route.Home) },
-            label = { Text(LocalStrings.current.home) },
-            icon = {},
+            label = { Text(strings.home) },
+            icon = { androidx.compose.material3.Icon(Icons.Filled.Home, contentDescription = strings.home) },
+        )
+        NavigationBarItem(
+            selected = false,
+            onClick = onCreateClick,
+            label = { Text(strings.create) },
+            icon = { androidx.compose.material3.Icon(Icons.Filled.AddCircle, contentDescription = strings.create) },
         )
         NavigationBarItem(
             selected = current is Route.Search,
             onClick = { onNavigate(Route.Search) },
-            label = { Text(LocalStrings.current.search) },
-            icon = {},
+            label = { Text(strings.search) },
+            icon = { androidx.compose.material3.Icon(Icons.Filled.Search, contentDescription = strings.search) },
         )
         NavigationBarItem(
             selected = current is Route.Notifications,
             onClick = { onNavigate(Route.Notifications) },
-            label = { Text(LocalStrings.current.alerts) },
-            icon = {},
-        )
-        NavigationBarItem(
-            selected = current is Route.Profile || current is Route.Saved,
-            onClick = { onNavigate(Route.Profile) },
-            label = { Text(LocalStrings.current.profile) },
-            icon = {},
+            label = { Text(strings.alerts) },
+            icon = { androidx.compose.material3.Icon(Icons.Filled.Notifications, contentDescription = strings.alerts) },
         )
     }
 }

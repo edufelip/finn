@@ -1,31 +1,46 @@
 package com.edufelip.finn.di
 
 import android.content.Context
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
-import com.bumptech.glide.request.RequestOptions
+import app.cash.sqldelight.db.SqlDriver
+import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.edufelip.finn.BuildConfig
-import com.edufelip.finn.R
-import com.edufelip.finn.data.network.ApiServiceV2
-import com.edufelip.finn.ui.delegators.auth.AuthExecutor
-import com.edufelip.finn.ui.delegators.auth.GeneralAuthExecutor
-import com.edufelip.finn.ui.delegators.auth.GoogleAuthExecutor
+import com.edufelip.finn.network.FinnHttpLogger
+import com.edufelip.finn.data.cache.RemoteConfigCacheTtlProvider
+import com.edufelip.finn.shared.cache.FinnDatabase
+import com.edufelip.finn.shared.data.CacheTtlProvider
+import com.edufelip.finn.shared.data.local.CommentCacheDataSource
+import com.edufelip.finn.shared.data.local.CommunityCacheDataSource
+import com.edufelip.finn.shared.data.local.PostCacheDataSource
+import com.edufelip.finn.shared.data.local.SqlDelightCommentCacheDataSource
+import com.edufelip.finn.shared.data.local.SqlDelightCommunityCacheDataSource
+import com.edufelip.finn.shared.data.local.SqlDelightPostCacheDataSource
+import com.edufelip.finn.shared.data.remote.api.ApiServiceV2
+import com.edufelip.finn.shared.data.remote.source.CommentRemoteDataSource
+import com.edufelip.finn.shared.data.remote.source.CommunityRemoteDataSource
+import com.edufelip.finn.shared.data.remote.source.PostRemoteDataSource
+import com.edufelip.finn.shared.data.remote.source.RetrofitCommentRemoteDataSource
+import com.edufelip.finn.shared.data.remote.source.RetrofitCommunityRemoteDataSource
+import com.edufelip.finn.shared.data.remote.source.RetrofitPostRemoteDataSource
+import com.edufelip.finn.shared.data.remote.source.RetrofitUserRemoteDataSource
+import com.edufelip.finn.shared.data.remote.source.UserRemoteDataSource
 import com.edufelip.finn.utils.GoogleAuthUiClient
 import com.edufelip.finn.utils.RemoteConfigUtils
-import com.edufelip.finn.utils.extensions.GlideUtils
 import com.google.firebase.auth.FirebaseAuth
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -34,15 +49,19 @@ internal object AppModule {
 
     @Provides
     @Singleton
+    @OptIn(ExperimentalSerializationApi::class)
     fun providesBackendApiV2(
-        factory: GsonConverterFactory,
         remoteConfigUtils: RemoteConfigUtils,
         okHttpClient: OkHttpClient,
     ): ApiServiceV2 {
         val baseUrl = remoteConfigUtils.getRemoteServerAddress()
+        val json = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+        }
         return Retrofit.Builder()
             .baseUrl(baseUrl)
-            .addConverterFactory(factory)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
             .client(okHttpClient)
             .build()
             .create(ApiServiceV2::class.java)
@@ -51,7 +70,7 @@ internal object AppModule {
     @Provides
     @Singleton
     fun providesOkHttpClient(): OkHttpClient {
-        val logger = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+        val logger = HttpLoggingInterceptor(FinnHttpLogger).setLevel(HttpLoggingInterceptor.Level.BODY)
         val okHttpClient = OkHttpClient.Builder().apply {
             if (BuildConfig.DEBUG) addInterceptor(logger)
         }
@@ -60,12 +79,6 @@ internal object AppModule {
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
         return okHttpClient
-    }
-
-    @Provides
-    @Singleton
-    fun providesGsonConverter(): GsonConverterFactory {
-        return GsonConverterFactory.create()
     }
 
     @Provides
@@ -82,47 +95,57 @@ internal object AppModule {
 
     @Provides
     @Singleton
-    fun providesGlideInstance(@ApplicationContext context: Context?): RequestManager {
-        return Glide.with(context!!).setDefaultRequestOptions(
-            RequestOptions()
-                .placeholder(R.drawable.user_icon),
-        )
-    }
-
-    @Provides
-    @Singleton
-    fun providesGlideUtils(
-        glide: RequestManager,
-        remoteConfigUtils: RemoteConfigUtils,
-    ): GlideUtils {
-        return GlideUtils(glide, remoteConfigUtils)
-    }
-
-    @Provides
-    @Singleton
     fun providesGoogleAuthUiClient(@ApplicationContext context: Context?): GoogleAuthUiClient =
         GoogleAuthUiClient(context!!)
 
     @Provides
     @Singleton
-    fun providesGoogleAuthExecutor(googleAuthUiClient: GoogleAuthUiClient): GoogleAuthExecutor {
-        return GoogleAuthExecutor(googleAuthUiClient)
-    }
+    fun providesSqlDriver(@ApplicationContext context: Context): SqlDriver =
+        AndroidSqliteDriver(FinnDatabase.Schema, context, "finn.db")
 
     @Provides
     @Singleton
-    fun providesGeneralAuthExecutor(firebaseAuth: FirebaseAuth): GeneralAuthExecutor {
-        return GeneralAuthExecutor(firebaseAuth)
-    }
+    fun providesDatabase(driver: SqlDriver): FinnDatabase = FinnDatabase(driver)
 
     @Provides
     @Singleton
-    fun providesAuthExecutor(
-        googleAuthExecutor: GoogleAuthExecutor,
-        generalAuthExecutor: GeneralAuthExecutor,
-    ): AuthExecutor {
-        return AuthExecutor(googleAuthExecutor, generalAuthExecutor)
-    }
+    fun providesPostCacheDataSource(database: FinnDatabase): PostCacheDataSource =
+        SqlDelightPostCacheDataSource(database)
+
+    @Provides
+    @Singleton
+    fun providesCommunityCacheDataSource(database: FinnDatabase): CommunityCacheDataSource =
+        SqlDelightCommunityCacheDataSource(database)
+
+    @Provides
+    @Singleton
+    fun providesCommentCacheDataSource(database: FinnDatabase): CommentCacheDataSource =
+        SqlDelightCommentCacheDataSource(database)
+
+    @Provides
+    @Singleton
+    fun providesCacheTtlProvider(remoteConfigUtils: RemoteConfigUtils): CacheTtlProvider =
+        RemoteConfigCacheTtlProvider(remoteConfigUtils)
+
+    @Provides
+    @Singleton
+    fun providePostRemoteDataSource(api: ApiServiceV2): PostRemoteDataSource =
+        RetrofitPostRemoteDataSource(api)
+
+    @Provides
+    @Singleton
+    fun provideCommunityRemoteDataSource(api: ApiServiceV2): CommunityRemoteDataSource =
+        RetrofitCommunityRemoteDataSource(api)
+
+    @Provides
+    @Singleton
+    fun provideCommentRemoteDataSource(api: ApiServiceV2): CommentRemoteDataSource =
+        RetrofitCommentRemoteDataSource(api)
+
+    @Provides
+    @Singleton
+    fun provideUserRemoteDataSource(api: ApiServiceV2): UserRemoteDataSource =
+        RetrofitUserRemoteDataSource(api)
 
     @Provides
     @Singleton

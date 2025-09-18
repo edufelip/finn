@@ -13,6 +13,11 @@
     <string name="cancel">Cancelar</string>
     <string name="back">Atrás</string>
     <string name="load_more">Cargar más</string>
+    <string name="create_post">Crear publicación</string>
+    <string name="create_post_description">Comparte algo con tus comunidades</string>
+    <string name="create_community">Crear comunidad</string>
+    <string name="create_community_description">Inicia un nuevo espacio para tus miembros</string>
+    <string name="privacy_policy">Política de privacidad</string>
 
     <string name="like">Me gusta</string>
     <string name="unlike">Quitar me gusta</string>
@@ -30,10 +35,19 @@
     <string name="comments">comentarios</string>
     <string name="unknown">desconocido</string>
     <string name="image">imagen</string>
+    <string name="share">Compartir</string>
+    <string name="more">Más</string>
+    <string name="hide">Ocultar</string>
+    <string name="subscribe">Suscribirse</string>
+    <string name="unsubscribe">Cancelar suscripción</string>
+    <string name="delete">Eliminar</string>
+    <string name="created_on">Creada %1s</string>
+    <string name="subscribers_count">%1d suscriptores</string>
 
     <string name="not_authenticated">No autenticado</string>
     <string name="content_empty">El contenido está vacío</string>
     <string name="unknown_error">Error desconocido</string>
+    <string name="cached_label">En caché • actualizado %1s</string>
 
     <string name="login_placeholder">Iniciar sesión</string>
     <string name="continue_label">Continuar</string>
@@ -41,6 +55,7 @@
     <string name="forgot_your_password">¿Olvidaste tu contraseña?</string>
     <string name="login">Iniciar sesión</string>
     <string name="e_mail">Correo electrónico</string>
+    <string name="create_account">Crear cuenta</string>
 
     <string name="comments_header">Comentarios</string>
     <string name="no_comments">Aún no hay comentarios</string>

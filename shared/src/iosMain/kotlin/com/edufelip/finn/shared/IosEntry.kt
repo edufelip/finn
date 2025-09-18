@@ -1,8 +1,27 @@
 package com.edufelip.finn.shared
 
 import androidx.compose.ui.window.ComposeUIViewController
-import com.edufelip.finn.shared.data.fake.PostRepositoryFake
-import com.edufelip.finn.shared.domain.model.Community
+import app.cash.sqldelight.driver.native.NativeSqliteDriver
+import com.edufelip.finn.shared.cache.FinnDatabase
+import com.edufelip.finn.shared.data.AppleRemoteConfigCacheTtlProvider
+import com.edufelip.finn.shared.data.CacheTtlProvider
+import com.edufelip.finn.shared.data.local.CommentCacheDataSource
+import com.edufelip.finn.shared.data.local.CommunityCacheDataSource
+import com.edufelip.finn.shared.data.local.PostCacheDataSource
+import com.edufelip.finn.shared.data.local.SqlDelightCommentCacheDataSource
+import com.edufelip.finn.shared.data.local.SqlDelightCommunityCacheDataSource
+import com.edufelip.finn.shared.data.local.SqlDelightPostCacheDataSource
+import com.edufelip.finn.shared.data.remote.source.IosCommentRemoteDataSource
+import com.edufelip.finn.shared.data.remote.source.IosCommunityRemoteDataSource
+import com.edufelip.finn.shared.data.remote.source.IosPostRemoteDataSource
+import com.edufelip.finn.shared.data.remote.source.IosUserRemoteDataSource
+import com.edufelip.finn.shared.data.repository.DefaultCommentRepository
+import com.edufelip.finn.shared.data.repository.DefaultCommunityRepository
+import com.edufelip.finn.shared.data.repository.DefaultPostRepository
+import com.edufelip.finn.shared.data.repository.DefaultUserRepository
+import com.edufelip.finn.shared.di.AuthActions
+import com.edufelip.finn.shared.di.CommentsVMFactory
+import com.edufelip.finn.shared.di.ShareActions
 import com.edufelip.finn.shared.domain.model.Post
 import com.edufelip.finn.shared.domain.repository.CommentRepository
 import com.edufelip.finn.shared.domain.repository.CommunityRepository
@@ -20,42 +39,45 @@ import com.edufelip.finn.shared.navigation.DeepLinks
 import com.edufelip.finn.shared.navigation.Route
 import com.edufelip.finn.shared.navigation.SimpleRouter
 import com.edufelip.finn.shared.presentation.vm.*
-import com.edufelip.finn.shared.di.AuthActions
-import com.edufelip.finn.shared.di.CommentsVMFactory
-import com.edufelip.finn.shared.di.ShareActions
-import org.koin.core.context.startKoin
-import org.koin.dsl.module
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
+import platform.Foundation.NSURL
+import platform.UIKit.UIApplication
 
 fun MainViewController() = ComposeUIViewController {
     val router = SimpleRouter(Route.Login)
 
-    // Fake repositories for iOS demo wiring
-    val postRepo: PostRepository = PostRepositoryFake()
-    val communityRepo: CommunityRepository = object : CommunityRepository {
-        override fun search(query: String) = flowOf(
-            listOf(
-                Community(1, "Kotlin", "Kotlin discussions", null, 12345),
-                Community(2, "Android", "Android dev", null, 9876),
-            ),
-        )
-        override fun getById(id: Int) = flowOf(
-            Community(id, if (id == 1) "Kotlin" else "Android", "Details for $id", null, 1000 + id),
-        )
-        override fun create(title: String, description: String?, image: ByteArray?) = flowOf(
-            Community((0..100000).random(), title, description, null, 0),
-        )
-    }
-    val userRepo: UserRepository = object : UserRepository {
-        override fun getUser(id: String) = flowOf(com.edufelip.finn.shared.domain.model.User(id, "iOS User", null, null))
-    }
-    val commentRepo: CommentRepository = object : CommentRepository {
-        override fun list(postId: Int, page: Int) = flowOf(emptyList<com.edufelip.finn.shared.domain.model.Comment>())
-        override fun add(postId: Int, userId: String, content: String) = flowOf(
-            com.edufelip.finn.shared.domain.model.Comment(1, postId, userName = "iOS", content = content, dateMillis = kotlin.system.getTimeMillis()),
-        )
-    }
+    val driver = NativeSqliteDriver(FinnDatabase.Schema, name = "finn.db")
+    val database = FinnDatabase(driver)
+
+    val postCache: PostCacheDataSource = SqlDelightPostCacheDataSource(database)
+    val communityCache: CommunityCacheDataSource = SqlDelightCommunityCacheDataSource(database)
+    val commentCache: CommentCacheDataSource = SqlDelightCommentCacheDataSource(database)
+    val cacheTtlProvider: CacheTtlProvider = AppleRemoteConfigCacheTtlProvider()
+
+    val postRepo: PostRepository = DefaultPostRepository(
+        remote = IosPostRemoteDataSource(),
+        cache = postCache,
+        ttlProvider = cacheTtlProvider,
+    )
+
+    val communityRepo: CommunityRepository = DefaultCommunityRepository(
+        remote = IosCommunityRemoteDataSource(),
+        cache = communityCache,
+        ttlProvider = cacheTtlProvider,
+    )
+
+    val userRepo: UserRepository = DefaultUserRepository(IosUserRemoteDataSource())
+
+    val commentRepo: CommentRepository = DefaultCommentRepository(
+        remote = IosCommentRemoteDataSource(),
+        cache = commentCache,
+        ttlProvider = cacheTtlProvider,
+        pageSize = DEFAULT_PAGE_SIZE,
+    )
+
 
     // Use cases
     val getFeed = GetFeedUseCase(postRepo)
@@ -123,6 +145,7 @@ fun MainViewController() = ComposeUIViewController {
                         override fun requestSignIn() {}
                         override fun requestSignOut() {}
                         override fun emailPasswordLogin(email: String, password: String) {}
+                        override fun createAccount(email: String, password: String) {}
                     }
                 }
                 single<ShareActions> {
@@ -132,9 +155,21 @@ fun MainViewController() = ComposeUIViewController {
                         }
                     }
                 }
+                single<com.edufelip.finn.shared.di.LinkActions> {
+                    object : com.edufelip.finn.shared.di.LinkActions {
+                        override fun openUrl(url: String) {
+                            val nsUrl = NSURL.URLWithString(url)
+                            if (nsUrl != null) {
+                                UIApplication.sharedApplication.openURL(nsUrl)
+                            }
+                        }
+                    }
+                }
             },
         )
     }
 
     SharedApp(router = router)
 }
+
+private const val DEFAULT_PAGE_SIZE = 10

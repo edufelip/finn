@@ -12,8 +12,8 @@ import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import kotlinx.coroutines.tasks.await
 import java.util.concurrent.CancellationException
+import kotlinx.coroutines.tasks.await
 
 class GoogleAuthUiClient(
     private val context: Context,

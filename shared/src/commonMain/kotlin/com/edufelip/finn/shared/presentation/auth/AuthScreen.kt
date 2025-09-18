@@ -22,20 +22,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.edufelip.finn.shared.domain.util.Result
+import com.edufelip.finn.shared.domain.util.asResult
+import com.edufelip.finn.shared.domain.util.readableMessage
 import com.edufelip.finn.shared.i18n.LocalStrings
 import finn.shared.generated.resources.Res
 import finn.shared.generated.resources.ic_google
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
@@ -48,18 +48,22 @@ fun AuthScreen(
     onRequestSignOut: () -> Unit,
     onSignedIn: () -> Unit,
     onEmailPasswordLogin: (String, String) -> Unit,
+    onCreateAccount: (String, String) -> Unit,
 ) {
     var state by remember { mutableStateOf(AuthState()) }
-    val scope = remember { CoroutineScope(Dispatchers.Main) }
+    val scope = rememberCoroutineScope()
     LaunchedEffect(Unit) {
         scope.launch {
-            userIdFlow
-                .onStart { state = state.copy(loading = true) }
-                .catch { e -> state = state.copy(loading = false, error = e.message) }
-                .collect { id ->
-                    state = state.copy(loading = false, userId = id)
-                    if (id != null) onSignedIn()
+            userIdFlow.asResult().collect { result ->
+                when (result) {
+                    is Result.Loading -> state = state.copy(loading = true, error = null)
+                    is Result.Success -> {
+                        state = state.copy(loading = false, userId = result.value, error = null)
+                        result.value?.let { onSignedIn() }
+                    }
+                    is Result.Error -> state = state.copy(loading = false, error = result.error.readableMessage())
                 }
+            }
         }
     }
     val strings = LocalStrings.current
@@ -104,8 +108,19 @@ fun AuthScreen(
             enabled = !state.loading,
         ) { Text(strings.login) }
 
+        Spacer(Modifier.height(12.dp))
+        Button(
+            onClick = { onCreateAccount(email, password) },
+            modifier = Modifier.fillMaxWidth().height(52.dp),
+            enabled = !state.loading,
+        ) { Text(strings.create_account) }
+
         Spacer(Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text(strings.forgot_your_password)
             Spacer(modifier = Modifier.width(4.dp))
             Text(strings.continue_label, color = MaterialTheme.colorScheme.primary)

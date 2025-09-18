@@ -15,7 +15,7 @@ fun AuthScreen_Preview() {
             onRequestSignOut = {},
             onSignedIn = {},
             onEmailPasswordLogin = { _, _ -> },
+            onCreateAccount = { _, _ -> },
         )
     }
 }
-

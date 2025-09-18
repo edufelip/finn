@@ -26,7 +26,7 @@ Go to [Google Play](https://play.google.com/store/apps/details?id=com.edufelip.f
 - Clean Architecture (domain/data/presentation)
 - Hilt for DI
 - Retrofit + OkHttp
-- Room (ready for local persistence)
+- SQLDelight (shared cache with generated queries for Android/iOS)
 - Firebase (Auth, Remote Config, Messaging/FCM)
 - Navigation Compose, Coil (Android), Kamel (iOS)
 - Lint, ktlint, detekt, GitHub Actions CI
@@ -46,6 +46,7 @@ Requirements
 - JDK 17, Android SDK 34
 - `app/google-services.json` from your Firebase project
 - `local.properties` should contain `FIREBASE_GOOGLE_ID=YOUR_GOOGLE_CLIENT_ID`
+- The project resolves iOS image loading via Kamel and shared persistence via SQLDelight; keep the JetBrains Space repository (`https://maven.pkg.jetbrains.space/public/p/ktor/eap`) in `settings.gradle.kts` if you customize repositories.
 
 Build/Run
 - Sync and run from Android Studio or:
@@ -56,6 +57,24 @@ Build/Run
 Notifications
 - Android uses FCM. Foreground notifications are shown, and a Flow-based repository feeds the UI.
 - iOS scaffold included: call `IosPush.requestAuthorization()` at startup and `IosPush.handleRemoteNotification(title, body)` from your AppDelegate to feed shared UI.
+
+## Remote Config
+- The app expects the following parameters in Firebase Remote Config (defaults live in `app/src/main/res/xml/remote_config_defaults.xml`):
+  - `feed_cache_ttl_ms`
+  - `community_search_ttl_ms`
+  - `community_details_ttl_ms`
+  - `comment_cache_ttl_ms`
+- These values (in milliseconds) control how long feed, community, and comment responses stay in the SQLDelight cache before a fresh network fetch is enforced.
+- Quick setup:
+  1. Open your Firebase project → Remote Config → Add parameters matching the keys above.
+  2. Use the defaults from `remote_config_defaults.xml` (5–15 minutes) or adjust per environment.
+  3. Publish the Remote Config changes, then restart the app (debug fetch interval is 1 s, release 1 h).
+- You can also override `comments_page_size` and `remote_server` the same way.
+
+## Architecture Notes
+- Domain use cases emit `Flow<Result<T>>`, so UI layers collect a single stream for loading, success, and error states without manual try/catch.
+- Network calls use an OkHttp `HttpLoggingInterceptor` wired to `FinnNetwork` for verbose request/response logs in debug builds.
+
 
 ## Modules
 - `app/` Android application (Hilt wiring, platform services, Navigation Compose)

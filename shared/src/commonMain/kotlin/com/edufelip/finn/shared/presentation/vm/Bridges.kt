@@ -4,13 +4,17 @@ import com.edufelip.finn.shared.domain.model.Post
 import com.edufelip.finn.shared.domain.repository.PostRepository
 import com.edufelip.finn.shared.domain.usecase.AddCommentUseCase
 import com.edufelip.finn.shared.domain.usecase.CreateCommunityUseCase
+import com.edufelip.finn.shared.domain.usecase.DeleteCommunityUseCase
 import com.edufelip.finn.shared.domain.usecase.GetCommentsForPostUseCase
 import com.edufelip.finn.shared.domain.usecase.GetCommunityDetailsUseCase
 import com.edufelip.finn.shared.domain.usecase.GetCommunityPostsUseCase
+import com.edufelip.finn.shared.domain.usecase.GetCommunitySubscriptionUseCase
 import com.edufelip.finn.shared.domain.usecase.GetFeedUseCase
 import com.edufelip.finn.shared.domain.usecase.GetUserUseCase
 import com.edufelip.finn.shared.domain.usecase.ObserveNotificationsUseCase
 import com.edufelip.finn.shared.domain.usecase.SearchCommunitiesUseCase
+import com.edufelip.finn.shared.domain.usecase.SubscribeToCommunityUseCase
+import com.edufelip.finn.shared.domain.usecase.UnsubscribeFromCommunityUseCase
 import kotlinx.coroutines.flow.Flow
 
 interface HomeVM {
@@ -24,6 +28,10 @@ interface SearchVM { val searchCommunities: SearchCommunitiesUseCase }
 interface CommunityDetailsVM {
     val getCommunityDetails: GetCommunityDetailsUseCase
     val getCommunityPosts: GetCommunityPostsUseCase
+    val subscribe: SubscribeToCommunityUseCase
+    val unsubscribe: UnsubscribeFromCommunityUseCase
+    val getSubscription: GetCommunitySubscriptionUseCase
+    val deleteCommunity: DeleteCommunityUseCase
 }
 
 interface NotificationsVM { val observeNotifications: ObserveNotificationsUseCase? }
@@ -54,4 +62,3 @@ interface CommentsVM {
     val addComment: AddCommentUseCase
     val userIdProvider: () -> String
 }
-

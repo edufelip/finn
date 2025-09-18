@@ -1,6 +1,6 @@
 package com.edufelip.finn.notifications
 
-import com.edufelip.finn.data.network.ApiServiceV2
+import com.edufelip.finn.shared.data.remote.api.ApiServiceV2
 import com.google.firebase.auth.FirebaseAuth
 import javax.inject.Inject
 

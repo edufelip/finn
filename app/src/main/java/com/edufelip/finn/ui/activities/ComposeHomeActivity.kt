@@ -1,7 +1,13 @@
 package com.edufelip.finn.ui.activities
 
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.net.Uri
 import android.os.Bundle
+import android.util.Patterns
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -9,10 +15,26 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.lifecycleScope
+import com.edufelip.finn.R
+import com.edufelip.finn.notifications.TokenUploaderAndroid
+import com.edufelip.finn.shared.SharedApp
+import com.edufelip.finn.shared.di.AuthActions
+import com.edufelip.finn.shared.di.CommentsVMFactory
+import com.edufelip.finn.shared.di.LinkActions
+import com.edufelip.finn.shared.di.ShareActions
+import com.edufelip.finn.shared.domain.model.Post
+import com.edufelip.finn.shared.navigation.DeepLinks
 import com.edufelip.finn.shared.navigation.Route
+import com.edufelip.finn.shared.presentation.vm.AuthVM
+import com.edufelip.finn.shared.presentation.vm.CommentsVM
+import com.edufelip.finn.shared.presentation.vm.CommunityDetailsVM
+import com.edufelip.finn.shared.presentation.vm.CreateCommunityVM
+import com.edufelip.finn.shared.presentation.vm.CreatePostVM
 import com.edufelip.finn.shared.presentation.vm.HomeVM
-import com.edufelip.finn.sharedimpl.CommunityRepositoryAndroid
-import com.edufelip.finn.sharedimpl.PostRepositoryAndroid
+import com.edufelip.finn.shared.presentation.vm.NotificationsVM
+import com.edufelip.finn.shared.presentation.vm.ProfileVM
+import com.edufelip.finn.shared.presentation.vm.SavedVM
+import com.edufelip.finn.shared.presentation.vm.SearchVM
 import com.edufelip.finn.ui.compose.AndroidRouter
 import com.edufelip.finn.ui.compose.parseRoute
 import com.edufelip.finn.ui.compose.pickImageFlow
@@ -27,58 +49,26 @@ import com.edufelip.finn.ui.viewmodels.ProfileViewModel
 import com.edufelip.finn.ui.viewmodels.SavedViewModel
 import com.edufelip.finn.ui.viewmodels.SearchViewModel
 import com.edufelip.finn.utils.GoogleAuthUiClient
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.messaging.FirebaseMessaging
-import android.widget.Toast
-import android.util.Patterns
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.content.Context
-import com.edufelip.finn.R
-import com.edufelip.finn.notifications.TokenUploaderAndroid
-import com.edufelip.finn.shared.SharedApp
-import com.edufelip.finn.shared.di.AuthActions
-import com.edufelip.finn.shared.di.CommentsVMFactory
-import com.edufelip.finn.shared.di.ShareActions
-import com.edufelip.finn.shared.domain.model.Post
-import com.edufelip.finn.shared.navigation.DeepLinks
-import com.edufelip.finn.shared.presentation.vm.AuthVM
-import com.edufelip.finn.shared.presentation.vm.CommentsVM
-import com.edufelip.finn.shared.presentation.vm.CommunityDetailsVM
-import com.edufelip.finn.shared.presentation.vm.CreateCommunityVM
-import com.edufelip.finn.shared.presentation.vm.CreatePostVM
-import com.edufelip.finn.shared.presentation.vm.NotificationsVM
-import com.edufelip.finn.shared.presentation.vm.ProfileVM
-import com.edufelip.finn.shared.presentation.vm.SavedVM
-import com.edufelip.finn.shared.presentation.vm.SearchVM
-import com.edufelip.finn.sharedimpl.CommentRepositoryAndroid
-import com.edufelip.finn.sharedimpl.UserRepositoryAndroid
 import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ComposeHomeActivity : ComponentActivity() {
-
-    @Inject lateinit var postRepository: PostRepositoryAndroid
-
-    @Inject lateinit var communityRepository: CommunityRepositoryAndroid
-
-    @Inject lateinit var userRepository: UserRepositoryAndroid
 
     @Inject lateinit var auth: FirebaseAuth
 
     @Inject lateinit var googleAuthUiClient: GoogleAuthUiClient
 
     @Inject lateinit var tokenUploader: TokenUploaderAndroid
-
-    @Inject lateinit var commentRepository: CommentRepositoryAndroid
 
     private val homeVm: HomeViewModel by viewModels()
     private val searchVm: SearchViewModel by viewModels()
@@ -159,6 +149,10 @@ class ComposeHomeActivity : ComponentActivity() {
             val communityBridge = object : CommunityDetailsVM {
                 override val getCommunityDetails = getCommunityDetails
                 override val getCommunityPosts = getCommunityPosts
+                override val subscribe = communityVm.subscribe
+                override val unsubscribe = communityVm.unsubscribe
+                override val getSubscription = communityVm.getSubscription
+                override val deleteCommunity = communityVm.deleteCommunity
             }
             val notificationsBridge = object : NotificationsVM { override val observeNotifications = observeNotifications }
             val createCommunityBridge = object : CreateCommunityVM { override val createCommunity = createCommunity }
@@ -230,11 +224,40 @@ class ComposeHomeActivity : ComponentActivity() {
                                         }
                                 }
                             }
+                            override fun createAccount(email: String, password: String) {
+                                when {
+                                    email.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter email", Toast.LENGTH_SHORT).show()
+                                    !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> Toast.makeText(this@ComposeHomeActivity, "Email is invalid", Toast.LENGTH_SHORT).show()
+                                    password.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter password", Toast.LENGTH_SHORT).show()
+                                    !isOnline() -> Toast.makeText(this@ComposeHomeActivity, "No internet connection", Toast.LENGTH_SHORT).show()
+                                    else -> auth.createUserWithEmailAndPassword(email, password)
+                                        .addOnCompleteListener { task ->
+                                            if (!task.isSuccessful) {
+                                                val msg = when (val ex = task.exception) {
+                                                    is FirebaseAuthInvalidCredentialsException -> "Invalid credentials"
+                                                    is FirebaseNetworkException -> "Network error. Check your connection and try again"
+                                                    else -> ex?.message ?: "Unknown error"
+                                                }
+                                                Toast.makeText(this@ComposeHomeActivity, "Error: ${msg}", Toast.LENGTH_SHORT).show()
+                                            } else {
+                                                Toast.makeText(this@ComposeHomeActivity, "Account created. You are now signed in.", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                }
+                            }
                         }
                     }
                     single<ShareActions> {
                         object : ShareActions {
                             override fun share(post: Post) = onSharePost(post)
+                        }
+                    }
+                    single<LinkActions> {
+                        object : LinkActions {
+                            override fun openUrl(url: String) {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                                this@ComposeHomeActivity.startActivity(intent)
+                            }
                         }
                     }
                 },

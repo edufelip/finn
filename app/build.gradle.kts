@@ -82,10 +82,6 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.kotlinx.serialization.json)
 
-    // Room
-    implementation(libs.room.runtime)
-    implementation(libs.room.ktx)
-    kapt(libs.room.compiler)
 
     // Hilt
     implementation(libs.hilt.android)
@@ -98,8 +94,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.config)
     implementation(libs.play.services.auth)
-    implementation(libs.facebook.sdk)
-    implementation("com.google.firebase:firebase-messaging")
+    implementation(libs.firebase.messaging)
 
     // Credential Manager + Google ID
     implementation(libs.androidx.credentials)
@@ -109,12 +104,13 @@ dependencies {
     // Koin core for shared DI
     implementation(libs.koin.core)
 
+    // SQLDelight driver for Android
+    implementation(libs.sqldelight.android.driver)
+
     // Images
     implementation(libs.coil.compose)
     // Material Components (XML themes/styles)
-    implementation("com.google.android.material:material:1.12.0")
-    // Glide (used by GlideUtils)
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.material)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.tooling.preview)

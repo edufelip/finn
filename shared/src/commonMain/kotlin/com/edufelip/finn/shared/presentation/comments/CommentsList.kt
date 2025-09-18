@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -34,6 +34,8 @@ fun CommentsList(
     onReply: (Comment) -> Unit = {},
     endReached: Boolean = true,
     onLoadMore: () -> Unit = {},
+    cacheAgeMillis: Long? = null,
+    errorMessage: String? = null,
 ) {
     val strings = LocalStrings.current
     val listState = rememberLazyListState()
@@ -44,6 +46,17 @@ fun CommentsList(
             .collect { onLoadMore() }
     }
     Column {
+        cacheAgeMillis?.let {
+            Text(
+                text = LocalStrings.current.cached_label.replace("%1s", formatRelative(it)),
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Spacer(Modifier.height(8.dp))
+        }
+        errorMessage?.let {
+            Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            Spacer(Modifier.height(8.dp))
+        }
         Text(strings.comments_header, style = MaterialTheme.typography.titleMedium)
         if (comments.isEmpty()) {
             Spacer(Modifier.height(8.dp))
@@ -58,7 +71,7 @@ fun CommentsList(
                         Text(c.content, style = MaterialTheme.typography.bodyMedium)
                         TextButton(onClick = { onReply(c) }) { Text(strings.reply) }
                         Spacer(Modifier.height(8.dp))
-                        Divider()
+                        HorizontalDivider()
                     }
                 }
             }

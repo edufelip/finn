@@ -6,4 +6,7 @@ data class Community(
     val description: String?,
     val image: String?,
     val subscribersCount: Int,
+    val ownerId: String? = null,
+    val createdAtMillis: Long? = null,
+    val cachedAtMillis: Long? = null,
 )

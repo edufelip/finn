@@ -12,20 +12,21 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.edufelip.finn.shared.domain.model.Post
 import com.edufelip.finn.shared.domain.model.User
 import com.edufelip.finn.shared.domain.usecase.GetUserUseCase
+import com.edufelip.finn.shared.domain.util.Result
+import com.edufelip.finn.shared.domain.util.asResult
+import com.edufelip.finn.shared.domain.util.readableMessage
 import com.edufelip.finn.shared.i18n.LocalStrings
 import com.edufelip.finn.shared.ui.components.SharedImage
 import com.edufelip.finn.shared.util.format.formatJoined
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 data class ProfileState(
@@ -43,25 +44,43 @@ fun ProfileScreen(
     getUserPosts: (String, Int) -> Flow<List<Post>>,
     goToSaved: () -> Unit,
     goToSettings: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var state by remember { mutableStateOf(ProfileState()) }
-    val scope = remember { CoroutineScope(Dispatchers.Main) }
+    val scope = rememberCoroutineScope()
     fun loadPosts(id: String, page: Int) {
         scope.launch {
-            getUserPosts(id, page)
-                .onStart { state = state.copy(loading = page == 1) }
-                .collect { list -> state = state.copy(loading = false, posts = if (page == 1) list else state.posts + list, nextPage = page + 1) }
+            getUserPosts(id, page).asResult().collect { result ->
+                when (result) {
+                    is Result.Loading -> if (page == 1) state = state.copy(loading = true, error = null)
+                    is Result.Success -> state = state.copy(
+                        loading = false,
+                        posts = if (page == 1) result.value else state.posts + result.value,
+                        nextPage = page + 1,
+                        error = null,
+                    )
+                    is Result.Error -> state = state.copy(loading = false, error = result.error.readableMessage())
+                }
+            }
         }
     }
     LaunchedEffect(Unit) {
         scope.launch {
             userIdFlow.filterNotNull().collect { id ->
-                scope.launch { getUser(id).collect { u -> state = state.copy(user = u, loading = false) } }
+                scope.launch {
+                    getUser(id).collect { result ->
+                        when (result) {
+                            is Result.Loading -> state = state.copy(loading = true, error = null)
+                            is Result.Success -> state = state.copy(user = result.value, loading = false, error = null)
+                            is Result.Error -> state = state.copy(loading = false, error = result.error.readableMessage())
+                        }
+                    }
+                }
                 loadPosts(id, 1)
             }
         }
     }
-    Column(Modifier.fillMaxSize()) {
+    Column(modifier.fillMaxSize()) {
         if (state.loading && state.user == null) {
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
             return@Column
@@ -86,7 +105,19 @@ fun ProfileScreen(
                 }
             }
         }
+        state.error?.let {
+            Text(it, color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+        }
         LazyColumn(Modifier.fillMaxSize().padding(16.dp)) {
+            state.posts.firstOrNull()?.cachedAtMillis?.let {
+                item {
+                    Text(
+                        text = LocalStrings.current.cached_label.replace("%1s", com.edufelip.finn.shared.util.format.formatRelative(it)),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(bottom = 8.dp),
+                    )
+                }
+            }
             items(state.posts) { p ->
                 Column(Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
                     Text(p.content, style = MaterialTheme.typography.bodyLarge)

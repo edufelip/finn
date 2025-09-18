@@ -20,20 +20,14 @@ shared/build/
 *.ap_
 *.aab
 *.dex
-
 # Java/Kotlin compiled classes
 *.class
-
 # Logs
 *.log
-
 # Misc local caches
 .kotlin/
-
 # Project docs not to version
-AGENTS.md
-
+**/AGENTS.md
+/docs/
 buildlog.txt
 build_output.log
-
-AGENTS.md

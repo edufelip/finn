@@ -15,11 +15,16 @@ interface AuthActions {
     fun requestSignIn()
     fun requestSignOut()
     fun emailPasswordLogin(email: String, password: String)
+    fun createAccount(email: String, password: String)
 }
 
 // Platform share actions consumed by shared UI
 interface ShareActions {
     fun share(post: Post)
+}
+
+interface LinkActions {
+    fun openUrl(url: String)
 }
 
 // Simple access to Koin from common code

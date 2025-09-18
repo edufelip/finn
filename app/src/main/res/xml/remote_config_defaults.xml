@@ -12,4 +12,20 @@
         <key>comments_page_size</key>
         <value>10</value>
     </entry>
+    <entry>
+        <key>feed_cache_ttl_ms</key>
+        <value>300000</value>
+    </entry>
+    <entry>
+        <key>community_search_ttl_ms</key>
+        <value>900000</value>
+    </entry>
+    <entry>
+        <key>community_details_ttl_ms</key>
+        <value>600000</value>
+    </entry>
+    <entry>
+        <key>comment_cache_ttl_ms</key>
+        <value>300000</value>
+    </entry>
 </defaultsMap>

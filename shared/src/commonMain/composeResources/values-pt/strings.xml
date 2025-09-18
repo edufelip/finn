@@ -13,6 +13,11 @@
     <string name="cancel">Cancelar</string>
     <string name="back">Voltar</string>
     <string name="load_more">Carregar mais</string>
+    <string name="create_post">Criar publicação</string>
+    <string name="create_post_description">Compartilhe algo com suas comunidades</string>
+    <string name="create_community">Criar comunidade</string>
+    <string name="create_community_description">Inicie um novo espaço para os membros</string>
+    <string name="privacy_policy">Política de privacidade</string>
 
     <string name="like">Curtir</string>
     <string name="unlike">Descurtir</string>
@@ -28,12 +33,21 @@
     <string name="by">por</string>
     <string name="likes">curtidas</string>
     <string name="comments">comentários</string>
-    <string name="unknown">desconhecido</string>
-    <string name="image">imagem</string>
+   <string name="unknown">desconhecido</string>
+   <string name="image">imagem</string>
+    <string name="share">Compartilhar</string>
+    <string name="more">Mais</string>
+    <string name="hide">Ocultar</string>
+    <string name="subscribe">Inscrever-se</string>
+    <string name="unsubscribe">Cancelar inscrição</string>
+    <string name="delete">Excluir</string>
+    <string name="created_on">Criada %1s</string>
+    <string name="subscribers_count">%1d assinantes</string>
 
     <string name="not_authenticated">Não autenticado</string>
     <string name="content_empty">Conteúdo vazio</string>
     <string name="unknown_error">Erro desconhecido</string>
+    <string name="cached_label">Em cache • atualizado %1s</string>
 
     <string name="login_placeholder">Entrar</string>
     <string name="continue_label">Continuar</string>
@@ -41,6 +55,7 @@
     <string name="forgot_your_password">Esqueceu sua senha</string>
     <string name="login">Entrar</string>
     <string name="e_mail">E-mail</string>
+    <string name="create_account">Criar conta</string>
 
     <string name="comments_header">Comentários</string>
     <string name="no_comments">Ainda não há comentários</string>
