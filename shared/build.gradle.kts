@@ -31,7 +31,6 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.sqldelight.runtime)
                 implementation(libs.sqldelight.coroutines)
-                implementation(libs.retrofit)
                 // Skia Image APIs for iOS byte decoding are provided by Compose runtime on iOS
             }
         }
@@ -41,6 +40,7 @@ kotlin {
                 implementation(libs.coil.compose)
                 implementation(libs.androidx.compose.tooling.preview)
                 implementation(libs.sqldelight.android.driver)
+                implementation(libs.retrofit)
             }
         }
         val commonTest by getting {
@@ -55,13 +55,25 @@ kotlin {
                 implementation(libs.sqldelight.sqlite.driver)
             }
         }
-        val iosX64Main by getting { dependencies { implementation(libs.kamel.image); implementation(libs.sqldelight.native.driver) } }
-        val iosArm64Main by getting { dependencies { implementation(libs.kamel.image); implementation(libs.sqldelight.native.driver) } }
-        val iosSimulatorArm64Main by getting { dependencies { implementation(libs.kamel.image); implementation(libs.sqldelight.native.driver) } }
+        val iosX64Main by getting {
+            dependencies {
+                implementation(libs.sqldelight.native.driver)
+            }
+        }
+        val iosArm64Main by getting {
+            dependencies {
+                implementation(libs.sqldelight.native.driver)
+            }
+        }
+        val iosSimulatorArm64Main by getting {
+            dependencies {
+                implementation(libs.sqldelight.native.driver)
+            }
+        }
 
         all {
-            languageSettings.languageVersion = "2.0"
-            languageSettings.apiVersion = "2.0"
+            languageSettings.languageVersion = "1.9"
+            languageSettings.apiVersion = "1.9"
         }
     }
 

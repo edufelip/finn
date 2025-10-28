@@ -4,7 +4,7 @@ import com.edufelip.finn.shared.domain.repository.NotificationsRepository
 import com.edufelip.finn.shared.domain.util.DomainError
 import com.edufelip.finn.shared.domain.util.Result
 import com.edufelip.finn.shared.domain.util.retryWithBackoff
-import com.edufelip.finn.shared.presentation.notifications.NotificationItem
+import com.edufelip.finn.shared.ui.screens.notifications.NotificationItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map

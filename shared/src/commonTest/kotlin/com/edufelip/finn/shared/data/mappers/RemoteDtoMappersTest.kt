@@ -6,7 +6,6 @@ import com.edufelip.finn.shared.data.remote.dto.PostDto
 import com.edufelip.finn.shared.data.remote.dto.UserDto
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
 import kotlin.test.assertNull
 
 class RemoteDtoMappersTest {

@@ -23,7 +23,9 @@ interface HomeVM {
     val userIdProvider: () -> String
 }
 
-interface SearchVM { val searchCommunities: SearchCommunitiesUseCase }
+interface SearchVM {
+    val searchCommunities: SearchCommunitiesUseCase
+}
 
 interface CommunityDetailsVM {
     val getCommunityDetails: GetCommunityDetailsUseCase
@@ -34,7 +36,9 @@ interface CommunityDetailsVM {
     val deleteCommunity: DeleteCommunityUseCase
 }
 
-interface NotificationsVM { val observeNotifications: ObserveNotificationsUseCase? }
+interface NotificationsVM {
+    val observeNotifications: ObserveNotificationsUseCase?
+}
 
 interface ProfileVM {
     val userIdFlow: Flow<String?>
@@ -47,9 +51,13 @@ interface SavedVM {
     val repo: PostRepository
 }
 
-interface AuthVM { val userIdFlow: Flow<String?> }
+interface AuthVM {
+    val userIdFlow: Flow<String?>
+}
 
-interface CreateCommunityVM { val createCommunity: CreateCommunityUseCase }
+interface CreateCommunityVM {
+    val createCommunity: CreateCommunityUseCase
+}
 
 interface CreatePostVM {
     val repo: PostRepository

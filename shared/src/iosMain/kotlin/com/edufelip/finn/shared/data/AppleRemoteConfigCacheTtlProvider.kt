@@ -1,5 +1,6 @@
 package com.edufelip.finn.shared.data
 
+import com.edufelip.finn.shared.data.CacheTtlProvider.Defaults
 import platform.Foundation.NSNumber
 import platform.Foundation.NSUserDefaults
 

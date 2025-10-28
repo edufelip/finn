@@ -1,10 +1,10 @@
 package com.edufelip.finn.shared.data.network
 
 import com.edufelip.finn.shared.domain.util.DomainError
-import java.io.IOException
-import java.net.UnknownHostException
 import kotlinx.serialization.SerializationException
 import retrofit2.HttpException
+import java.io.IOException
+import java.net.UnknownHostException
 
 actual object NetworkErrorMapper {
     actual fun map(throwable: Throwable): DomainError = when (throwable) {

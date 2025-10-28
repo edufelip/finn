@@ -3,6 +3,7 @@ package com.edufelip.finn.shared.data.local
 import com.edufelip.finn.shared.cache.Comment_cache
 import com.edufelip.finn.shared.cache.FinnDatabase
 import com.edufelip.finn.shared.domain.model.Comment
+import com.edufelip.finn.shared.util.currentTimeMillis
 
 interface CommentCacheDataSource {
     suspend fun write(postId: Int, comments: List<Comment>)
@@ -12,7 +13,7 @@ interface CommentCacheDataSource {
 
 class SqlDelightCommentCacheDataSource(
     private val database: FinnDatabase,
-    private val timeProvider: () -> Long = { System.currentTimeMillis() },
+    private val timeProvider: () -> Long = { currentTimeMillis() },
 ) : CommentCacheDataSource {
 
     private val queries get() = database.cacheQueries

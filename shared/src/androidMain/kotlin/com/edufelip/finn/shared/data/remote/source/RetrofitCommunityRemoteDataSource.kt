@@ -3,8 +3,6 @@ package com.edufelip.finn.shared.data.remote.source
 import com.edufelip.finn.shared.data.remote.api.ApiServiceV2
 import com.edufelip.finn.shared.data.remote.dto.CommunityDto
 import com.edufelip.finn.shared.data.remote.dto.SubscriptionDto
-import java.io.File
-import java.util.UUID
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import okhttp3.MediaType.Companion.toMediaType
@@ -12,6 +10,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
 class RetrofitCommunityRemoteDataSource(
     private val api: ApiServiceV2,
 ) : CommunityRemoteDataSource {

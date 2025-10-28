@@ -1,6 +1,6 @@
 package com.edufelip.finn.shared.domain.repository
 
-import com.edufelip.finn.shared.presentation.notifications.NotificationItem
+import com.edufelip.finn.shared.ui.screens.notifications.NotificationItem
 import kotlinx.coroutines.flow.Flow
 
 interface NotificationsRepository {

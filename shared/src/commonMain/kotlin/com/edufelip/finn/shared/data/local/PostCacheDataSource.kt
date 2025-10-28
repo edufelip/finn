@@ -3,6 +3,7 @@ package com.edufelip.finn.shared.data.local
 import com.edufelip.finn.shared.cache.FinnDatabase
 import com.edufelip.finn.shared.cache.Post_cache
 import com.edufelip.finn.shared.domain.model.Post
+import com.edufelip.finn.shared.util.currentTimeMillis
 
 interface PostCacheDataSource {
     suspend fun write(scope: PostCacheScope, page: Int, pageSize: Int, posts: List<Post>)
@@ -12,7 +13,7 @@ interface PostCacheDataSource {
 
 class SqlDelightPostCacheDataSource(
     private val database: FinnDatabase,
-    private val timeProvider: () -> Long = { System.currentTimeMillis() },
+    private val timeProvider: () -> Long = { currentTimeMillis() },
 ) : PostCacheDataSource {
 
     private val queries get() = database.cacheQueries

@@ -3,7 +3,6 @@ package com.edufelip.finn.shared.di
 import com.edufelip.finn.shared.domain.model.Post
 import com.edufelip.finn.shared.presentation.vm.CommentsVM
 import org.koin.core.Koin
-import org.koin.core.context.GlobalContext
 
 // Factory for per-post CommentsVM instances
 interface CommentsVMFactory {
@@ -29,6 +28,12 @@ interface LinkActions {
 
 // Simple access to Koin from common code
 object DI {
-    // Access the global Koin instance
-    val koin: Koin get() = GlobalContext.get()
+    private var provider: (() -> Koin)? = null
+
+    val koin: Koin
+        get() = provider?.invoke() ?: error("Koin not configured for shared module")
+
+    fun configure(block: () -> Koin) {
+        provider = block
+    }
 }

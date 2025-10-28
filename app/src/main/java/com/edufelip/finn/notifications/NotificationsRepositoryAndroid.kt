@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import com.edufelip.finn.shared.domain.repository.NotificationsRepository
-import com.edufelip.finn.shared.presentation.notifications.NotificationItem
+import com.edufelip.finn.shared.ui.screens.notifications.NotificationItem
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

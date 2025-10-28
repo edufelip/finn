@@ -4,6 +4,7 @@ import com.edufelip.finn.shared.cache.Community_cache
 import com.edufelip.finn.shared.cache.Community_search
 import com.edufelip.finn.shared.cache.FinnDatabase
 import com.edufelip.finn.shared.domain.model.Community
+import com.edufelip.finn.shared.util.currentTimeMillis
 
 interface CommunityCacheDataSource {
     suspend fun writeSearch(query: String, communities: List<Community>)
@@ -16,7 +17,7 @@ interface CommunityCacheDataSource {
 
 class SqlDelightCommunityCacheDataSource(
     private val database: FinnDatabase,
-    private val timeProvider: () -> Long = { System.currentTimeMillis() },
+    private val timeProvider: () -> Long = { currentTimeMillis() },
 ) : CommunityCacheDataSource {
 
     private val queries get() = database.cacheQueries

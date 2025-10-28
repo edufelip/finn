@@ -1,0 +1,18 @@
+package com.edufelip.finn.shared.ui.screens.community
+
+import com.edufelip.finn.shared.domain.model.Community
+import com.edufelip.finn.shared.domain.model.Post
+import com.edufelip.finn.shared.domain.model.Subscription
+
+data class CommunityDetailsState(
+    val loading: Boolean = false,
+    val community: Community? = null,
+    val posts: List<Post> = emptyList(),
+    val loadingMore: Boolean = false,
+    val nextPage: Int = 1,
+    val endReached: Boolean = false,
+    val error: String? = null,
+    val membership: Subscription? = null,
+    val membershipLoading: Boolean = false,
+    val deleting: Boolean = false,
+)

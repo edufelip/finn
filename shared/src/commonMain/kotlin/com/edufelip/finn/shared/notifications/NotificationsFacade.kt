@@ -1,6 +1,6 @@
 package com.edufelip.finn.shared.notifications
 
-import com.edufelip.finn.shared.presentation.notifications.NotificationItem
+import com.edufelip.finn.shared.ui.screens.notifications.NotificationItem
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

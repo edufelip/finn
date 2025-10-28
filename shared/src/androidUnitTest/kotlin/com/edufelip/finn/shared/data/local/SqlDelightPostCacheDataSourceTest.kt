@@ -3,12 +3,12 @@ package com.edufelip.finn.shared.data.local
 import app.cash.sqldelight.driver.jdbc.sqlite.JdbcSqliteDriver
 import com.edufelip.finn.shared.cache.FinnDatabase
 import com.edufelip.finn.shared.domain.model.Post
+import kotlinx.coroutines.test.runTest
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlinx.coroutines.test.runTest
 
 class SqlDelightPostCacheDataSourceTest {
     private lateinit var driver: JdbcSqliteDriver

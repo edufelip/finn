@@ -4,8 +4,8 @@ import android.content.Context
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.edufelip.finn.BuildConfig
-import com.edufelip.finn.network.FinnHttpLogger
 import com.edufelip.finn.data.cache.RemoteConfigCacheTtlProvider
+import com.edufelip.finn.network.FinnHttpLogger
 import com.edufelip.finn.shared.cache.FinnDatabase
 import com.edufelip.finn.shared.data.CacheTtlProvider
 import com.edufelip.finn.shared.data.local.CommentCacheDataSource
@@ -32,15 +32,15 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import java.util.concurrent.TimeUnit
-import javax.inject.Named
-import javax.inject.Singleton
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

@@ -1,6 +1,5 @@
 package com.edufelip.finn.ui.activities
 
-import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
@@ -17,9 +16,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.lifecycleScope
 import com.edufelip.finn.R
 import com.edufelip.finn.notifications.TokenUploaderAndroid
-import com.edufelip.finn.shared.SharedApp
 import com.edufelip.finn.shared.di.AuthActions
 import com.edufelip.finn.shared.di.CommentsVMFactory
+import com.edufelip.finn.shared.di.DI
 import com.edufelip.finn.shared.di.LinkActions
 import com.edufelip.finn.shared.di.ShareActions
 import com.edufelip.finn.shared.domain.model.Post
@@ -35,6 +34,7 @@ import com.edufelip.finn.shared.presentation.vm.NotificationsVM
 import com.edufelip.finn.shared.presentation.vm.ProfileVM
 import com.edufelip.finn.shared.presentation.vm.SavedVM
 import com.edufelip.finn.shared.presentation.vm.SearchVM
+import com.edufelip.finn.shared.ui.screens.app.SharedApp
 import com.edufelip.finn.ui.compose.AndroidRouter
 import com.edufelip.finn.ui.compose.parseRoute
 import com.edufelip.finn.ui.compose.pickImageFlow
@@ -55,11 +55,12 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.koin.core.context.GlobalContext
 import org.koin.core.context.loadKoinModules
 import org.koin.dsl.module
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ComposeHomeActivity : ComponentActivity() {
@@ -145,7 +146,9 @@ class ComposeHomeActivity : ComponentActivity() {
                 override val postRepository = homeVm.postRepository
                 override val userIdProvider = homeVm.userIdProvider
             }
-            val searchBridge = object : SearchVM { override val searchCommunities = searchCommunities }
+            val searchBridge = object : SearchVM {
+                override val searchCommunities = searchCommunities
+            }
             val communityBridge = object : CommunityDetailsVM {
                 override val getCommunityDetails = getCommunityDetails
                 override val getCommunityPosts = getCommunityPosts
@@ -154,8 +157,12 @@ class ComposeHomeActivity : ComponentActivity() {
                 override val getSubscription = communityVm.getSubscription
                 override val deleteCommunity = communityVm.deleteCommunity
             }
-            val notificationsBridge = object : NotificationsVM { override val observeNotifications = observeNotifications }
-            val createCommunityBridge = object : CreateCommunityVM { override val createCommunity = createCommunity }
+            val notificationsBridge = object : NotificationsVM {
+                override val observeNotifications = observeNotifications
+            }
+            val createCommunityBridge = object : CreateCommunityVM {
+                override val createCommunity = createCommunity
+            }
             val profileBridge = object : ProfileVM {
                 override val userIdFlow = userIdFlow
                 override val getUser = getUser
@@ -165,7 +172,9 @@ class ComposeHomeActivity : ComponentActivity() {
                 override val userIdFlow = userIdFlow
                 override val repo = homeVm.postRepository
             }
-            val authBridge = object : AuthVM { override val userIdFlow = userIdFlow }
+            val authBridge = object : AuthVM {
+                override val userIdFlow = userIdFlow
+            }
             val createPostBridge = object : CreatePostVM {
                 override val repo = createPostVm.postRepository
                 override val userIdProvider = createPostVm.userIdProvider
@@ -219,7 +228,7 @@ class ComposeHomeActivity : ComponentActivity() {
                                                     is FirebaseNetworkException -> "Network error. Check your connection and try again"
                                                     else -> ex?.message ?: "Unknown error"
                                                 }
-                                                Toast.makeText(this@ComposeHomeActivity, "Error: ${msg}", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(this@ComposeHomeActivity, "Error: $msg", Toast.LENGTH_SHORT).show()
                                             }
                                         }
                                 }
@@ -238,7 +247,7 @@ class ComposeHomeActivity : ComponentActivity() {
                                                     is FirebaseNetworkException -> "Network error. Check your connection and try again"
                                                     else -> ex?.message ?: "Unknown error"
                                                 }
-                                                Toast.makeText(this@ComposeHomeActivity, "Error: ${msg}", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(this@ComposeHomeActivity, "Error: $msg", Toast.LENGTH_SHORT).show()
                                             } else {
                                                 Toast.makeText(this@ComposeHomeActivity, "Account created. You are now signed in.", Toast.LENGTH_SHORT).show()
                                             }
@@ -263,6 +272,7 @@ class ComposeHomeActivity : ComponentActivity() {
                 },
             )
 
+            DI.configure { GlobalContext.get() }
             SharedApp(router = router)
         }
     }

@@ -82,7 +82,6 @@ dependencies {
     implementation(libs.okhttp.logging)
     implementation(libs.kotlinx.serialization.json)
 
-
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

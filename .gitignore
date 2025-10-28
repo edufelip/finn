@@ -31,3 +31,6 @@ shared/build/
 /docs/
 buildlog.txt
 build_output.log
+
+# iOS artifacts
+iosApp/
