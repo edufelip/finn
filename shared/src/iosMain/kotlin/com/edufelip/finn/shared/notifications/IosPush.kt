@@ -1,6 +1,5 @@
 package com.edufelip.finn.shared.notifications
 
-import com.edufelip.finn.shared.ui.screens.notifications.NotificationItem
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch

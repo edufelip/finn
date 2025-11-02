@@ -14,8 +14,11 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.lifecycleScope
+import com.edufelip.finn.composeapp.FinnApp
 import com.edufelip.finn.R
 import com.edufelip.finn.notifications.TokenUploaderAndroid
+import com.edufelip.finn.composeapp.di.PlatformBindings
+import com.edufelip.finn.composeapp.di.composePlatformModule
 import com.edufelip.finn.shared.di.AuthActions
 import com.edufelip.finn.shared.di.CommentsVMFactory
 import com.edufelip.finn.shared.di.DI
@@ -34,7 +37,6 @@ import com.edufelip.finn.shared.presentation.vm.NotificationsVM
 import com.edufelip.finn.shared.presentation.vm.ProfileVM
 import com.edufelip.finn.shared.presentation.vm.SavedVM
 import com.edufelip.finn.shared.presentation.vm.SearchVM
-import com.edufelip.finn.shared.ui.screens.app.SharedApp
 import com.edufelip.finn.ui.compose.AndroidRouter
 import com.edufelip.finn.ui.compose.parseRoute
 import com.edufelip.finn.ui.compose.pickImageFlow
@@ -59,7 +61,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.core.context.GlobalContext
 import org.koin.core.context.loadKoinModules
-import org.koin.dsl.module
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -180,100 +181,88 @@ class ComposeHomeActivity : ComponentActivity() {
                 override val userIdProvider = createPostVm.userIdProvider
                 override val pickImage = pickImage
             }
-            val commentsFactory: (Int) -> CommentsVM = { _ ->
-                object : CommentsVM {
-                    override val getComments = getComments
-                    override val addComment = addComment
-                    override val userIdProvider = commentsVm.userIdProvider
+            val commentsFactory = object : CommentsVMFactory {
+                override fun create(postId: Int): CommentsVM =
+                    object : CommentsVM {
+                        override val getComments = getComments
+                        override val addComment = addComment
+                        override val userIdProvider = commentsVm.userIdProvider
+                    }
+            }
+            val authActions = object : AuthActions {
+                override fun requestSignIn() = onRequestSignIn()
+                override fun requestSignOut() = onRequestSignOut()
+                override fun emailPasswordLogin(email: String, password: String) {
+                    when {
+                        email.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter email", Toast.LENGTH_SHORT).show()
+                        !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> Toast.makeText(this@ComposeHomeActivity, "Email is invalid", Toast.LENGTH_SHORT).show()
+                        password.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter password", Toast.LENGTH_SHORT).show()
+                        !isOnline() -> Toast.makeText(this@ComposeHomeActivity, "No internet connection", Toast.LENGTH_SHORT).show()
+                        else -> auth.signInWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                if (!task.isSuccessful) {
+                                    val msg = when (val ex = task.exception) {
+                                        is FirebaseAuthInvalidUserException -> "User not registered"
+                                        is FirebaseAuthInvalidCredentialsException -> "Password incorrect"
+                                        is FirebaseNetworkException -> "Network error. Check your connection and try again"
+                                        else -> ex?.message ?: "Unknown error"
+                                    }
+                                    Toast.makeText(this@ComposeHomeActivity, "Error: $msg", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                    }
+                }
+                override fun createAccount(email: String, password: String) {
+                    when {
+                        email.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter email", Toast.LENGTH_SHORT).show()
+                        !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> Toast.makeText(this@ComposeHomeActivity, "Email is invalid", Toast.LENGTH_SHORT).show()
+                        password.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter password", Toast.LENGTH_SHORT).show()
+                        !isOnline() -> Toast.makeText(this@ComposeHomeActivity, "No internet connection", Toast.LENGTH_SHORT).show()
+                        else -> auth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener { task ->
+                                if (!task.isSuccessful) {
+                                    val msg = when (val ex = task.exception) {
+                                        is FirebaseAuthInvalidCredentialsException -> "Invalid credentials"
+                                        is FirebaseNetworkException -> "Network error. Check your connection and try again"
+                                        else -> ex?.message ?: "Unknown error"
+                                    }
+                                    Toast.makeText(this@ComposeHomeActivity, "Error: $msg", Toast.LENGTH_SHORT).show()
+                                } else {
+                                    Toast.makeText(this@ComposeHomeActivity, "Account created. You are now signed in.", Toast.LENGTH_SHORT).show()
+                                }
+                            }
+                    }
                 }
             }
-            // Load Koin bindings for shared UI (bridges + platform actions)
-            loadKoinModules(
-                module {
-                    single<HomeVM> { homeBridge }
-                    single<SearchVM> { searchBridge }
-                    single<CommunityDetailsVM> { communityBridge }
-                    single<NotificationsVM> { notificationsBridge }
-                    single<CreateCommunityVM> { createCommunityBridge }
-                    single<ProfileVM> { profileBridge }
-                    single<SavedVM> { savedBridge }
-                    single<AuthVM> { authBridge }
-                    single<CreatePostVM> { createPostBridge }
-                    single<CommentsVMFactory> {
-                        object : CommentsVMFactory {
-                            override fun create(postId: Int): CommentsVM =
-                                object : CommentsVM {
-                                    override val getComments = getComments
-                                    override val addComment = addComment
-                                    override val userIdProvider = commentsVm.userIdProvider
-                                }
-                        }
-                    }
-                    single<AuthActions> {
-                        object : AuthActions {
-                            override fun requestSignIn() = onRequestSignIn()
-                            override fun requestSignOut() = onRequestSignOut()
-                            override fun emailPasswordLogin(email: String, password: String) {
-                                when {
-                                    email.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter email", Toast.LENGTH_SHORT).show()
-                                    !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> Toast.makeText(this@ComposeHomeActivity, "Email is invalid", Toast.LENGTH_SHORT).show()
-                                    password.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter password", Toast.LENGTH_SHORT).show()
-                                    !isOnline() -> Toast.makeText(this@ComposeHomeActivity, "No internet connection", Toast.LENGTH_SHORT).show()
-                                    else -> auth.signInWithEmailAndPassword(email, password)
-                                        .addOnCompleteListener { task ->
-                                            if (!task.isSuccessful) {
-                                                val msg = when (val ex = task.exception) {
-                                                    is FirebaseAuthInvalidUserException -> "User not registered"
-                                                    is FirebaseAuthInvalidCredentialsException -> "Password incorrect"
-                                                    is FirebaseNetworkException -> "Network error. Check your connection and try again"
-                                                    else -> ex?.message ?: "Unknown error"
-                                                }
-                                                Toast.makeText(this@ComposeHomeActivity, "Error: $msg", Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                }
-                            }
-                            override fun createAccount(email: String, password: String) {
-                                when {
-                                    email.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter email", Toast.LENGTH_SHORT).show()
-                                    !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> Toast.makeText(this@ComposeHomeActivity, "Email is invalid", Toast.LENGTH_SHORT).show()
-                                    password.isBlank() -> Toast.makeText(this@ComposeHomeActivity, "Please enter password", Toast.LENGTH_SHORT).show()
-                                    !isOnline() -> Toast.makeText(this@ComposeHomeActivity, "No internet connection", Toast.LENGTH_SHORT).show()
-                                    else -> auth.createUserWithEmailAndPassword(email, password)
-                                        .addOnCompleteListener { task ->
-                                            if (!task.isSuccessful) {
-                                                val msg = when (val ex = task.exception) {
-                                                    is FirebaseAuthInvalidCredentialsException -> "Invalid credentials"
-                                                    is FirebaseNetworkException -> "Network error. Check your connection and try again"
-                                                    else -> ex?.message ?: "Unknown error"
-                                                }
-                                                Toast.makeText(this@ComposeHomeActivity, "Error: $msg", Toast.LENGTH_SHORT).show()
-                                            } else {
-                                                Toast.makeText(this@ComposeHomeActivity, "Account created. You are now signed in.", Toast.LENGTH_SHORT).show()
-                                            }
-                                        }
-                                }
-                            }
-                        }
-                    }
-                    single<ShareActions> {
-                        object : ShareActions {
-                            override fun share(post: Post) = onSharePost(post)
-                        }
-                    }
-                    single<LinkActions> {
-                        object : LinkActions {
-                            override fun openUrl(url: String) {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                                this@ComposeHomeActivity.startActivity(intent)
-                            }
-                        }
-                    }
-                },
+            val shareActions = object : ShareActions {
+                override fun share(post: Post) = onSharePost(post)
+            }
+            val linkActions = object : LinkActions {
+                override fun openUrl(url: String) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    this@ComposeHomeActivity.startActivity(intent)
+                }
+            }
+            val bindings = PlatformBindings(
+                homeVm = homeBridge,
+                searchVm = searchBridge,
+                communityVm = communityBridge,
+                notificationsVm = notificationsBridge,
+                createCommunityVm = createCommunityBridge,
+                profileVm = profileBridge,
+                savedVm = savedBridge,
+                authVm = authBridge,
+                createPostVm = createPostBridge,
+                commentsFactory = commentsFactory,
+                authActions = authActions,
+                shareActions = shareActions,
+                linkActions = linkActions,
             )
+            // Load Koin bindings for shared UI (bridges + platform actions)
+            loadKoinModules(composePlatformModule(bindings))
 
             DI.configure { GlobalContext.get() }
-            SharedApp(router = router)
+            FinnApp(router = router)
         }
     }
 

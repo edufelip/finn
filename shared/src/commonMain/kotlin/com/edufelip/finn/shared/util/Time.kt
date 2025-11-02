@@ -1,3 +1,5 @@
 package com.edufelip.finn.shared.util
 
-expect fun currentTimeMillis(): Long
+import kotlinx.datetime.Clock
+
+fun currentTimeMillis(): Long = Clock.System.now().toEpochMilliseconds()

@@ -1,6 +1,6 @@
 package com.edufelip.finn.notifications
 
-import com.edufelip.finn.shared.ui.screens.notifications.NotificationItem
+import com.edufelip.finn.shared.notifications.NotificationItem
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.hilt.android.AndroidEntryPoint

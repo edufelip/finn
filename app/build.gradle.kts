@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -11,12 +13,12 @@ plugins {
 
 android {
     namespace = "com.edufelip.finn"
-    compileSdk = 34
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.edufelip.finn"
-        minSdk = 24
-        targetSdk = 34
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 4
         versionName = "1.0.3"
 
@@ -42,8 +44,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = "17"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.fromTarget(JavaVersion.VERSION_17.toString()))
+        }
     }
     buildFeatures {
         compose = true
@@ -114,8 +118,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.tooling.preview)
 
-    // Shared Compose Multiplatform UI
-    implementation(project(":shared"))
+    // Shared Compose Multiplatform UI layers
+    implementation(projects.shared)
+    implementation(projects.composeApp)
 }
 
 kapt {
