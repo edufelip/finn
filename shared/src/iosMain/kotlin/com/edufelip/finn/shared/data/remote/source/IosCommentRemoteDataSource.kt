@@ -1,21 +1,20 @@
 package com.edufelip.finn.shared.data.remote.source
 
+import com.edufelip.finn.shared.data.remote.dto.CommentCreateRequestDto
 import com.edufelip.finn.shared.data.remote.dto.CommentDto
 
-class IosCommentRemoteDataSource : CommentRemoteDataSource {
-    override suspend fun getComments(postId: Int, page: Int, limit: Int): List<CommentDto> = sampleComments(postId)
+class IosCommentRemoteDataSource(
+    private val api: IosBackendApi,
+) : CommentRemoteDataSource {
+    override suspend fun getComments(postId: Int, page: Int, limit: Int): List<CommentDto> =
+        api.getComments(postId, page, limit)
 
     override suspend fun addComment(postId: Int, userId: String, content: String): CommentDto =
-        CommentDto(id = (1..100_000).random(), postId = postId, userId = userId, userName = "iOS", content = content)
-
-    private fun sampleComments(postId: Int): List<CommentDto> =
-        (0 until 5).map { index ->
-            CommentDto(
-                id = index + 1,
+        api.addComment(
+            CommentCreateRequestDto(
                 postId = postId,
-                userId = "user-$index",
-                userName = "Commenter ${index + 1}",
-                content = "Insight #$index",
-            )
-        }
+                userId = userId,
+                content = content,
+            ),
+        )
 }

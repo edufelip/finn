@@ -1,0 +1,7 @@
+TEAM_ID=
+BUNDLE_ID=com.edufelip.finn.iosApp
+APP_NAME=Finn
+KOTLIN_FRAMEWORK_NAME=FinnApp
+KOTLIN_FRAMEWORK_SEARCH_PATH=$(SRCROOT)/../composeApp/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)
+GRADLE_TASK=:iosApp:syncFramework
+FINN_REMOTE_SERVER=https://finn.dev.dashboard.eduwaldo.com/

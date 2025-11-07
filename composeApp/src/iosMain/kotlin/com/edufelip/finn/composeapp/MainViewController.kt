@@ -1,18 +1,20 @@
 package com.edufelip.finn.composeapp
 
 import androidx.compose.ui.window.ComposeUIViewController
-import app.cash.sqldelight.driver.native.NativeSqliteDriver
 import com.edufelip.finn.composeapp.di.PlatformBindings
 import com.edufelip.finn.composeapp.di.composePlatformModule
-import com.edufelip.finn.shared.cache.FinnDatabase
 import com.edufelip.finn.shared.data.AppleRemoteConfigCacheTtlProvider
 import com.edufelip.finn.shared.data.CacheTtlProvider
+import com.edufelip.finn.shared.data.IosRemoteConfigSync
 import com.edufelip.finn.shared.data.local.CommentCacheDataSource
 import com.edufelip.finn.shared.data.local.CommunityCacheDataSource
 import com.edufelip.finn.shared.data.local.PostCacheDataSource
-import com.edufelip.finn.shared.data.local.SqlDelightCommentCacheDataSource
-import com.edufelip.finn.shared.data.local.SqlDelightCommunityCacheDataSource
-import com.edufelip.finn.shared.data.local.SqlDelightPostCacheDataSource
+import com.edufelip.finn.shared.data.local.RoomCommentCacheDataSource
+import com.edufelip.finn.shared.data.local.RoomCommunityCacheDataSource
+import com.edufelip.finn.shared.data.local.RoomPostCacheDataSource
+import com.edufelip.finn.shared.data.local.room.buildFinnDatabase
+import com.edufelip.finn.shared.data.local.room.finnDatabaseBuilder
+import com.edufelip.finn.shared.data.remote.source.IosBackendApi
 import com.edufelip.finn.shared.data.remote.source.IosCommentRemoteDataSource
 import com.edufelip.finn.shared.data.remote.source.IosCommunityRemoteDataSource
 import com.edufelip.finn.shared.data.remote.source.IosPostRemoteDataSource
@@ -47,6 +49,7 @@ import com.edufelip.finn.shared.domain.usecase.UnsubscribeFromCommunityUseCase
 import com.edufelip.finn.shared.navigation.DeepLinks
 import com.edufelip.finn.shared.navigation.Route
 import com.edufelip.finn.shared.navigation.SimpleRouter
+import com.edufelip.finn.shared.network.createIosHttpClient
 import com.edufelip.finn.shared.presentation.vm.AuthVM
 import com.edufelip.finn.shared.presentation.vm.CommentsVM
 import com.edufelip.finn.shared.presentation.vm.CommunityDetailsVM
@@ -59,7 +62,9 @@ import com.edufelip.finn.shared.presentation.vm.SavedVM
 import com.edufelip.finn.shared.presentation.vm.SearchVM
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
+import platform.Foundation.NSBundle
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 
@@ -67,30 +72,41 @@ fun MainViewController() = ComposeUIViewController {
     val router = SimpleRouter(Route.Login)
     val commentPageSize = 10
 
-    val driver = NativeSqliteDriver(FinnDatabase.Schema, name = "finn.db")
-    val database = FinnDatabase(driver)
+    val httpClient = createIosHttpClient()
+    runBlocking {
+        runCatching { IosRemoteConfigSync(httpClient).refresh() }
+            .onFailure { println("IosRemoteConfigSync error: ${it.message}") }
+    }
 
-    val postCache: PostCacheDataSource = SqlDelightPostCacheDataSource(database)
-    val communityCache: CommunityCacheDataSource = SqlDelightCommunityCacheDataSource(database)
-    val commentCache: CommentCacheDataSource = SqlDelightCommentCacheDataSource(database)
-    val cacheTtlProvider: CacheTtlProvider = AppleRemoteConfigCacheTtlProvider()
+    val database = finnDatabaseBuilder().buildFinnDatabase()
+
+    val postCache: PostCacheDataSource = RoomPostCacheDataSource(database)
+    val communityCache: CommunityCacheDataSource = RoomCommunityCacheDataSource(database)
+    val commentCache: CommentCacheDataSource = RoomCommentCacheDataSource(database)
+    val appleConfig = AppleRemoteConfigCacheTtlProvider()
+    val cacheTtlProvider: CacheTtlProvider = appleConfig
+    val bundleHost = (NSBundle.mainBundle.objectForInfoDictionaryKey("FinnRemoteServer") as? String)
+        ?.trim()
+        ?.takeIf { it.isNotEmpty() }
+    val resolvedBaseUrl = (bundleHost ?: appleConfig.remoteServer()).ensureTrailingSlash()
+    val backendApi = IosBackendApi(baseUrl = resolvedBaseUrl, client = httpClient)
 
     val postRepo: PostRepository = DefaultPostRepository(
-        remote = IosPostRemoteDataSource(),
+        remote = IosPostRemoteDataSource(backendApi),
         cache = postCache,
         ttlProvider = cacheTtlProvider,
     )
 
     val communityRepo: CommunityRepository = DefaultCommunityRepository(
-        remote = IosCommunityRemoteDataSource(),
+        remote = IosCommunityRemoteDataSource(backendApi),
         cache = communityCache,
         ttlProvider = cacheTtlProvider,
     )
 
-    val userRepo: UserRepository = DefaultUserRepository(IosUserRemoteDataSource())
+    val userRepo: UserRepository = DefaultUserRepository(IosUserRemoteDataSource(backendApi))
 
     val commentRepo: CommentRepository = DefaultCommentRepository(
-        remote = IosCommentRemoteDataSource(),
+        remote = IosCommentRemoteDataSource(backendApi),
         cache = commentCache,
         ttlProvider = cacheTtlProvider,
         pageSize = commentPageSize,
@@ -201,9 +217,14 @@ fun MainViewController() = ComposeUIViewController {
     FinnApp(router = router)
 }
 
+@Suppress("unused")
+fun ComposeRootViewController() = MainViewController()
+
 private fun presentShareSheet(text: String) {
     val url = NSURL.URLWithString(text)
     if (url != null) {
         UIApplication.sharedApplication().openURL(url)
     }
 }
+
+private fun String.ensureTrailingSlash(): String = if (endsWith("/")) this else "$this/"

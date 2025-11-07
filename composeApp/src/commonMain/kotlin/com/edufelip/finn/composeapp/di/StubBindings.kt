@@ -27,6 +27,7 @@ import com.edufelip.finn.shared.domain.usecase.ObserveNotificationsUseCase
 import com.edufelip.finn.shared.domain.usecase.SearchCommunitiesUseCase
 import com.edufelip.finn.shared.domain.usecase.SubscribeToCommunityUseCase
 import com.edufelip.finn.shared.domain.usecase.UnsubscribeFromCommunityUseCase
+import com.edufelip.finn.shared.notifications.NotificationItem
 import com.edufelip.finn.shared.presentation.vm.AuthVM
 import com.edufelip.finn.shared.presentation.vm.CommentsVM
 import com.edufelip.finn.shared.presentation.vm.CommunityDetailsVM
@@ -37,7 +38,6 @@ import com.edufelip.finn.shared.presentation.vm.NotificationsVM
 import com.edufelip.finn.shared.presentation.vm.ProfileVM
 import com.edufelip.finn.shared.presentation.vm.SavedVM
 import com.edufelip.finn.shared.presentation.vm.SearchVM
-import com.edufelip.finn.shared.notifications.NotificationItem
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf

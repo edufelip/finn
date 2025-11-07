@@ -1,7 +1,9 @@
 package com.edufelip.finn.shared.data.local
 
-import com.edufelip.finn.shared.cache.Comment_cache
-import com.edufelip.finn.shared.cache.FinnDatabase
+import androidx.room.withTransaction
+import com.edufelip.finn.shared.data.local.room.CommentCacheDao
+import com.edufelip.finn.shared.data.local.room.CommentCacheEntity
+import com.edufelip.finn.shared.data.local.room.FinnCacheDatabase
 import com.edufelip.finn.shared.domain.model.Comment
 import com.edufelip.finn.shared.util.currentTimeMillis
 
@@ -11,41 +13,37 @@ interface CommentCacheDataSource {
     suspend fun clear(postId: Int)
 }
 
-class SqlDelightCommentCacheDataSource(
-    private val database: FinnDatabase,
+class RoomCommentCacheDataSource(
+    private val database: FinnCacheDatabase,
     private val timeProvider: () -> Long = { currentTimeMillis() },
 ) : CommentCacheDataSource {
 
-    private val queries get() = database.cacheQueries
+    private val dao: CommentCacheDao
+        get() = database.commentCacheDao()
 
     override suspend fun write(postId: Int, comments: List<Comment>) {
         val scopeKey = scope(postId)
-        database.transaction {
-            queries.deleteCommentsByScope(scopeKey)
+        database.withTransaction {
+            dao.deleteByScope(scopeKey)
             val updatedAt = timeProvider()
-            comments.forEach { comment ->
-                queries.insertComment(
-                    cache_key = cacheKey(scopeKey, comment.id),
-                    scope = scopeKey,
-                    comment_id = comment.id.toLong(),
-                    post_id = comment.postId.toLong(),
-                    user_id = comment.userId,
-                    user_image = comment.userImage,
-                    user_name = comment.userName,
-                    content = comment.content,
-                    date_millis = comment.dateMillis,
-                    updated_at_millis = updatedAt,
-                )
-            }
+            dao.insertAll(
+                comments.map { comment ->
+                    comment.toEntity(
+                        scope = scopeKey,
+                        cacheKey = cacheKey(scopeKey, comment.id),
+                        updatedAt = updatedAt,
+                    )
+                },
+            )
         }
     }
 
     override suspend fun read(postId: Int, maxAgeMillis: Long?): List<Comment> {
         val scopeKey = scope(postId)
-        val rows = queries.selectCommentsByScope(scopeKey).executeAsList()
+        val rows = dao.selectByScope(scopeKey)
         if (rows.isEmpty()) return emptyList()
         if (maxAgeMillis != null) {
-            val newest = rows.maxOf { it.updated_at_millis }
+            val newest = rows.maxOf { it.updatedAtMillis }
             if (timeProvider() - newest > maxAgeMillis) {
                 clear(postId)
                 return emptyList()
@@ -55,7 +53,7 @@ class SqlDelightCommentCacheDataSource(
     }
 
     override suspend fun clear(postId: Int) {
-        queries.deleteCommentsByScope(scope(postId))
+        dao.deleteByScope(scope(postId))
     }
 
     private fun scope(postId: Int) = "post:$postId"
@@ -63,14 +61,31 @@ class SqlDelightCommentCacheDataSource(
     private fun cacheKey(scope: String, commentId: Int) = "$scope-$commentId"
 }
 
-private fun Comment_cache.toDomain(): Comment =
+private fun CommentCacheEntity.toDomain(): Comment =
     Comment(
-        id = comment_id.toInt(),
-        postId = post_id.toInt(),
-        userId = user_id,
-        userImage = user_image,
-        userName = user_name,
+        id = commentId.toInt(),
+        postId = postId.toInt(),
+        userId = userId,
+        userImage = userImage,
+        userName = userName,
         content = content,
-        dateMillis = date_millis,
-        cachedAtMillis = updated_at_millis,
+        dateMillis = dateMillis,
+        cachedAtMillis = updatedAtMillis,
     )
+
+private fun Comment.toEntity(
+    scope: String,
+    cacheKey: String,
+    updatedAt: Long,
+) = CommentCacheEntity(
+    cacheKey = cacheKey,
+    scope = scope,
+    commentId = id.toLong(),
+    postId = postId.toLong(),
+    userId = userId,
+    userImage = userImage,
+    userName = userName,
+    content = content,
+    dateMillis = dateMillis,
+    updatedAtMillis = updatedAt,
+)

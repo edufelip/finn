@@ -14,11 +14,11 @@ import androidx.activity.viewModels
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.lifecycle.lifecycleScope
-import com.edufelip.finn.composeapp.FinnApp
 import com.edufelip.finn.R
-import com.edufelip.finn.notifications.TokenUploaderAndroid
+import com.edufelip.finn.composeapp.FinnApp
 import com.edufelip.finn.composeapp.di.PlatformBindings
 import com.edufelip.finn.composeapp.di.composePlatformModule
+import com.edufelip.finn.notifications.TokenUploaderAndroid
 import com.edufelip.finn.shared.di.AuthActions
 import com.edufelip.finn.shared.di.CommentsVMFactory
 import com.edufelip.finn.shared.di.DI

@@ -5,8 +5,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.edufelip.finn.shared.domain.model.Post
 import com.edufelip.finn.shared.domain.model.User
-import com.edufelip.finn.shared.domain.usecase.GetUserUseCase
 import com.edufelip.finn.shared.domain.repository.UserRepository
+import com.edufelip.finn.shared.domain.usecase.GetUserUseCase
 import com.edufelip.finn.shared.i18n.ProvideStrings
 import com.edufelip.finn.shared.ui.screens.profile.ProfileScreen
 import kotlinx.coroutines.flow.flowOf

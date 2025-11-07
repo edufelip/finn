@@ -24,7 +24,15 @@ class RemoteConfigUtils {
         return remoteConfig
     }
 
-    fun getRemoteServerAddress(): String = remote.getString(KEY_REMOTE_SERVER)
+    fun getRemoteServerAddress(): String {
+        val configured = remote.getString(KEY_REMOTE_SERVER).trim()
+        val resolved = if (configured.isNotEmpty()) configured else BuildConfig.DEFAULT_REMOTE_SERVER
+        val normalized = normalizeBaseUrl(resolved)
+        require(normalized.startsWith("https://")) {
+            "Remote server must use HTTPS. Provided value: $resolved"
+        }
+        return normalized
+    }
 
     fun getIsFacebookAuthEnabled(): Boolean = remote.getBoolean(IS_FACEBOOK_AUTH_ENABLED)
 
@@ -51,5 +59,8 @@ class RemoteConfigUtils {
         private const val DEFAULT_COMMUNITY_SEARCH_TTL = 15 * 60 * 1000L
         private const val DEFAULT_COMMUNITY_DETAILS_TTL = 10 * 60 * 1000L
         private const val DEFAULT_COMMENT_TTL = 5 * 60 * 1000L
+
+        private fun normalizeBaseUrl(value: String): String =
+            if (value.endsWith("/")) value else "$value/"
     }
 }

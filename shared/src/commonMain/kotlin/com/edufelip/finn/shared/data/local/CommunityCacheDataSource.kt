@@ -1,8 +1,12 @@
 package com.edufelip.finn.shared.data.local
 
-import com.edufelip.finn.shared.cache.Community_cache
-import com.edufelip.finn.shared.cache.Community_search
-import com.edufelip.finn.shared.cache.FinnDatabase
+import androidx.room.withTransaction
+import com.edufelip.finn.shared.data.local.room.CommunityCacheDao
+import com.edufelip.finn.shared.data.local.room.CommunityCacheEntity
+import com.edufelip.finn.shared.data.local.room.CommunitySearchDao
+import com.edufelip.finn.shared.data.local.room.CommunitySearchEntryEntity
+import com.edufelip.finn.shared.data.local.room.CommunitySearchMetadataEntity
+import com.edufelip.finn.shared.data.local.room.FinnCacheDatabase
 import com.edufelip.finn.shared.domain.model.Community
 import com.edufelip.finn.shared.util.currentTimeMillis
 
@@ -15,77 +19,68 @@ interface CommunityCacheDataSource {
     suspend fun remove(id: Int)
 }
 
-class SqlDelightCommunityCacheDataSource(
-    private val database: FinnDatabase,
+class RoomCommunityCacheDataSource(
+    private val database: FinnCacheDatabase,
     private val timeProvider: () -> Long = { currentTimeMillis() },
 ) : CommunityCacheDataSource {
 
-    private val queries get() = database.cacheQueries
+    private val cacheDao: CommunityCacheDao
+        get() = database.communityCacheDao()
+    private val searchDao: CommunitySearchDao
+        get() = database.communitySearchDao()
 
     override suspend fun writeSearch(query: String, communities: List<Community>) {
         val key = searchKey(query)
         val now = timeProvider()
-        database.transaction {
-            queries.deleteSearchEntries(key)
+        database.withTransaction {
+            searchDao.deleteEntries(key)
             if (communities.isEmpty()) {
-                queries.deleteSearchMetadata(key)
-                return@transaction
+                searchDao.deleteMetadata(key)
+                return@withTransaction
             }
 
-            queries.insertSearchMetadata(key, now)
-            communities.forEachIndexed { index, community ->
-                queries.insertCommunity(
-                    id = community.id.toLong(),
-                    title = community.title,
-                    description = community.description,
-                    image = community.image,
-                    subscribers_count = community.subscribersCount.toLong(),
-                    owner_id = community.ownerId,
-                    created_at_millis = community.createdAtMillis,
-                    updated_at_millis = now,
-                )
-                queries.insertSearchEntry(
-                    key = key,
-                    community_id = community.id.toLong(),
-                    position = index.toLong(),
-                )
-            }
+            searchDao.insertMetadata(
+                CommunitySearchMetadataEntity(key = key, updatedAtMillis = now),
+            )
+            cacheDao.insertAll(
+                communities.map { it.toEntity(now) },
+            )
+            searchDao.insertEntries(
+                communities.mapIndexed { index, community ->
+                    CommunitySearchEntryEntity(
+                        key = key,
+                        communityId = community.id.toLong(),
+                        position = index.toLong(),
+                    )
+                },
+            )
         }
     }
 
     override suspend fun readSearch(query: String, maxAgeMillis: Long?): List<Community> {
         val key = searchKey(query)
-        val metadata: Community_search = queries.selectSearchMetadata(key).executeAsOneOrNull() ?: return emptyList()
-        if (maxAgeMillis != null && timeProvider() - metadata.updated_at_millis > maxAgeMillis) {
+        val metadata = searchDao.metadataForKey(key) ?: return emptyList()
+        if (maxAgeMillis != null && timeProvider() - metadata.updatedAtMillis > maxAgeMillis) {
             clearSearch(query)
             return emptyList()
         }
-        val ids = queries.selectCommunitiesForSearch(key).executeAsList()
+        val ids = searchDao.idsForKey(key)
         if (ids.isEmpty()) return emptyList()
         return ids.mapNotNull { id ->
-            queries.selectCommunityById(id).executeAsOneOrNull()?.takeIf { row ->
-                maxAgeMillis == null || timeProvider() - row.updated_at_millis <= maxAgeMillis
+            cacheDao.getById(id)?.takeIf { row ->
+                maxAgeMillis == null || timeProvider() - row.updatedAtMillis <= maxAgeMillis
             }?.toDomain()
         }
     }
 
     override suspend fun writeDetails(community: Community) {
         val now = timeProvider()
-        queries.insertCommunity(
-            id = community.id.toLong(),
-            title = community.title,
-            description = community.description,
-            image = community.image,
-            subscribers_count = community.subscribersCount.toLong(),
-            owner_id = community.ownerId,
-            created_at_millis = community.createdAtMillis,
-            updated_at_millis = now,
-        )
+        cacheDao.insert(community.toEntity(now))
     }
 
     override suspend fun getById(id: Int, maxAgeMillis: Long?): Community? {
-        val row = queries.selectCommunityById(id.toLong()).executeAsOneOrNull() ?: return null
-        if (maxAgeMillis != null && timeProvider() - row.updated_at_millis > maxAgeMillis) {
+        val row = cacheDao.getById(id.toLong()) ?: return null
+        if (maxAgeMillis != null && timeProvider() - row.updatedAtMillis > maxAgeMillis) {
             remove(id)
             return null
         }
@@ -94,27 +89,39 @@ class SqlDelightCommunityCacheDataSource(
 
     override suspend fun clearSearch(query: String) {
         val key = searchKey(query)
-        database.transaction {
-            queries.deleteSearchEntries(key)
-            queries.deleteSearchMetadata(key)
+        database.withTransaction {
+            searchDao.deleteEntries(key)
+            searchDao.deleteMetadata(key)
         }
     }
 
     override suspend fun remove(id: Int) {
-        queries.deleteCommunityById(id.toLong())
+        cacheDao.deleteById(id.toLong())
     }
 
     private fun searchKey(query: String) = query.trim().lowercase()
 }
 
-private fun Community_cache.toDomain(): Community =
+private fun CommunityCacheEntity.toDomain(): Community =
     Community(
         id = id.toInt(),
         title = title,
         description = description,
         image = image,
-        subscribersCount = subscribers_count.toInt(),
-        ownerId = owner_id,
-        createdAtMillis = created_at_millis,
-        cachedAtMillis = updated_at_millis,
+        subscribersCount = subscribersCount.toInt(),
+        ownerId = ownerId,
+        createdAtMillis = createdAtMillis,
+        cachedAtMillis = updatedAtMillis,
+    )
+
+private fun Community.toEntity(now: Long) =
+    CommunityCacheEntity(
+        id = id.toLong(),
+        title = title,
+        description = description,
+        image = image,
+        subscribersCount = subscribersCount.toLong(),
+        ownerId = ownerId,
+        createdAtMillis = createdAtMillis,
+        updatedAtMillis = now,
     )

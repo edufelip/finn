@@ -1,19 +1,19 @@
 package com.edufelip.finn.di
 
 import android.content.Context
-import app.cash.sqldelight.db.SqlDriver
-import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.edufelip.finn.BuildConfig
 import com.edufelip.finn.data.cache.RemoteConfigCacheTtlProvider
 import com.edufelip.finn.network.FinnHttpLogger
-import com.edufelip.finn.shared.cache.FinnDatabase
 import com.edufelip.finn.shared.data.CacheTtlProvider
 import com.edufelip.finn.shared.data.local.CommentCacheDataSource
 import com.edufelip.finn.shared.data.local.CommunityCacheDataSource
 import com.edufelip.finn.shared.data.local.PostCacheDataSource
-import com.edufelip.finn.shared.data.local.SqlDelightCommentCacheDataSource
-import com.edufelip.finn.shared.data.local.SqlDelightCommunityCacheDataSource
-import com.edufelip.finn.shared.data.local.SqlDelightPostCacheDataSource
+import com.edufelip.finn.shared.data.local.RoomCommentCacheDataSource
+import com.edufelip.finn.shared.data.local.RoomCommunityCacheDataSource
+import com.edufelip.finn.shared.data.local.RoomPostCacheDataSource
+import com.edufelip.finn.shared.data.local.room.FinnCacheDatabase
+import com.edufelip.finn.shared.data.local.room.buildFinnDatabase
+import com.edufelip.finn.shared.data.local.room.finnDatabaseBuilder
 import com.edufelip.finn.shared.data.remote.api.ApiServiceV2
 import com.edufelip.finn.shared.data.remote.source.CommentRemoteDataSource
 import com.edufelip.finn.shared.data.remote.source.CommunityRemoteDataSource
@@ -100,27 +100,25 @@ internal object AppModule {
 
     @Provides
     @Singleton
-    fun providesSqlDriver(@ApplicationContext context: Context): SqlDriver =
-        AndroidSqliteDriver(FinnDatabase.Schema, context, "finn.db")
+    fun providesDatabase(@ApplicationContext context: Context): FinnCacheDatabase =
+        finnDatabaseBuilder(context)
+            .fallbackToDestructiveMigration()
+            .buildFinnDatabase()
 
     @Provides
     @Singleton
-    fun providesDatabase(driver: SqlDriver): FinnDatabase = FinnDatabase(driver)
+    fun providesPostCacheDataSource(database: FinnCacheDatabase): PostCacheDataSource =
+        RoomPostCacheDataSource(database)
 
     @Provides
     @Singleton
-    fun providesPostCacheDataSource(database: FinnDatabase): PostCacheDataSource =
-        SqlDelightPostCacheDataSource(database)
+    fun providesCommunityCacheDataSource(database: FinnCacheDatabase): CommunityCacheDataSource =
+        RoomCommunityCacheDataSource(database)
 
     @Provides
     @Singleton
-    fun providesCommunityCacheDataSource(database: FinnDatabase): CommunityCacheDataSource =
-        SqlDelightCommunityCacheDataSource(database)
-
-    @Provides
-    @Singleton
-    fun providesCommentCacheDataSource(database: FinnDatabase): CommentCacheDataSource =
-        SqlDelightCommentCacheDataSource(database)
+    fun providesCommentCacheDataSource(database: FinnCacheDatabase): CommentCacheDataSource =
+        RoomCommentCacheDataSource(database)
 
     @Provides
     @Singleton

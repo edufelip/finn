@@ -1,0 +1,293 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "4bf03171c0df0e88d78c70fbe1421b8c",
+    "entities": [
+      {
+        "tableName": "post_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cache_key` TEXT NOT NULL, `scope` TEXT NOT NULL, `post_id` INTEGER NOT NULL, `content` TEXT NOT NULL, `community_id` INTEGER, `community_title` TEXT, `community_image` TEXT, `user_id` TEXT, `user_name` TEXT, `image` TEXT, `likes_count` INTEGER NOT NULL, `comments_count` INTEGER NOT NULL, `is_liked` INTEGER NOT NULL, `date_millis` INTEGER, `ordering` INTEGER NOT NULL, `updated_at_millis` INTEGER NOT NULL, PRIMARY KEY(`cache_key`))",
+        "fields": [
+          {
+            "fieldPath": "cacheKey",
+            "columnName": "cache_key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scope",
+            "columnName": "scope",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "postId",
+            "columnName": "post_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "content",
+            "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "communityId",
+            "columnName": "community_id",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "communityTitle",
+            "columnName": "community_title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "communityImage",
+            "columnName": "community_image",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "user_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "likesCount",
+            "columnName": "likes_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commentsCount",
+            "columnName": "comments_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLiked",
+            "columnName": "is_liked",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateMillis",
+            "columnName": "date_millis",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "ordering",
+            "columnName": "ordering",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAtMillis",
+            "columnName": "updated_at_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "cache_key"
+          ]
+        }
+      },
+      {
+        "tableName": "comment_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`cache_key` TEXT NOT NULL, `scope` TEXT NOT NULL, `comment_id` INTEGER NOT NULL, `post_id` INTEGER NOT NULL, `user_id` TEXT, `user_image` TEXT, `user_name` TEXT, `content` TEXT NOT NULL, `date_millis` INTEGER, `updated_at_millis` INTEGER NOT NULL, PRIMARY KEY(`cache_key`))",
+        "fields": [
+          {
+            "fieldPath": "cacheKey",
+            "columnName": "cache_key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scope",
+            "columnName": "scope",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "commentId",
+            "columnName": "comment_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "postId",
+            "columnName": "post_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "user_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "userImage",
+            "columnName": "user_image",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "userName",
+            "columnName": "user_name",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "content",
+            "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dateMillis",
+            "columnName": "date_millis",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "updatedAtMillis",
+            "columnName": "updated_at_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "cache_key"
+          ]
+        }
+      },
+      {
+        "tableName": "community_cache",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `image` TEXT, `subscribers_count` INTEGER NOT NULL, `owner_id` TEXT, `created_at_millis` INTEGER, `updated_at_millis` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "subscribersCount",
+            "columnName": "subscribers_count",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ownerId",
+            "columnName": "owner_id",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAtMillis",
+            "columnName": "created_at_millis",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "updatedAtMillis",
+            "columnName": "updated_at_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "community_search",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` TEXT NOT NULL, `updated_at_millis` INTEGER NOT NULL, PRIMARY KEY(`key`))",
+        "fields": [
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAtMillis",
+            "columnName": "updated_at_millis",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "key"
+          ]
+        }
+      },
+      {
+        "tableName": "community_search_entry",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` TEXT NOT NULL, `community_id` INTEGER NOT NULL, `position` INTEGER NOT NULL, PRIMARY KEY(`key`, `position`))",
+        "fields": [
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "communityId",
+            "columnName": "community_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "position",
+            "columnName": "position",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "key",
+            "position"
+          ]
+        }
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4bf03171c0df0e88d78c70fbe1421b8c')"
+    ]
+  }
+}

@@ -1,7 +1,9 @@
 package com.edufelip.finn.shared.data.local
 
-import com.edufelip.finn.shared.cache.FinnDatabase
-import com.edufelip.finn.shared.cache.Post_cache
+import androidx.room.withTransaction
+import com.edufelip.finn.shared.data.local.room.FinnCacheDatabase
+import com.edufelip.finn.shared.data.local.room.PostCacheDao
+import com.edufelip.finn.shared.data.local.room.PostCacheEntity
 import com.edufelip.finn.shared.domain.model.Post
 import com.edufelip.finn.shared.util.currentTimeMillis
 
@@ -11,60 +13,50 @@ interface PostCacheDataSource {
     suspend fun clear(scope: PostCacheScope)
 }
 
-class SqlDelightPostCacheDataSource(
-    private val database: FinnDatabase,
+class RoomPostCacheDataSource(
+    private val database: FinnCacheDatabase,
     private val timeProvider: () -> Long = { currentTimeMillis() },
 ) : PostCacheDataSource {
 
-    private val queries get() = database.cacheQueries
+    private val dao: PostCacheDao
+        get() = database.postCacheDao()
 
     override suspend fun write(scope: PostCacheScope, page: Int, pageSize: Int, posts: List<Post>) {
         val scopeKey = scope.key
         if (posts.isEmpty()) return
-        database.transaction {
+        database.withTransaction {
             if (page == 1) {
-                queries.deletePostsByScope(scopeKey)
+                dao.deleteByScope(scopeKey)
             }
 
             val baseIndex = maxOf((page - 1) * pageSize, 0)
             val updatedAt = timeProvider()
-            posts.forEachIndexed { index, post ->
-                queries.insertPost(
-                    cache_key = cacheKey(scopeKey, post.id),
-                    scope = scopeKey,
-                    post_id = post.id.toLong(),
-                    content = post.content,
-                    community_id = post.communityId?.toLong(),
-                    community_title = post.communityTitle,
-                    community_image = post.communityImage,
-                    user_id = post.userId,
-                    user_name = post.userName,
-                    image = post.image,
-                    likes_count = post.likesCount.toLong(),
-                    comments_count = post.commentsCount.toLong(),
-                    is_liked = if (post.isLiked) 1L else 0L,
-                    date_millis = post.dateMillis,
-                    ordering = (baseIndex + index).toLong(),
-                    updated_at_millis = updatedAt,
-                )
-            }
+            dao.insertAll(
+                posts.mapIndexed { index, post ->
+                    post.toEntity(
+                        scopeKey = scopeKey,
+                        cacheKey = cacheKey(scopeKey, post.id),
+                        ordering = (baseIndex + index).toLong(),
+                        updatedAt = updatedAt,
+                    )
+                },
+            )
 
-            val total = queries.countPostsByScope(scopeKey).executeAsOne().toInt()
+            val total = dao.countByScope(scopeKey)
             if (total > MAX_ITEMS_PER_SCOPE) {
                 val overflow = total - MAX_ITEMS_PER_SCOPE
-                queries.selectPostKeysByScope(scopeKey, overflow.toLong())
-                    .executeAsList()
-                    .forEach { key -> queries.deletePostByKey(key) }
+                val keys = dao.selectKeysByScope(scopeKey, overflow)
+                if (keys.isNotEmpty()) dao.deleteByCacheKeys(keys)
             }
         }
     }
 
     override suspend fun read(scope: PostCacheScope, limit: Int?, maxAgeMillis: Long?): List<Post> {
         val scopeKey = scope.key
-        val rows = queries.selectPostsByScope(scopeKey).executeAsList()
+        val rows = dao.selectByScope(scopeKey)
         if (rows.isEmpty()) return emptyList()
         if (maxAgeMillis != null) {
-            val newest = rows.maxOf { it.updated_at_millis }
+            val newest = rows.maxOf { it.updatedAtMillis }
             if (timeProvider() - newest > maxAgeMillis) {
                 clear(scope)
                 return emptyList()
@@ -75,7 +67,7 @@ class SqlDelightPostCacheDataSource(
     }
 
     override suspend fun clear(scope: PostCacheScope) {
-        queries.deletePostsByScope(scope.key)
+        dao.deleteByScope(scope.key)
     }
 
     private fun cacheKey(scopeKey: String, postId: Int) = "$scopeKey-$postId"
@@ -85,19 +77,43 @@ class SqlDelightPostCacheDataSource(
     }
 }
 
-private fun Post_cache.toDomain(): Post =
+private fun PostCacheEntity.toDomain(): Post =
     Post(
-        id = post_id.toInt(),
+        id = postId.toInt(),
         content = content,
-        communityId = community_id?.toInt(),
-        communityTitle = community_title,
-        communityImage = community_image,
-        userId = user_id,
-        userName = user_name,
+        communityId = communityId?.toInt(),
+        communityTitle = communityTitle,
+        communityImage = communityImage,
+        userId = userId,
+        userName = userName,
         image = image,
-        likesCount = likes_count.toInt(),
-        commentsCount = comments_count.toInt(),
-        isLiked = is_liked != 0L,
-        dateMillis = date_millis,
-        cachedAtMillis = updated_at_millis,
+        likesCount = likesCount.toInt(),
+        commentsCount = commentsCount.toInt(),
+        isLiked = isLiked,
+        dateMillis = dateMillis,
+        cachedAtMillis = updatedAtMillis,
     )
+
+private fun Post.toEntity(
+    scopeKey: String,
+    cacheKey: String,
+    ordering: Long,
+    updatedAt: Long,
+) = PostCacheEntity(
+    cacheKey = cacheKey,
+    scope = scopeKey,
+    postId = id.toLong(),
+    content = content,
+    communityId = communityId?.toLong(),
+    communityTitle = communityTitle,
+    communityImage = communityImage,
+    userId = userId,
+    userName = userName,
+    image = image,
+    likesCount = likesCount.toLong(),
+    commentsCount = commentsCount.toLong(),
+    isLiked = isLiked,
+    dateMillis = dateMillis,
+    ordering = ordering,
+    updatedAtMillis = updatedAt,
+)

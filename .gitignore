@@ -33,4 +33,8 @@ buildlog.txt
 build_output.log
 
 # iOS artifacts
-iosApp/
+iosApp/build/
+iosApp/iosApp.xcodeproj/project.xcworkspace/
+iosApp/iosApp.xcodeproj/xcuserdata/
+iosApp/iosApp.xcodeproj/xcshareddata/WorkspaceSettings.xcsettings
+iosApp/iosApp.xcodeproj/xcshareddata/IDEWorkspaceChecks.plist

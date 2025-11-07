@@ -6,9 +6,9 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toComposeImageBitmap
 import kotlinx.browser.window
 import kotlinx.coroutines.await
-import org.jetbrains.skia.Image as SkiaImage
 import org.khronos.webgl.ArrayBuffer
 import org.khronos.webgl.Int8Array
+import org.jetbrains.skia.Image as SkiaImage
 
 @Composable
 actual fun SharedImage(url: String, contentDescription: String?, modifier: Modifier) {

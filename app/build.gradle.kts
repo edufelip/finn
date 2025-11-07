@@ -33,11 +33,13 @@ android {
             isShrinkResources = true
             isDebuggable = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            buildConfigField("String", "DEFAULT_REMOTE_SERVER", "\"https://finn.dashboard.eduwaldo.com/\"")
         }
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
             isDebuggable = true
+            buildConfigField("String", "DEFAULT_REMOTE_SERVER", "\"https://finn.dev.dashboard.eduwaldo.com/\"")
         }
     }
     compileOptions {
@@ -52,6 +54,9 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+    lint {
+        disable += "NullSafeMutableLiveData"
     }
 }
 
@@ -107,8 +112,8 @@ dependencies {
     // Koin core for shared DI
     implementation(libs.koin.core)
 
-    // SQLDelight driver for Android
-    implementation(libs.sqldelight.android.driver)
+    // Room runtime for shared database builders
+    implementation(libs.androidx.room.runtime)
 
     // Images
     implementation(libs.coil.compose)

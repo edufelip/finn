@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.compose.hot.reload) apply false
     alias(libs.plugins.compose.multiplatform) apply false
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.ksp) apply false
+    alias(libs.plugins.androidx.room) apply false
     alias(libs.plugins.spotless)
 }
 
@@ -26,6 +28,8 @@ spotless {
                     "ktlint_standard_function-naming" to "disabled",
                     // Disable wildcard imports (standard:no-wildcard-imports)
                     "ktlint_standard_no-wildcard-imports" to "disabled",
+                    // Allow lowercase entrypoint files (Compose multiplatform wasm/js)
+                    "ktlint_standard_filename" to "disabled",
                 ),
             )
     }
@@ -39,4 +43,15 @@ spotless {
             ),
         )
     }
+}
+
+tasks.register("ci") {
+    group = "verification"
+    description = "Run formatting, lint, unit tests, and export Room schemas"
+    dependsOn(
+        "spotlessCheck",
+        ":shared:copyRoomSchemas",
+        ":shared:testDebugUnitTest",
+        ":app:testDebugUnitTest",
+    )
 }
